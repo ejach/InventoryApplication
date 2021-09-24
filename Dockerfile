@@ -11,8 +11,12 @@ RUN apt-get -y update
 RUN apt-get update && apt-get install -y python python3-pip
 RUN pip3 install -r requirements.txt
 
+# Set the env variables
+ENV HOST=0.0.0.0
+ENV PORT=8000
+
 # Expose the following port for the container
-EXPOSE 8000
+EXPOSE $PORT
 
 # Run the gunicorn wsgi server, bind the following address
-CMD gunicorn wsgi:app --bind=0.0.0.0
+CMD gunicorn wsgi:app --bind=$HOST
