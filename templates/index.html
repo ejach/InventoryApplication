@@ -2,12 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src={{ url_for("static", filename="js/reload.js") }}></script>
     <title>Inventory Application</title>
 </head>
 <body>
-<form>
-    <input type="text" name="partName" placeholder="add part" required/>
-    <input type="submit">
+<form action="http://localhost:5000/" method="POST">
+    <input type="text" name="partName" placeholder="part name" required/>
+    <input type="text" name="partNumber" placeholder="part number" required>
+    <input type="submit" id="submit">
 </form>
+<div>
+    <table border="1" id="table">
+    <th>Part Name</th> <th>Part Number</th><br/>
+{% for row in results %}
+      <tr>
+         <td>{{ row[0] }}</td>
+         <td>{{ row[1] }}</td><br/>
+      </tr>
+{% endfor %}
+    </table>
+</div>
 </body>
 </html>
