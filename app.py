@@ -1,8 +1,9 @@
 from flask import Flask, render_template
-
+from db_manipulator import fetchall
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    results = fetchall()
+    return render_template('index.html', results=results)
