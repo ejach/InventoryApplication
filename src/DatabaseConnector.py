@@ -9,7 +9,6 @@ class DatabaseConnector:
     def __init__(self):
         self.host = environ.get('host')
         self.database_file = environ.get('db_file')
-        self.database = environ.get('db')
-        self.db = connect(self.database_file, check_same_thread=False)
-        self.cursor = self.db.cursor()
-        self.db.row_factory = Row
+        self.database = connect(self.database_file, check_same_thread=False)
+        self.cursor = self.database.cursor()
+        self.database.row_factory = Row
