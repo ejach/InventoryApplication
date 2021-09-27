@@ -8,7 +8,7 @@ def index():
     dbm = DatabaseManipulator()
     results, error = dbm.fetchall()
     if request.method == 'POST':
-        part_name = str(request.form['partName'])
-        part_number = str(request.form['partNumber'])
+        part_name = request.form['partName']
+        part_number = request.form['partNumber']
         dbm.insert(part_name=part_name, part_number=part_number)
     return render_template('index.html', results=results, error=error)
