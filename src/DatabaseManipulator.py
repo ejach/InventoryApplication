@@ -21,5 +21,5 @@ class DatabaseManipulator:
 
     def insert(self, part_name, part_number):
         stmt = 'INSERT INTO parts (name, part_number) VALUES (?, ?)'
-        self.cursor.execute(stmt, (str(part_name), str(part_number)))
+        self.cursor.execute(stmt, (part_name, part_number))
         self.db.database.commit()
