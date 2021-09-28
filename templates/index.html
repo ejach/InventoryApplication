@@ -7,12 +7,12 @@
     <title>Inventory Application</title>
 </head>
 <body>
-<form action="http://localhost:5000/" method="POST">
+<form action="http://{{ host }}:{{ port }}/" method="POST">
     <input type="text" name="partName" placeholder="part name" required/>
     <input type="text" name="partNumber" placeholder="part number" required>
     <input type="submit" id="submit">
 </form>
-<div>
+<div id="myDiv">
     <table border="1" id="table">
     <th>Part Name</th> <th>Part Number</th><br/>
 {% for row in results %}
@@ -20,9 +20,13 @@
          <td>{{ row[0] }}</td>
          <td>{{ row[1] }}</td><br/>
       </tr>
-    {{ error }}
 {% endfor %}
     </table>
+<button type="button" id="refreshBtn">Refresh</button>
+
+<script>
+
+</script>
 </div>
 </body>
 </html>

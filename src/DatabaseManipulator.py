@@ -1,25 +1,25 @@
 from src.DatabaseConnector import DatabaseConnector
+from src.DatabaseStatements import DatabaseStatements
 
 
 class DatabaseManipulator:
     def __init__(self):
         self.db = DatabaseConnector()
-        self.cursor = self.db.cursor
+        self.cursor = self.db.get_cursor()
+        self.stmt = DatabaseStatements()
 
     def fetchall(self):
         try:
-            stmt = 'SELECT * FROM parts'
+            stmt = self.stmt.get_select_stmt()
             self.cursor.execute(stmt)
             results = self.cursor.fetchall()
-            error = ''
-            return results, error
+            return results
         except:
             self.db.database.rollback()
             results = None
-            error = "Error connecting to the database"
-            return results, error
+            return results
 
     def insert(self, part_name, part_number):
-        stmt = 'INSERT INTO parts (name, part_number) VALUES (?, ?)'
+        stmt = self.stmt.get_insert_statement()
         self.cursor.execute(stmt, (part_name, part_number))
         self.db.database.commit()
