@@ -7,8 +7,8 @@
     <title>Inventory Application</title>
 
     <div class="header">
-        <img src ="{{ url_for('static', filename='assets/logo.png') }}" href="#default" align="left" alt="SOS Irrigation" width="70px" height="50px" class="logo">
-        <h3 id="logoName">Inventory Application</h3>
+        <img src ="https://lh3.googleusercontent.com/proxy/HyPC7GZv78F2c7Ax3oUKSf5DaUJo7itx9myUPY6UJdeyz9JZSyOAsZ03NVnf7-KYqMQr0CtNRSXmkFhzf_tmk0x7WikPWy2Ohrs" align="left" alt="SOS Irrigation" width="200px" height="100px"  href="#default" class="logo">
+
         <div class="header-right">
             <a class="active" href="#home">Home</a>
             <a href="#profile">Profile</a>
@@ -27,7 +27,7 @@
 <body>
 <br><br><br><br>
 
-<form action="http://{{ host }}:{{ port }}/" method="POST">
+<form action="http://localhost:5000/" method="POST">
     <p>Enter the Part Name and Part Number: </p>
     <input type="text" name="partName" placeholder="Part Name" required/>
     <input type="text" name="partNumber" placeholder="Part Number" required>
@@ -39,9 +39,10 @@
     <th>Part Name</th> <th>Part Number</th><br/>
 {% for row in results %}
       <tr>
-         <td>{{ row[1] }}</td>
-         <td>{{ row[2] }}</td>
+         <td>{{ row[0] }}</td>
+         <td>{{ row[1] }}</td><br/>
       </tr>
+    {{ error }}
 {% endfor %}
     </table>
 </div>
