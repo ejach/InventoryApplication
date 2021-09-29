@@ -5,14 +5,36 @@
     <link href={{ url_for("static", filename="css/stylesheet.css") }} rel="stylesheet">
     <script src={{ url_for("static", filename="js/reload.js") }}></script>
     <title>Inventory Application</title>
+
+    <div class="header">
+        <img src ="https://lh3.googleusercontent.com/proxy/HyPC7GZv78F2c7Ax3oUKSf5DaUJo7itx9myUPY6UJdeyz9JZSyOAsZ03NVnf7-KYqMQr0CtNRSXmkFhzf_tmk0x7WikPWy2Ohrs" align="left" alt="SOS Irrigation" width="200px" height="100px"  href="#default" class="logo">
+
+        <div class="header-right">
+            <a class="active" href="#home">Home</a>
+            <a href="#profile">Profile</a>
+            <a href="#settings">Settings</a>
+        </div>
+    </div>
+
+    <div class="sidenav">
+        <a href="#">Inventory</a>
+        <a href="#">Orders</a>
+        <a href="#">Reports</a>
+        <a href="#">Contact</a>
+    </div>
+
 </head>
 <body>
-<form action="http://{{ host }}:{{ port }}/" method="POST">
-    <input type="text" name="partName" placeholder="part name" required/>
-    <input type="text" name="partNumber" placeholder="part number" required>
+<br><br><br><br>
+
+<form action="http://localhost:5000/" method="POST">
+    <p>Enter the Part Name and Part Number: </p>
+    <input type="text" name="partName" placeholder="Part Name" required/>
+    <input type="text" name="partNumber" placeholder="Part Number" required>
     <input type="submit" id="submit">
 </form>
-<div id="myDiv">
+
+<div>
     <table border="1" id="table">
     <th>Part Name</th> <th>Part Number</th><br/>
 {% for row in results %}
@@ -20,13 +42,10 @@
          <td>{{ row[0] }}</td>
          <td>{{ row[1] }}</td><br/>
       </tr>
+    {{ error }}
 {% endfor %}
     </table>
-<button type="button" id="refreshBtn">Refresh</button>
-
-<script>
-
-</script>
 </div>
+
 </body>
 </html>
