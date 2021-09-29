@@ -1,3 +1,5 @@
+from json import dumps, loads
+
 from src.DatabaseConnector import DatabaseConnector
 from src.DatabaseStatements import DatabaseStatements
 
@@ -13,6 +15,7 @@ class DatabaseManipulator:
             stmt = self.stmt.get_select_stmt()
             self.cursor.execute(stmt)
             results = self.cursor.fetchall()
+            print(results)
             return results
         except:
             self.db.database.rollback()
@@ -23,3 +26,15 @@ class DatabaseManipulator:
         stmt = self.stmt.get_insert_statement()
         self.cursor.execute(stmt, (part_name, part_number))
         self.db.database.commit()
+
+    def get_json(self):
+        stmt = self.stmt.get_select_stmt()
+        self.cursor.execute(stmt)
+        results = self.cursor.fetchall()
+        container = []
+        for tup in results:
+            json_string = {'data': {tup[0]: {"name": tup[1], "part_number": tup[2]}}}
+            j_dump = dumps(json_string, separators=(" , ", " : "))
+            loader = loads(j_dump)
+            container.append(loader)
+        return container
