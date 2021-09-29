@@ -1,6 +1,7 @@
+from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify
+
 from src.DatabaseConnector import DatabaseConnector
 from src.DatabaseManipulator import DatabaseManipulator
-from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
@@ -18,3 +19,10 @@ def index():
         dbm.insert(part_name=part_name, part_number=part_number)
         return redirect(url_for('index'))
     return render_template('index.html', results=results, host=host, port=port)
+
+
+@app.route('/json', methods=['GET', 'POST'])
+def get_json():
+    dbm = DatabaseManipulator()
+    res = make_response(jsonify(dbm.get_json()))
+    return res
