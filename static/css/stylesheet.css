@@ -1,6 +1,3 @@
-html {
-  font-family: Arial, serif;
-}
 body {
     text-align: center;
     height: 100%;
@@ -18,10 +15,6 @@ form {
     font-size: 20px;
 }
 
-#logoName {
-  float: left;
-}
-
 h1 {
     font-size: 56px;
 }
@@ -31,6 +24,7 @@ h1 {
   width: 200px;
   position: fixed;
   z-index: 1;
+  top: 100px;
   left: 0;
   background-color: #808080;
   overflow-x: hidden;
@@ -63,7 +57,6 @@ h1 {
 .header {
   overflow: hidden;
   background-color: #f1f1f1;
-  bottom: auto;
 }
 
 /* Style the header links */
@@ -74,7 +67,7 @@ h1 {
   padding: 12px;
   text-decoration: none;
   font-size: 18px;
-  line-height: 190%;
+  line-height: 25px;
 }
 
 /* Style the logo link (notice that we set the same value of line-height and font-size to prevent the header to increase when the font gets bigger */
