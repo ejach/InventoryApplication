@@ -11,7 +11,7 @@ There is a need to have a system in place that allows for part inventory to be t
 2. `cd` into the cloned directory `$ cd InventoryApplication`
 3. Install the requirements `$ pip install -r requirements.txt`
 
-### Docker
+### Docker (not working currently)
 `docker run -it -e host=<host> -e port=<port> -e db_file=<db_file> -e db=<db> ghcr.io/ejach/inventoryapplication:latest`
 
 1. Change the environment variables to your liking in `.env`:
