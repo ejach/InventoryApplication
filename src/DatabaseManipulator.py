@@ -10,23 +10,20 @@ class DatabaseManipulator:
         self.cursor = self.db.get_cursor()
         self.stmt = DatabaseStatements()
 
+    # Get all entries from database
     def fetchall(self):
-        try:
-            stmt = self.stmt.get_select_stmt()
-            self.cursor.execute(stmt)
-            results = self.cursor.fetchall()
-            print(results)
-            return results
-        except:
-            self.db.database.rollback()
-            results = None
-            return results
+        stmt = self.stmt.get_select_stmt()
+        self.cursor.execute(stmt)
+        results = self.cursor.fetchall()
+        return results
 
+    # Insert entries into database
     def insert(self, part_name, part_number):
         stmt = self.stmt.get_insert_statement()
         self.cursor.execute(stmt, (part_name, part_number))
         self.db.database.commit()
 
+    # Get all database entries and translate them into JSON
     def get_json(self):
         stmt = self.stmt.get_select_stmt()
         self.cursor.execute(stmt)

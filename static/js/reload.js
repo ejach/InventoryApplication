@@ -10,19 +10,3 @@ window.onload = function() {
         }
     })
 }
-
-// $("#refreshBtn").keyup(function(){
-//     var text = $(this).val();
-//
-//     $.ajax({
-//       url: "/",
-//       type: "get",
-//       data: {jsdata: text},
-//       success: function(response) {
-//         $("#myDiv").html(response);
-//       },
-//       error: function(xhr) {
-//         //Do Something to handle error
-//       }
-//     });
-// });
