@@ -1,6 +1,6 @@
 import sqlite3
 from json import loads
-from os import environ
+from os import path
 from unittest import TestCase, main
 from unittest.mock import MagicMock
 
@@ -11,10 +11,12 @@ from src.DatabaseConnector import DatabaseConnector
 
 load_dotenv()
 
-host = environ.get('HOST')
-port = environ.get('PORT')
-database_file = environ.get('db_file')
-database = environ.get('db')
+dbc = DatabaseConnector()
+
+host = dbc.get_host()
+port = dbc.get_port()
+database_file = dbc.get_database_file()
+database = dbc.get_database()
 
 
 def is_json(my_json):
@@ -40,11 +42,21 @@ class TestApplication(TestCase):
         r = get(f'http://{host}:{port}')
         self.assertTrue(r.status_code == 200)
         print('HTTP 200 test -> PASSED' + '\n')
-        sqlite3.connect = MagicMock(return_value='Connection Successful')
-        test_db_class = DatabaseConnector
-        sqlite3.connect.assert_called_with(test_db_class)
-        self.assertEqual(test_db_class.get_database, 'Connection Successful')
-        print('SQLite3 Connection test -> PASSED' + '\n')
+
+    def test_sqlite_conn(self):
+        self.assertTrue(path.exists(f'../{database_file}'))
+        print('SQLite3 file exists -> PASSED' + '\n')
+        sqlite3.connect = MagicMock(return_value='Connection is Successful')
+        tdbc = TestDatabaseClass()
+        sqlite3.connect.assert_called_with('database.db')
+        self.assertEqual(tdbc.connection, 'Connection is Successful')
+        print('SQLite3 test -> PASSED' + '\n')
+
+
+class TestDatabaseClass:
+
+    def __init__(self, connection_string='database.db'):
+        self.connection = sqlite3.connect(connection_string)
 
 
 if __name__ == '__main__':
