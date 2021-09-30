@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link href={{ url_for("static", filename="css/stylesheet.css") }} rel="stylesheet">
-    <script src={{ url_for("static", filename="js/reload.js") }}></script>
+    <link rel=stylesheet href="{{ url_for('static', filename='css/stylesheet.css') }}">
+    <script src= "{{ url_for('static', filename='js/reload.js') }}"></script>
     <title>Inventory Application</title>
-
+</head>
+<body>
     <div class="header">
-        <img src ="{{ url_for('static', filename='assets/logo.png') }}" href="#default" align="left" alt="SOS Irrigation"
-             width="70px" height="50px" class="logo">
+        <img src ="{{ url_for('static', filename='assets/logo.png') }}" style="float: left;" alt="SOS Irrigation"
+             width="70" height="50" class="logo">
         <h3 id="logoName">Inventory Application</h3>
         <div class="header-right">
             <a class="active" href="#home">Home</a>
@@ -22,21 +23,17 @@
         <a href="#">Orders</a>
         <a href="#">Reports</a>
         <a href="#">Contact</a>
-    </div>
+    </div><br><br><br>
 
-</head>
-<body>
-<br><br><br><br>
-
-<form action="http://{{ host }}:{{ port }}/" method="POST">
+<form action="https://{{ host }}:{{ port }}/" method="POST">
     <p>Enter the Part Name and Part Number: </p>
     <input type="text" name="partName" placeholder="Part Name" required/>
     <input type="text" name="partNumber" placeholder="Part Number" required>
-    <input type="submit" id="submit">
+    <input type="submit" id="submit"><br><br>
 </form>
 
 <div id="table">
-    <table border="1" id="table">
+    <table border="1" class="table">
     <th>Part Name</th> <th>Part Number</th><br/>
 {% for row in results %}
       <tr>
