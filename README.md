@@ -10,6 +10,8 @@ There is a need to have a system in place that allows for part inventory to be t
 1. Clone the repo by running `$ git clone https://github.com/ejach/InventoryApplication.git`
 2. `cd` into the cloned directory `$ cd InventoryApplication`
 3. Install the requirements `$ pip install -r requirements.txt`
+4. Create the database file using `database.sql` and name it `database.db` and place it in the root directory
+5. Run the program using `python wsgi.py`
 
 ### Docker (not working currently)
 `docker run -it -e host=<host> -e port=<port> -e db_file=<db_file> -e db=<db> ghcr.io/ejach/inventoryapplication:latest`
