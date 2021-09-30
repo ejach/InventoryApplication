@@ -14,13 +14,17 @@ def index():
     host = dbc.get_host()
     port = dbc.get_port()
     if request.method == 'POST':
+        # Sanitizes the input using escape
         part_name = escape(request.form['partName'])
         part_number = escape(request.form['partNumber'])
+        # Insert into the database
         dbm.insert(part_name=part_name, part_number=part_number)
+        # Redirect when finished
         return redirect(url_for('index'))
     return render_template('index.html', results=results, host=host, port=port)
 
 
+# Display the database in JSON format
 @app.route('/json', methods=['GET', 'POST'])
 def get_json():
     dbm = DatabaseManipulator()
