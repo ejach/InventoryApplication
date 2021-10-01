@@ -28,8 +28,8 @@
 
 <form action="http://{{ host }}:{{ port }}/" method="POST">
     <p>Enter the Part Name and Part Number: </p>
-    <input type="text" name="partName" placeholder="Part Name" required/>
-    <input type="text" name="partNumber" placeholder="Part Number" required>
+    <input type="text" name="partName" placeholder="Part Name" required pattern="^(\w+\S+)$"/>
+    <input type="text" name="partNumber" placeholder="Part Number" required pattern="^(\w+\S+)$"/>
     <input type="submit" id="submit"><br><br><br>
 </form>
 
