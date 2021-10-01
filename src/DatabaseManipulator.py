@@ -4,6 +4,14 @@ from src.DatabaseConnector import DatabaseConnector
 from src.DatabaseStatements import DatabaseStatements
 
 
+# Prevents inputs that only contain spaces from being entered into the database
+def check_input(part_name, part_number):
+    if not part_number and not part_number or not part_name.isspace() and not part_number.isspace():
+        return True
+    else:
+        return False
+
+
 class DatabaseManipulator:
     def __init__(self):
         self.db = DatabaseConnector()
@@ -21,7 +29,8 @@ class DatabaseManipulator:
     def insert(self, part_name, part_number):
         stmt = self.stmt.get_insert_statement()
         self.cursor.execute(stmt, (part_name, part_number))
-        self.db.database.commit()
+        if check_input(part_name, part_number):
+            self.db.database.commit()
 
     # Get all database entries and translate them into JSON
     def get_json(self):
