@@ -61,3 +61,4 @@ class TestDatabaseClass:
 
 if __name__ == '__main__':
     main()
+# TODO create tests that validate MySQL connection, and creates a test database that verifies the statements

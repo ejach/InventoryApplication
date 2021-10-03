@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify, escape
+from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify
+from bleach import clean
 
 from src.DatabaseConnector import DatabaseConnector
 from src.DatabaseManipulator import DatabaseManipulator
@@ -15,8 +16,8 @@ def index():
     port = dbc.get_port()
     if request.method == 'POST':
         # Sanitizes the input using escape
-        part_name = escape(request.form['partName'])
-        part_number = escape(request.form['partNumber'])
+        part_name = clean(request.form['partName'])
+        part_number = clean(request.form['partNumber'])
         # Insert into the database
         dbm.insert(part_name=part_name, part_number=part_number)
         # Redirect when finished
