@@ -21,11 +21,17 @@ There is a need to have a system in place that allows for part inventory to be t
 
 1. Change the environment variables to your liking in `.env`:
 ```bash
+# Host for the MySQL database and the WebUI (default is localhost)
 host=localhost
+# Port for the WebUI using a WSGI server (default is 5000 for development, 8000 for production)
 webui_port=5000
+# Username for the MySQL database (default is root)
 username=root
+# Password for the MySQL database (default is root)
 password=root
+# Port for the MySQL database (default is 3306)
 db_port=3308
+# Database name in the MySQL database (default is parts)
 db=parts
 ```
 2. Build the image using the existing `Dockerfile` by running `$ docker build -t inventoryapplication .`
