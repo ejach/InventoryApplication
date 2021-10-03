@@ -1,6 +1,7 @@
 from os import environ
-from sqlite3 import connect, Row
+
 from dotenv import load_dotenv
+from mysql.connector import connect, Error
 
 load_dotenv()
 
@@ -8,11 +9,14 @@ load_dotenv()
 class DatabaseConnector:
     def __init__(self):
         self.host = environ.get('host')
-        self.port = environ.get('port')
-        self.database_file = environ.get('db_file')
-        self.database = connect(self.database_file, check_same_thread=False)
-        self.cursor = self.database.cursor()
-        self.database.row_factory = Row
+        self.port = environ.get('webui_port')
+        self.db_port = int(environ.get('db_port'))
+        self.user = environ.get('username')
+        self.password = environ.get('password')
+        self.db = environ.get('db')
+        self.conn = connect(host=self.host, user=self.user, password=self.password, database=self.db,
+                            port=self.db_port)
+        self.cursor = self.conn.cursor()
 
     def set_host(self, host):
         self.host = host
@@ -26,20 +30,25 @@ class DatabaseConnector:
     def get_port(self):
         return self.port
 
-    def set_database_file(self, database_file):
-        self.database_file = database_file
-
-    def get_database_file(self):
-        return self.database_file
-
-    def set_database(self, database):
-        self.database = database
-
-    def get_database(self):
-        return self.database
-
     def set_cursor(self, cursor):
         self.cursor = cursor
 
     def get_cursor(self):
         return self.cursor
+
+    def set_password(self, password):
+        self.password = password
+
+    def get_password(self):
+        return self.password
+
+    def set_conn(self, conn):
+        self.conn = conn
+
+    # Test if the connection is successful; print errors if it was not
+    def get_conn(self):
+        try:
+            if self.conn.is_connected():
+                return self.conn
+        except Error as e:
+            print(e)
