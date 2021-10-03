@@ -16,14 +16,16 @@ There is a need to have a system in place that allows for part inventory to be t
 
 6. Run the program using `python wsgi.py`
 
-### Docker (not working currently [#36](https://github.com/ejach/InventoryApplication/issues/36)
+### Docker (not working currently [#36](https://github.com/ejach/InventoryApplication/issues/36))
 `docker run -it -e host=<host> -e port=<port> -e db_file=<db_file> -e db=<db> ghcr.io/ejach/inventoryapplication:latest`
 
 1. Change the environment variables to your liking in `.env`:
 ```bash
 host=localhost
-port=8000
-db_file=database.db
+webui_port=5000
+username=root
+password=root
+db_port=3308
 db=parts
 ```
 2. Build the image using the existing `Dockerfile` by running `$ docker build -t inventoryapplication .`
