@@ -16,6 +16,7 @@ class DatabaseManipulator:
     def __init__(self):
         self.db = DatabaseConnector()
         self.cursor = self.db.get_cursor()
+        self.conn = self.db.get_conn()
         self.stmt = DatabaseStatements()
 
     # Get all entries from database
@@ -28,9 +29,10 @@ class DatabaseManipulator:
     # Insert entries into database
     def insert(self, part_name, part_number):
         stmt = self.stmt.get_insert_statement()
-        self.cursor.execute(stmt, (part_name, part_number))
+        val = (part_name, part_number)
+        self.cursor.execute(stmt, val)
         if check_input(part_name, part_number):
-            self.db.database.commit()
+            self.conn.commit()
 
     # Get all database entries and translate them into JSON
     def get_json(self):
