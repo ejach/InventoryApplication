@@ -1,9 +1,6 @@
 from os import environ
 
-from dotenv import load_dotenv
 from mysql.connector import connect, Error
-
-load_dotenv()
 
 
 class DatabaseConnector:

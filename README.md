@@ -9,7 +9,7 @@ There is a need to have a system in place that allows for part inventory to be t
 
 1. Clone the repo by running `$ git clone https://github.com/ejach/InventoryApplication.git`
 2. `cd` into the cloned directory `$ cd InventoryApplication`
-3. Change the environment variables to your liking in `.env`
+3. Change the environment variables to your liking by [exporting them](https://bash.cyberciti.biz/guide/Export_Variables) shown in `example.env`
 ```bash
 # Host for the MySQL database and the WebUI (default is localhost)
 host=localhost
@@ -34,6 +34,6 @@ db=parts
 ### Docker (not working currently [#36](https://github.com/ejach/InventoryApplication/issues/36))
 `docker run -it -e host=<host> -e port=<port> -e db_file=<db_file> -e db=<db> ghcr.io/ejach/inventoryapplication:latest`
 
-1. Change the environment variables to your liking in `.env`
+1. Change the environment variables to your liking by [exporting them](https://bash.cyberciti.biz/guide/Export_Variables) shown in `example.env`
 2. Build the image using the existing `Dockerfile` by running `$ docker build -t inventoryapplication .`
 3. Run the newly created image using `$ docker run inventoryapplication`
