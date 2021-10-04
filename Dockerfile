@@ -19,4 +19,4 @@ ENV PORT=8000
 EXPOSE $PORT
 
 # Run the gunicorn wsgi server, bind the following address
-CMD gunicorn wsgi:app --bind=$HOST
+CMD gunicorn wsgi:app --bind=localhost
