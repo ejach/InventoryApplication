@@ -24,6 +24,7 @@ services:
     restart: always
     environment:
       host: db
+      webui_host: localhost
       webui_port: 5000
       username: root
       password: root
