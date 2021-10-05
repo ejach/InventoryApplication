@@ -26,24 +26,26 @@
         <a href="#">Contact</a>
     </div><br><br><br>
 
-<form action="http://{{ webui_host }}:{{ port }}/" method="POST">
-    <p>Enter the Part Name and Part Number: </p>
-    <input type="text" name="partName" placeholder="Part Name" required pattern="^(\w+\S+)$"/>
-    <input type="text" name="partNumber" placeholder="Part Number" required pattern="^(\w+\S+)$"/>
-    <input type="submit" id="submit"><br><br><br>
-</form>
+    <div class="main">
+        <form action="http://{{ webui_host }}:{{ port }}/" method="POST">
+            <p>Enter the Part Name and Part Number: </p>
+            <input type="text" name="partName" placeholder="Part Name" required pattern="^(\w+\S+)$"/>
+            <input type="text" name="partNumber" placeholder="Part Number" required pattern="^(\w+\S+)$"/>
+            <input type="submit" id="submit"><br><br><br>
+        </form>
 
-<div id="table">
-    <table border="1" class="table">
-    <th>Part Name</th> <th>Part Number</th><br/>
-{% for row in results %}
-      <tr>
-         <td>{{ row[1] }}</td>
-         <td>{{ row[2] }}</td>
-      </tr>
-{% endfor %}
-    </table>
-</div>
 
+        <div id="table">
+            <table border="1" class="table">
+            <th>Part Name</th> <th>Part Number</th><br/>
+        {% for row in results %}
+              <tr>
+                 <td>{{ row[1] }}</td>
+                 <td>{{ row[2] }}</td>
+              </tr>
+        {% endfor %}
+            </table>
+        </div>
+    </div>
 </body>
 </html>
