@@ -1,54 +1,3 @@
-html {
-  font-family: Arial, serif;
-}
-body {
-    text-align: center;
-    height: 100%;
-    width: 100%;
-    margin: 0;
-}
-table {
-    width: 50%;
-    margin-left: auto;
-    margin-right: auto;
-}
-form {
-    font-size: 20px;
-}
-#logoName {
-  float: left;
-}
-h1 {
-    font-size: 56px;
-}
-.sidenav {
-  height: 100%;
-  width: 200px;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  background-color: #808080;
-  overflow-x: hidden;
-  padding-top: 20px;
-}
-.sidenav a {
-  padding: 6px 6px 6px 32px;
-  text-decoration: none;
-  font-size: 25px;
-  color: black;
-  display: block;
-}
-.sidenav a:hover {
-  background-color: #f1f1f1;
-}
-.main {
-  margin-left: 200px; /* Same as the width of the sidenav */
-}
-@media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
-}
-
 /* Style the header with a grey background and some padding */
 .header {
   overflow: hidden;
@@ -90,6 +39,56 @@ h1 {
   float: right;
   padding: 0 15px;
 }
+.sidenav {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  background-color: #808080;
+  padding-top: 20px;
+  min-width: 20px;
+}
+.sidenav a {
+  padding: 6px 6px 6px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: black;
+  display: block;
+}
+.sidenav a:hover {
+  background-color: #f1f1f1;
+}
+.main {
+  margin-left: 200px; /* Same as the width of the sidenav */
+}
+html {
+  font-family: Arial, serif;
+}
+body {
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+}
+table {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+form {
+    font-size: 20px;
+}
+#logoName {
+  float: left;
+}
+h1 {
+    font-size: 56px;
+}
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
 
 /* Add media queries for responsiveness - when the screen is 500px wide or less, stack the links on top of each other */
 @media screen and (max-width: 500px) {
@@ -102,6 +101,8 @@ h1 {
     float: none;
   }
 }
+
+
 #table td, #table th {
   border: 1px solid #ddd;
   padding: 8px;
