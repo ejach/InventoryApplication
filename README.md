@@ -46,7 +46,8 @@ _Change the corresponding environment variables as needed_
 
 ### Docker-Compose
 
-1. Use the [docker-compose](https://github.com/ejach/InventoryApplication/blob/main/docker-compose.yml) file and edit the `environment` variables as needed:
+1. Run `$ docker volume create --name db-data` to create the volume used by the MySQL database
+2. Use the [docker-compose](https://github.com/ejach/InventoryApplication/blob/main/docker-compose.yml) file and edit the `environment` variables as needed:
 
 ```yaml
 version: '3.8'
@@ -58,7 +59,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: parts
     volumes:
-      - /your/mount/point:/var/lib/mysql
+      - db-data:/var/lib/mysql
     ports:
       - "3308:3306"
   phpmyadmin:
@@ -73,7 +74,7 @@ services:
   invapplication:
     image: ghcr.io/ejach/inventoryapplication:latest
     restart: always
-    environment:    # \/ Edit these \/
+    environment:
       host: db
       webui_host: localhost
       webui_port: 5000
@@ -83,6 +84,9 @@ services:
       db: parts
     ports:
       - "5000:8000"
+volumes:
+  db-data:
+    external: true
 ```
 2. Run `$ docker-compose -f docker-compose.yml up -d`
 
