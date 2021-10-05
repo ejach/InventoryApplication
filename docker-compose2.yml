@@ -19,3 +19,16 @@ services:
       PMA_PASSWORD: root
     ports:
       - "8080:80"
+  invapplication:
+    image: ghcr.io/ejach/inventoryapplication:latest
+    restart: always
+    environment:
+      host: db
+      webui_host: localhost
+      webui_port: 5000
+      username: root
+      password: root
+      db_port: 3306
+      db: parts
+    ports:
+      - "5000:8000"
