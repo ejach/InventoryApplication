@@ -1,0 +1,10 @@
+<div id="table">
+            <table border="1" class="table">
+            <th>Part Name</th> <th>Part Number</th><br/>
+        {% for row in results %}
+              <tr>
+                 <td>{{ row[1] }}</td>
+                 <td>{{ row[2] }}</td>
+              </tr>
+        {% endfor %}
+            </table>
