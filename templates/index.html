@@ -5,6 +5,7 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
     <link rel=stylesheet href="{{ url_for('static', filename='css/stylesheet.css') }}">
     <script src= "{{ url_for('static', filename='js/reload.js') }}"></script>
+    <script src="https://unpkg.com/htmx.org@1.6.0"></script>
     <title>Inventory Application</title>
 </head>
 <body>
@@ -24,18 +25,17 @@
         <a href="#">Orders</a>
         <a href="#">Reports</a>
         <a href="#">Contact</a>
-    </div><br><br><br>
+    </div>
 
     <div class="main">
-        <form action="http://{{ webui_host }}:{{ port }}/" method="POST">
+        <form id="myForm">
             <p>Enter the Part Name and Part Number: </p>
-            <input type="text" name="partName" placeholder="Part Name" required pattern="^(\w+\S+)$"/>
-            <input type="text" name="partNumber" placeholder="Part Number" required pattern="^(\w+\S+)$"/>
-            <input type="submit" id="submit"><br><br><br>
+            <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^(\w+\S+)$"/>
+            <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^(\w+\S+)$"/>
+            <input type="submit" id="submit">
         </form>
-
-
-        <div id="table">
+    {#  Used to swap the HTML from table.html located at /table to dynamically refresh it  #}
+        <div id="table" hx-get="/table" hx-trigger="load, every 1s" hx-swap="table">
             <table border="1" class="table">
             <th>Part Name</th> <th>Part Number</th><br/>
         {% for row in results %}

@@ -75,6 +75,7 @@ table {
     width: 50%;
     margin-left: auto;
     margin-right: auto;
+    transition: length 1s;
 }
 form {
     font-size: 20px;
