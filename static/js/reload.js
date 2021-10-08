@@ -3,7 +3,6 @@
 window.addEventListener("load",function() {
   // Get the myForm element and assign it to a variable
   const form = document.getElementById("myForm");
-
   function sendData() {
     const XHR = new XMLHttpRequest();
 
@@ -31,3 +30,6 @@ window.addEventListener("load",function() {
     sendData();
   });
 });
+function myFunction(x) {
+  x.classList.toggle("change");
+}

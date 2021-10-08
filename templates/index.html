@@ -8,24 +8,23 @@
     <script src="https://unpkg.com/htmx.org@1.6.0"></script>
     <title>Inventory Application</title>
 </head>
+<div class="container" onclick="myFunction(this)">
+  <div class="bar1"></div>
+  <div class="bar2"></div>
+  <div class="bar3"></div>
+</div>
 <body>
     <div class="header">
-        <img src ="{{ url_for('static', filename='assets/logo.png') }}" style="float: left;" alt="SOS Irrigation"
-             width="70" height="50" class="logo">
         <h3 id="logoName">Inventory Application</h3>
-        <div class="header-right">
-            <a class="active" href="#home">Home</a>
-            <a href="#profile">Profile</a>
-            <a href="#settings">Settings</a>
-        </div>
     </div>
-
-    <div class="sidenav">
+    <div id="sidenav" class="sidenav">
         <a href="#">Inventory</a>
         <a href="#">Orders</a>
         <a href="#">Reports</a>
         <a href="#">Contact</a>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src= "{{ url_for('static', filename='js/sidenav.js') }}"></script>
 
     <div class="main">
         <form id="myForm">
