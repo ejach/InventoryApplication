@@ -30,7 +30,9 @@ username=root
 password=root
 # Port for the MySQL database (default is 3306)
 db_port=3306
-# Database name in the MySQL database (default is parts)
+# Database schema name in the MySQL database (default is parts)
+db_schema=parts
+# Database table in the MySQL database (default is parts)
 db=parts
 ```
 5. Install the requirements `$ pip install -r requirements.txt`
