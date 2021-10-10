@@ -30,6 +30,11 @@ window.addEventListener("load",function() {
     sendData();
   });
 });
-function myFunction(x) {
-  x.classList.toggle("change");
+
+// Function to make the 'hamburger' menu animation fire upon clicking
+window.onload = function() {
+  document.getElementById("container").addEventListener("click", function() {
+      let x = document.getElementById('container');
+      x.classList.toggle("change");
+  });
 }
