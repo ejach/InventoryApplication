@@ -32,6 +32,17 @@ def table():
     return render_template('table.html', results=results)
 
 
+# Route for the delete method
+@app.route('/delete', methods=['POST', 'GET'])
+def delete():
+    dbm = DatabaseManipulator()
+    if request.method == 'POST':
+        part_id = request.form.get('Delete')
+        dbm.delete(part_id)
+    # If the /delete route is accessed, re-route to index
+    return redirect(url_for('index'))
+
+
 # Display the database in JSON format
 @app.route('/json', methods=['GET', 'POST'])
 def get_json():

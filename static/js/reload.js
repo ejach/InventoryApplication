@@ -10,12 +10,12 @@ window.addEventListener("load",function() {
     const FD = new FormData(form);
 
     // On a successful submission, it gets an AJAX request to refresh the contents of the table
-    XHR.addEventListener( "load", function(event) {
+    XHR.addEventListener("load", function() {
       htmx.ajax('GET', '/table', '#table');
-    } );
+    });
 
     // Define what happens in case of error
-    XHR.addEventListener("error", function( event) {
+    XHR.addEventListener("error", function() {
       console.log('POST request was not successful.');
     });
 
@@ -30,12 +30,32 @@ window.addEventListener("load",function() {
   }
 
   // Replace the submit event with our sendData function
-  form.addEventListener( "submit", function ( event ) {
+  form.addEventListener("submit", function (event) {
     event.preventDefault();
     sendData();
   });
 });
 
+// Function that sends a POST request to /delete to delete a row entry by ID
+function deleteMe(id) {
+  // Parameters to be sent in the request
+  const params = 'Delete=' + id;
+  // Instantiate the XMLHTTP request
+  const xhr = new XMLHttpRequest();
+  // Open a POST request to /delete with async enabled
+  xhr.open("POST", '/delete', true);
+
+  // Send the proper header information along with the request
+  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+  // On a successful submission, it gets an AJAX request to refresh the contents of the table
+  xhr.addEventListener("load", function() {
+    htmx.ajax('GET', '/table', '#table');
+  });
+
+  // Send the parameters
+  xhr.send(params);
+}
 
 window.onload = function() {
   // Implementation to use the PullToRefresh library to perform an AJAX request to update the table

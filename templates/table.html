@@ -1,10 +1,11 @@
 <div id="table">
             <table border="1" class="table">
-            <th>Part Name</th> <th>Part Number</th><br/>
+            <th>Part Name</th><th>Part Number</th><th>Action</th><br/>
         {% for row in results %}
               <tr>
                  <td>{{ row[1] }}</td>
                  <td>{{ row[2] }}</td>
+                  <td><input type="button" id="deleteBtn" name="deleteBtn" value="Delete" /> </td>
               </tr>
         {% endfor %}
             </table>
