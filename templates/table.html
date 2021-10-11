@@ -5,7 +5,7 @@
               <tr>
                  <td>{{ row[1] }}</td>
                  <td>{{ row[2] }}</td>
-                  <td><input type="button" id="deleteBtn" name="deleteBtn" value="Delete" /> </td>
+                  <td><input type="button" id="deleteBtn" name="deleteBtn" value="Delete" onclick="deleteMe({{ row[0] }})"/> </td>
               </tr>
         {% endfor %}
             </table>
