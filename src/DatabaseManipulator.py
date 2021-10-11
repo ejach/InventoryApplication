@@ -34,6 +34,12 @@ class DatabaseManipulator:
         if check_input(part_name, part_number):
             self.conn.commit()
 
+    # Delete entries from database by ID
+    def delete(self, row_id):
+        stmt = self.stmt.get_delete_statement()
+        self.cursor.execute(stmt, (int(row_id),))
+        self.conn.commit()
+
     # Get all database entries and translate them into JSON
     def get_json(self):
         stmt = self.stmt.get_select_stmt()
