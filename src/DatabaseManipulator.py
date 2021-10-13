@@ -29,8 +29,8 @@ class DatabaseManipulator:
     # Insert entries into database
     def insert(self, part_name, part_number):
         stmt = self.stmt.get_insert_statement()
-        val = (part_name, part_number)
-        self.cursor.execute(stmt, val)
+        values = (part_name, part_number)
+        self.cursor.execute(stmt, values)
         if check_input(part_name, part_number):
             self.conn.commit()
 
@@ -39,6 +39,14 @@ class DatabaseManipulator:
         stmt = self.stmt.get_delete_statement()
         self.cursor.execute(stmt, (int(row_id),))
         self.conn.commit()
+
+    # Update entries from database by ID
+    def update(self, row_id, part_name, part_number):
+        stmt = self.stmt.get_update_statement()
+        values = (part_name, part_number, int(row_id))
+        self.cursor.execute(stmt, values)
+        if check_input(part_name, part_number):
+            self.conn.commit()
 
     # Get all database entries and translate them into JSON
     def get_json(self):
