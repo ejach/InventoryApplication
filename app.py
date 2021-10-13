@@ -43,6 +43,19 @@ def delete():
     return redirect(url_for('index'))
 
 
+# Route to edit table rows using the update method
+@app.route('/update', methods=['POST', 'GET'])
+def update():
+    dbm = DatabaseManipulator()
+    if request.method == 'POST':
+        part_id = request.form.get('id')
+        part_name = request.form.get('part_name')
+        part_number = request.form.get('part_number')
+        dbm.update(part_id, part_name, part_number)
+    # If the /update route is accessed, re-route to index
+    return redirect(url_for('index'))
+
+
 # Display the database in JSON format
 @app.route('/json', methods=['GET', 'POST'])
 def get_json():
