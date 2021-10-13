@@ -42,11 +42,14 @@ class DatabaseManipulator:
 
     # Update entries from database by ID
     def update(self, row_id, part_name, part_number):
-        stmt = self.stmt.get_update_statement()
-        values = (part_name, part_number, int(row_id))
-        self.cursor.execute(stmt, values)
-        if check_input(part_name, part_number):
-            self.conn.commit()
+        try:
+            stmt = self.stmt.get_update_statement()
+            values = (part_name, part_number, int(row_id))
+            self.cursor.execute(stmt, values)
+            if check_input(part_name, part_number):
+                self.conn.commit()
+        except TypeError as e:
+            print(str(e) + '\n' + 'Blank input detected, database not manipulated')
 
     # Get all database entries and translate them into JSON
     def get_json(self):
