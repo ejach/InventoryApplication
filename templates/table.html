@@ -2,10 +2,14 @@
             <table border="1" class="table">
             <th>Part Name</th><th>Part Number</th><th>Action</th><br/>
         {% for row in results %}
-              <tr>
+               <tr>
                  <td>{{ row[1] }}</td>
                  <td>{{ row[2] }}</td>
-                  <td><input type="button" id="deleteBtn" name="deleteBtn" value="Delete" onclick="deleteMe({{ row[0] }})"/> </td>
+                  <td><input type="button" value="Delete" id="deleteBtn" name="deleteBtn"
+                             onclick="deleteMe({{ row[0] }})" />
+                    <input type="button" name="updateBtn" id="updateBtn" value="Edit"
+                           onclick="updateMe({{ row[0] }})" />
+                  </td>
               </tr>
         {% endfor %}
             </table>
