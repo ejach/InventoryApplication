@@ -57,6 +57,42 @@ function deleteMe(id) {
   xhr.send(params);
 }
 
+// Function for sending a POST request to the /update route to update data entries by ID
+function updateMe(id) {
+  let text;
+  let partName = prompt("Please enter the part name:", "PartName");
+  let partNumber = prompt("Please enter the part number:", "PartNumber");
+  if (partName == null || partName === "" && partNumber == null || partNumber === "") {
+      alert('Blank input will not be accepted.');
+    } else {
+      text = 'id=' + id + '&part_name=' + partName + '&part_number=' + partNumber;
+    }
+  function sendData() {
+    const XHR = new XMLHttpRequest();
+
+    // On a successful submission, it gets an AJAX request to refresh the contents of the table
+    XHR.addEventListener("load", function() {
+      htmx.ajax('GET', '/table', '#table');
+    });
+
+    // Define what happens in case of error
+    XHR.addEventListener("error", function() {
+      console.log('POST request was not successful.');
+    });
+
+    // Set up our request
+    XHR.open("POST","/update");
+
+      // Send the proper header information along with the request
+    XHR.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    // The data sent is what the user provided in the form
+    XHR.send(text);
+  }
+  // Send our request
+  sendData();
+}
+
 window.onload = function() {
   // Implementation to use the PullToRefresh library to perform an AJAX request to update the table
   const ptr = PullToRefresh.init({

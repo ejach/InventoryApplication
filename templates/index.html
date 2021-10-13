@@ -9,9 +9,10 @@
     {#  JS Package for the HTMX package  #}
     <script src="https://unpkg.com/htmx.org@1.6.0"></script>
     {#  JS CDN For the pulltorefresh package  #}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pulltorefreshjs/0.1.22/index.umd.min.js"
-            integrity="sha512-djmgTiVR15A/7fON+ojDzFYrRsfVkzQZu07ZVb0zLC1OhA2iISP39Lzs05GqSKF0vPjkLzL5hBC+am6po7dKpA=="
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pulltorefreshjs/0.1.22/index.umd.js"
+            integrity="sha512-c08RNGquBScVDxl/Yf50kga+4ZEI/xuqjBxwFUTFjnRn4Zoz1qcd2m5e/E+Pi+2b0O+lwDPz+J9N3ZzHTbnxHA=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <title>Inventory Application</title>
 </head>
 <div id="container" class="container">
@@ -35,8 +36,8 @@
     <div class="main" id="card">
         <form id="myForm">
             <p id="instructions">Enter the Part Name and Part Number: </p>
-            <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^(\w+\S+)$"/>
-            <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^(\w+\S+)$"/>
+            <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^\w+( +\w+)*$"/>
+            <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^\w+( +\w+)*$"/>
             <input type="submit" id="submit">
         </form>
         <div id="table">
@@ -46,7 +47,11 @@
               <tr>
                  <td>{{ row[1] }}</td>
                  <td>{{ row[2] }}</td>
-                  <td><input type="button" id="deleteBtn" name="deleteBtn" value="Delete" onclick="deleteMe({{ row[0] }})"/></td>
+                  <td><input type="button" value="Delete" id="deleteBtn" name="deleteBtn"
+                             onclick="deleteMe({{ row[0] }})" />
+                    <input type="button" name="updateBtn" id="updateBtn" value="Edit"
+                           onclick="updateMe({{ row[0] }})" />
+                  </td>
               </tr>
         {% endfor %}
             </table>
