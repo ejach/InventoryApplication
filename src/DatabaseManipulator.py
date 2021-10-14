@@ -21,15 +21,24 @@ class DatabaseManipulator:
 
     # Get all entries from database
     def fetchall(self):
-        stmt = self.stmt.get_select_stmt()
+        stmt = self.stmt.get_select_statement()
         self.cursor.execute(stmt)
         results = self.cursor.fetchall()
         return results
 
+    # Get all vans by van number
+    def get_vans(self, van_number):
+        stmt = self.stmt.get_select_vans_statement()
+        val = (van_number,)
+        self.cursor.execute(stmt, val)
+        results = self.cursor.fetchall()
+        print(results)
+        return results
+
     # Insert entries into database
-    def insert(self, part_name, part_number):
+    def insert(self, part_name, part_number, van_number):
         stmt = self.stmt.get_insert_statement()
-        values = (part_name, part_number)
+        values = (part_name, part_number, van_number)
         self.cursor.execute(stmt, values)
         if check_input(part_name, part_number):
             self.conn.commit()
@@ -41,10 +50,10 @@ class DatabaseManipulator:
         self.conn.commit()
 
     # Update entries from database by ID
-    def update(self, row_id, part_name, part_number):
+    def update(self, row_id, part_name, part_number, van_number):
         try:
             stmt = self.stmt.get_update_statement()
-            values = (part_name, part_number, int(row_id))
+            values = (part_name, part_number, van_number, int(row_id))
             self.cursor.execute(stmt, values)
             if check_input(part_name, part_number):
                 self.conn.commit()
@@ -53,7 +62,7 @@ class DatabaseManipulator:
 
     # Get all database entries and translate them into JSON
     def get_json(self):
-        stmt = self.stmt.get_select_stmt()
+        stmt = self.stmt.get_select_statement()
         self.cursor.execute(stmt)
         results = self.cursor.fetchall()
         container = []

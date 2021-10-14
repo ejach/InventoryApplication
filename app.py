@@ -17,8 +17,9 @@ def index():
         # Sanitizes the input using escape
         part_name = clean(request.form['partName'])
         part_number = clean(request.form['partNumber'])
+        van_number = request.form['van']
         # Insert into the database
-        dbm.insert(part_name=part_name, part_number=part_number)
+        dbm.insert(part_name=part_name, part_number=part_number, van_number=van_number)
         # Redirect when finished
         return redirect(url_for('index'))
     return render_template('index.html', results=results, webui_host=webui_host)
@@ -51,7 +52,8 @@ def update():
         part_id = request.form.get('id')
         part_name = request.form.get('part_name')
         part_number = request.form.get('part_number')
-        dbm.update(part_id, part_name, part_number)
+        van_number = request.form.get('van_number')
+        dbm.update(part_id, part_name, part_number, van_number)
     # If the /update route is accessed, re-route to index
     return redirect(url_for('index'))
 
