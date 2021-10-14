@@ -25,28 +25,35 @@
         <h3 id="logoName">Inventory Application</h3>
     </div>
     <div id="sidenav" class="sidenav">
-        <a href="#">Inventory</a>
-        <a href="#">Vans</a>
+        <a href="/">Inventory</a>
+        <a href="/vans">Vans</a>
         <a href="#">Reports</a>
     </div>
     {#  JS Package for JQUERY  #}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src= "{{ url_for('static', filename='js/sidenav.js') }}"></script>
-
+    <script src= "{{ url_for('static', filename='js/form.js') }}"></script>
     <div class="main" id="card">
         <form id="myForm">
             <p id="instructions">Enter the Part Name and Part Number: </p>
             <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^\w+( +\w+)*$"/>
             <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^\w+( +\w+)*$"/>
+            {#      TODO: Populate van list dynamically      #}
+            <select name="van" id="van">
+                <option value="1">Van 1</option>
+                <option value="2">Van 2</option>
+                <option value="3">Van 3</option>
+            </select>
             <input type="submit" id="submit">
         </form>
         <div id="table">
             <table border="1" class="table">
-            <th>Part Name</th><th>Part Number</th><th>Action</th><br/>
+            <th>Part Name</th><th>Part Number</th><th>Van</th><th>Action</th><br/>
         {% for row in results %}
               <tr>
-                 <td>{{ row[1] }}</td>
-                 <td>{{ row[2] }}</td>
+                  <td>{{ row[1] }}</td>
+                  <td>{{ row[2] }}</td>
+                  <td>{{ row[3] }}</td>
                   <td><input type="button" value="Delete" id="deleteBtn" name="deleteBtn"
                              onclick="deleteMe({{ row[0] }})" />
                     <input type="button" name="updateBtn" id="updateBtn" value="Edit"
