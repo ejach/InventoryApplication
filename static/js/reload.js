@@ -62,10 +62,11 @@ function updateMe(id) {
   let text;
   let partName = prompt("Please enter the part name:", "PartName");
   let partNumber = prompt("Please enter the part number:", "PartNumber");
+  let vanNumber = prompt("Please enter the van number:", "vanNumber");
   if (partName == null || partName === "" && partNumber == null || partNumber === "") {
       alert('Blank input will not be accepted.');
     } else {
-      text = 'id=' + id + '&part_name=' + partName + '&part_number=' + partNumber;
+      text = 'id=' + id + '&part_name=' + partName + '&part_number=' + partNumber + '&van_number=' + vanNumber;
     }
   function sendData() {
     const XHR = new XMLHttpRequest();
