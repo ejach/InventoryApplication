@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify
 from bleach import clean
+from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify
 
 from src.DatabaseConnector import DatabaseConnector
 from src.DatabaseManipulator import DatabaseManipulator
@@ -13,6 +13,7 @@ def index():
     dbc = DatabaseConnector()
     results = dbm.fetchall()
     webui_host = dbc.get_webui_host()
+    van_nums = dbm.get_van_nums()
     if request.method == 'POST':
         # Sanitizes the input using escape
         part_name = clean(request.form['partName'])
@@ -22,7 +23,7 @@ def index():
         dbm.insert(part_name=part_name, part_number=part_number, van_number=van_number)
         # Redirect when finished
         return redirect(url_for('index'))
-    return render_template('index.html', results=results, webui_host=webui_host)
+    return render_template('index.html', results=results, webui_host=webui_host, van_nums=van_nums)
 
 
 # Displays the table code in table.html so it can be refreshed dynamically without reloading the page
@@ -56,6 +57,14 @@ def update():
         dbm.update(part_id, part_name, part_number, van_number)
     # If the /update route is accessed, re-route to index
     return redirect(url_for('index'))
+
+
+# Route for /vans
+@app.route('/vans', methods=['GET', 'POST'])
+def vans():
+    dbm = DatabaseManipulator()
+    van_numbers = dbm.get_van_nums()
+    return render_template('vans.html', van_numbers=van_numbers)
 
 
 # Display the database in JSON format
