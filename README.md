@@ -12,7 +12,7 @@ There is a need to have a system in place that allows for part inventory to be t
 
 #### Prerequisites
 
-Make sure you have a MySQL database running (use [this](https://gist.github.com/ejach/d84a303fd791dc386d0570dba3c54e43) to set it up via Docker) with the [correct database schema](https://github.com/ejach/InventoryApplication/blob/main/database.sql)
+Make sure you have a MySQL database running with the [correct database schema](https://github.com/ejach/InventoryApplication/blob/main/database.sql)
 
 1. Clone the repo by running `$ git clone https://github.com/ejach/InventoryApplication.git`
 2. `cd` into the cloned directory `$ cd InventoryApplication`
