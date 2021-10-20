@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <link rel="shortcut icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
     <link rel=stylesheet href="{{ url_for('static', filename='css/stylesheet.css') }}">
-    <script src= "{{ url_for('static', filename='js/reload.js') }}"></script>
     {#  JS Package for the HTMX package  #}
     <script src="https://unpkg.com/htmx.org@1.6.0"></script>
     {#  JS CDN For the pulltorefresh package  #}
@@ -32,35 +31,9 @@
     {#  JS Package for JQUERY  #}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src= "{{ url_for('static', filename='js/sidenav.js') }}"></script>
+    <script src= "{{ url_for('static', filename='js/van.js') }}"></script>
     <div class="main" id="card">
-        <form id="myForm">
-            <p id="instructions">Enter the Part Name and Part Number: </p>
-            <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^\w+( +\w+)*$" />
-            <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^\w+( +\w+)*$" />
-            <select name="van" id="van">
-            {% for row in van_nums %}
-                <option value="{{ row[0] }}">Van {{ row[0] }}</option>
-            {% endfor %}
-            </select>
-            <input type="submit" id="submit">
-        </form>
-        <div id="table">
-            <table border="1" class="table">
-            <th>Part Name</th><th>Part Number</th><th>Van</th><th>Action</th><br/>
-        {% for row in results %}
-              <tr>
-                  <td>{{ row[1] }}</td>
-                  <td>{{ row[2] }}</td>
-                  <td>{{ row[3] }}</td>
-                  <td><input type="button" value="Delete" id="deleteBtn" name="deleteBtn"
-                             onclick="deleteMe({{ row[0] }})" />
-                    <input type="button" name="updateBtn" id="updateBtn" value="Edit"
-                           onclick="updateMe({{ row[0] }})" />
-                  </td>
-              </tr>
-        {% endfor %}
-            </table>
-        </div>
     </div>
+
 </body>
 </html>
