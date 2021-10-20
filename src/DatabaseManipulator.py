@@ -32,8 +32,15 @@ class DatabaseManipulator:
         val = (van_number,)
         self.cursor.execute(stmt, val)
         results = self.cursor.fetchall()
-        print(results)
         return results
+
+    # Get list of van numbers that exist in the database
+    def get_van_nums(self):
+        stmt = self.stmt.get_select_vans_distinct_statement()
+        self.cursor.execute(stmt)
+        results = self.cursor.fetchall()
+        res = [i[0] for i in results]
+        return res
 
     # Insert entries into database
     def insert(self, part_name, part_number, van_number):
