@@ -27,11 +27,20 @@ def index():
 
 
 # Displays the table code in table.html so it can be refreshed dynamically without reloading the page
-@app.route('/table', methods=['GET', 'POST'])
-def table():
+@app.route('/table/<table_name>/<van_number>', methods=['GET', 'POST'])
+def table(table_name, van_number):
     dbm = DatabaseManipulator()
-    results = dbm.fetchall()
-    return render_template('table.html', results=results)
+    # Requirements to return the results for a van by its number
+    if table_name == 'vans' and van_number != 'all':
+        results = dbm.get_vans(van_number)
+        return render_template('van_table.html', results=results)
+    # Requirements to return the master list of parts
+    elif table_name == 'main' and van_number == 'all':
+        results = dbm.fetchall()
+        return render_template('table.html', results=results)
+    # If the url is attempted to be accessed, redirect to index
+    else:
+        return redirect(url_for('index'))
 
 
 # Route for the delete method
@@ -65,6 +74,18 @@ def vans():
     dbm = DatabaseManipulator()
     van_numbers = dbm.get_van_nums()
     return render_template('vans.html', van_numbers=van_numbers)
+
+
+# Route for /vans that consumes the van_id
+@app.route('/vans/<van_id>')
+def van_num(van_id=0):
+    dbm = DatabaseManipulator()
+    results = dbm.get_vans(van_id)
+    # If the results are not None, return the following
+    if results is not None:
+        return render_template('display_van.html', results=results)
+    else:
+        return redirect(url_for('vans'))
 
 
 # Display the database in JSON format
