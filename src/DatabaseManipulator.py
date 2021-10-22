@@ -32,7 +32,12 @@ class DatabaseManipulator:
         val = (van_number,)
         self.cursor.execute(stmt, val)
         results = self.cursor.fetchall()
-        return results
+        # If the results are empty (i.e. the van_number doesn't exist) return None
+        if not results:
+            return None
+        # Else, return the following
+        else:
+            return results
 
     # Get list of van numbers that exist in the database
     def get_van_nums(self):
