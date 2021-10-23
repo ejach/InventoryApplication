@@ -69,7 +69,7 @@ def update():
 
 
 # Route for /vans
-@app.route('/vans', methods=['GET', 'POST'])
+@app.route('/vans/', methods=['GET', 'POST'])
 def vans():
     dbm = DatabaseManipulator()
     van_numbers = dbm.get_van_nums()
