@@ -4,7 +4,7 @@ from unittest import TestCase, main
 from responses import GET, activate, add
 from requests import get
 
-from src.DatabaseConnector import DatabaseConnector
+from app.DatabaseConnector import DatabaseConnector
 
 dbc = DatabaseConnector()
 host = dbc.get_host()

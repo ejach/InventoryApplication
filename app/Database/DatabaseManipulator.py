@@ -1,7 +1,7 @@
 from json import dumps, loads
 
-from src.DatabaseConnector import DatabaseConnector
-from src.DatabaseStatements import DatabaseStatements
+from app.Database.DatabaseConnector import DatabaseConnector
+from app.Database.DatabaseStatements import DatabaseStatements
 
 
 # Prevents inputs that only contain spaces from being entered into the database
