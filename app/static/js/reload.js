@@ -62,10 +62,12 @@ window.addEventListener("load",function() {
 
 // Function that sends a POST request to /delete to delete a row entry by ID
 function deleteMe(id) {
-  // Parameters to be sent in the request
-  const params = 'Delete=' + id;
-  // Send our request
-  sendData(params, '/delete');
+    if (window.confirm('Are you sure you want to delete?')) {
+        // Parameters to be sent in the request
+        const params = 'Delete=' + id;
+        // Send our request
+        sendData(params, '/delete');
+    }
 }
 
 // Function for sending a POST request to the /update route to update data entries by ID
@@ -81,12 +83,4 @@ function updateMe(id) {
     }
   // Send our request
   sendData(text, '/update');
-}
-
-window.onload = function() {
-  // Implementation to make the 'hamburger' menu animation fire upon clicking
-  document.getElementById("container").addEventListener("click", function() {
-      let x = document.getElementById('container');
-      x.classList.toggle("change");
-  });
 }
