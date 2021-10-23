@@ -18,11 +18,9 @@ def index():
         # Sanitizes the input using bleach
         part_name = clean(request.form['partName'])
         part_number = clean(request.form['partNumber'])
-        van_number = request.form['van']
+        van_number = clean(request.form['van'])
         # Insert into the database
         dbm.insert(part_name=part_name, part_number=part_number, van_number=van_number)
-        # Redirect when finished
-        return redirect(url_for('index'))
     return render_template('index.html', results=results, webui_host=webui_host, van_nums=van_nums)
 
 
@@ -37,7 +35,8 @@ def table(table_name, van_number):
     # Requirements to return the master list of parts
     elif table_name == 'main' and van_number == 'all':
         results = dbm.fetchall()
-        return render_template('table.html', results=results)
+        van_nums = dbm.get_van_nums()
+        return render_template('table.html', results=results, van_nums=van_nums)
     # If the url is attempted to be accessed, redirect to index
     else:
         return redirect(url_for('index'))

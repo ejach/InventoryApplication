@@ -24,8 +24,14 @@
     </div>
     {#  JS Package for JQUERY  #}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src= "{{ url_for('static', filename='js/sidenav.js') }}"></script>
+    {#  Scripts for the sidenav 'hamburger' animation and functionality  #}
+    <script src= "{{ url_for('static', filename='js/sidenav-animation.js') }}"></script>
+    <script src= "{{ url_for('static', filename='js/sidenav-change.js') }}"></script>
     <div class="main" id="card">
+    {#    If the van_numbers is empty, throw the following error    #}
+        {% if van_numbers == [] %}
+            <p style="color:red;">The database is empty, consider adding a van.</p>
+        {% endif %}
     <span id="mySpan">
         {% for row in van_numbers %}
         <a href="/vans/{{ row[0] }}" id="link"><img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
