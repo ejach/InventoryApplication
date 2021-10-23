@@ -1,8 +1,8 @@
 from bleach import clean
 from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify
 
-from src.DatabaseConnector import DatabaseConnector
-from src.DatabaseManipulator import DatabaseManipulator
+from app.Database.DatabaseConnector import DatabaseConnector
+from app.Database.DatabaseManipulator import DatabaseManipulator
 
 app = Flask(__name__)
 
