@@ -25,24 +25,31 @@
     </div>
     {#  JS Package for JQUERY  #}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src= "{{ url_for('static', filename='js/sidenav.js') }}"></script>
+    {#  Scripts for the sidenav 'hamburger' animation and functionality  #}
+    <script src= "{{ url_for('static', filename='js/sidenav-animation.js') }}"></script>
+    <script src= "{{ url_for('static', filename='js/sidenav-change.js') }}"></script>
     <div class="main" id="card">
-        <form id="myForm">
+    <form id="myForm">
             <p id="instructions">Enter the Part Name and Part Number: </p>
             <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^\w+( +\w+)*$" />
             <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^\w+( +\w+)*$" />
-            <select name="van" id="van">
+            {#    If van_nums is empty, change the select button to a form submission    #}
+            {% if van_nums == [] %}
+                <input type="text" id="van" name="van" placeholder="Van Number" required pattern="^\d+$" />
+            {% else %}
+                <select name="van" id="van">
+            {% endif %}
             {% for row in van_nums %}
                 <option value="{{ row[0] }}">Van {{ row[0] }}</option>
             {% endfor %}
             </select>
             <input type="submit" id="submit" value="Submit">
+        </form>
+        <div id="table">
         {#    If the results are empty, throw the following error    #}
         {% if results == [] %}
             <p style="color:red;">The database is empty, consider adding a part.</p>
-        {% endif %}
-        </form>
-        <div id="table">
+        {% else %}
             <table border="1" class="table">
             <th>Part Name</th><th>Part Number</th><th>Van</th><th>Action</th><br/>
         {% for row in results %}
@@ -58,6 +65,7 @@
               </tr>
         {% endfor %}
             </table>
+        {% endif %}
         </div>
     </div>
 </body>
