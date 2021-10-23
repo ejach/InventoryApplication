@@ -1,6 +1,5 @@
 // This excerpt of code was provided by the Mozilla foundation:
 // https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_forms_through_JavaScript
-
 const getPath = '/table/main/all';
 
 function sendData(content, dest) {
@@ -85,13 +84,6 @@ function updateMe(id) {
 }
 
 window.onload = function() {
-  // Implementation to use the PullToRefresh library to perform an AJAX request to update the table
-  const ptr = PullToRefresh.init({
-      mainElement: 'body',
-      onRefresh() {
-        htmx.ajax('GET', getPath, '#table');
-      }
-    });
   // Implementation to make the 'hamburger' menu animation fire upon clicking
   document.getElementById("container").addEventListener("click", function() {
       let x = document.getElementById('container');
