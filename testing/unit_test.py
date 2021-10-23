@@ -1,10 +1,9 @@
-from http.client import responses
 from unittest import TestCase, main
 
-from responses import GET, activate, add
-from requests import get
+from requests import get, post
+from responses import GET, activate, add, POST
 
-from app.DatabaseConnector import DatabaseConnector
+from app.Database.DatabaseConnector import DatabaseConnector
 
 dbc = DatabaseConnector()
 host = dbc.get_host()
@@ -42,9 +41,25 @@ class TestApplication(TestCase):
         })
         response = get(f'http://{host}:{port}')
         self.assertEqual({'error': 'reason'}, response.json())
-        print('HTTP Request test -> PASSED' + '\n')
+        print('HTTP 404 POST Request test -> PASSED' + '\n')
         self.assertEqual(404, response.status_code)
-        print('HTTP 404 test -> PASSED' + '\n')
+        print('HTTP 404 GET test -> PASSED' + '\n')
+
+    @activate
+    def testPOST(self):
+        add(**{
+            'method': POST,
+            'url': f'http://{host}:{port}',
+            'body': '{"error": "reason"}',
+            'status': 404,
+            'content_type': 'application/json',
+            'adding_headers': {'X-Foo': 'Bar'}
+        })
+        response = post(f'http://{host}:{port}')
+        self.assertEqual({'error': 'reason'}, response.json())
+        print('HTTP 404 POST Request test -> PASSED' + '\n')
+        self.assertEqual(404, response.status_code)
+        print('HTTP 404 POST test -> PASSED' + '\n')
 
 
 if __name__ == '__main__':

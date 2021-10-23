@@ -37,6 +37,10 @@
             {% endfor %}
             </select>
             <input type="submit" id="submit" value="Submit">
+        {#    If the results are empty, throw the following error    #}
+        {% if results == [] %}
+            <p style="color:red;">The database is empty, consider adding a part.</p>
+        {% endif %}
         </form>
         <div id="table">
             <table border="1" class="table">
