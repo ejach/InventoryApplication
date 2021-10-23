@@ -38,11 +38,13 @@
 }
 
 #mySpan {
-    display: inline;
+    vertical-align: top;
+    display: inline-block;
+    text-align: center;
 }
 
 #paragraph {
-  display: inline;
+  display: block;
 }
 
 html {
