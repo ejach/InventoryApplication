@@ -1,4 +1,8 @@
 <div id="table">
+        {#    If the results are empty, throw the following error    #}
+        {% if results == [] %}
+            <p style="color:red;">The database is empty, consider adding a part.</p>
+        {% else %}
             <table border="1" class="table">
             <th>Part Name</th><th>Part Number</th><th>Van</th><th>Action</th><br/>
         {% for row in results %}
@@ -14,3 +18,5 @@
               </tr>
         {% endfor %}
             </table>
+        {% endif %}
+        </div>

@@ -25,7 +25,9 @@
     </div>
     {#  JS Package for JQUERY  #}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src= "{{ url_for('static', filename='js/sidenav.js') }}"></script>
+    {#  Scripts for the sidenav 'hamburger' animation and functionality  #}
+    <script src= "{{ url_for('static', filename='js/sidenav-animation.js') }}"></script>
+    <script src= "{{ url_for('static', filename='js/sidenav-change.js') }}"></script>
     <div class="main" id="card">
         <form id="myForm">
             <p id="instructions">Enter the Part Name and Part Number: </p>
