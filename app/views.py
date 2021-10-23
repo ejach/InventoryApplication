@@ -15,7 +15,7 @@ def index():
     webui_host = dbc.get_webui_host()
     van_nums = dbm.get_van_nums()
     if request.method == 'POST':
-        # Sanitizes the input using escape
+        # Sanitizes the input using bleach
         part_name = clean(request.form['partName'])
         part_number = clean(request.form['partNumber'])
         van_number = request.form['van']
