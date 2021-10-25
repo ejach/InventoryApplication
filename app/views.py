@@ -25,7 +25,7 @@ def index():
 
 
 # Displays the table code in table.html so it can be refreshed dynamically without reloading the page
-@app.route('/table/<table_name>/<van_number>', methods=['GET', 'POST'])
+@app.route('/table/<table_name>/<van_number>/', methods=['GET', 'POST'])
 def table(table_name, van_number):
     dbm = DatabaseManipulator()
     # Requirements to return the results for a van by its number
@@ -43,7 +43,7 @@ def table(table_name, van_number):
 
 
 # Route for the delete method
-@app.route('/delete', methods=['POST', 'GET'])
+@app.route('/delete/', methods=['POST', 'GET'])
 def delete():
     dbm = DatabaseManipulator()
     if request.method == 'POST':
@@ -54,7 +54,7 @@ def delete():
 
 
 # Route to edit table rows using the update method
-@app.route('/update', methods=['POST', 'GET'])
+@app.route('/update/', methods=['POST', 'GET'])
 def update():
     dbm = DatabaseManipulator()
     if request.method == 'POST':
@@ -76,7 +76,7 @@ def vans():
 
 
 # Route for /vans that consumes the van_id
-@app.route('/vans/<van_id>')
+@app.route('/vans/<van_id>/')
 def van_num(van_id=0):
     dbm = DatabaseManipulator()
     results = dbm.get_vans(van_id)
@@ -88,7 +88,7 @@ def van_num(van_id=0):
 
 
 # Display the database in JSON format
-@app.route('/json', methods=['GET', 'POST'])
+@app.route('/json/', methods=['GET', 'POST'])
 def get_json():
     dbm = DatabaseManipulator()
     res = make_response(jsonify(dbm.get_json()))
