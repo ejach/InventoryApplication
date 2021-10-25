@@ -1,0 +1,108 @@
+.login{
+    padding: 30px;
+    background-color: #2E86C1;
+    border: 3px solid #f1f1f1;
+    width: 25%;
+    margin: auto;
+}
+.register{
+    padding: 30px;
+    background-color: #2E86C1;
+    border: 3px solid #f1f1f1;
+    width: 25%;
+    margin: auto;
+}
+
+h2{
+    text-align: center;
+    color: #2E86C1;
+}
+
+input::placeholder{
+    font-size: 18px;
+}
+label{
+    color: black;
+    font-size: 17px;
+    text-align: center;
+}
+
+input[type=text], input[type=email], input[type=password] {
+    width: 100%;
+    margin: 8px 0;
+    padding: 12px 20px;
+    display: inline-block;
+    border: 2px black;
+    box-sizing: border-box;
+    font-size: 18px;
+}
+#Name{
+    width: 300px;
+    height: 30px;
+    border: none;
+    border-radius: 3px;
+    padding-left: 8px;
+}
+#Username{
+    width: 300px;
+    height: 30px;
+    border: none;
+    border-radius: 3px;
+    padding-left: 8px;
+}
+#Password{
+    width: 300px;
+    height: 30px;
+    border: none;
+    border-radius: 3px;
+    padding-left: 8px;
+}
+
+button {
+    background-color: dimgrey;
+    width: 100%;
+    color: white;
+    font-size: 18px;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-top: 6px;
+  margin-bottom: 16px;
+}
+
+#message {
+  color: #000;
+  margin: auto;
+    width: 20%;
+}
+
+#message p {
+  font-size: 18px;
+}
+
+.valid {
+  color: green;
+}
+
+.valid:before {
+  position: relative;
+  left: -35px;
+  content: "✔";
+}
+
+.invalid {
+  color: red;
+}
+
+.invalid:before {
+  position: relative;
+  left: -35px;
+  content: "✖";
+}
