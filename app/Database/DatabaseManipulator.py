@@ -5,11 +5,12 @@ from app.Database.DatabaseStatements import DatabaseStatements
 
 
 # Prevents inputs that only contain spaces from being entered into the database
-def check_input(part_name, part_number):
-    if not part_number and not part_number or not part_name.isspace() and not part_number.isspace():
-        return True
-    else:
+def check_input(part_name, part_number, van_number):
+    if not part_name and not part_number and not van_number or \
+            not part_name.isspace() and not part_number.isspace() and not van_number.isspace():
         return False
+    else:
+        return True
 
 
 class DatabaseManipulator:
@@ -49,11 +50,14 @@ class DatabaseManipulator:
 
     # Insert entries into database
     def insert(self, part_name, part_number, van_number):
-        stmt = self.stmt.get_insert_statement()
-        values = (part_name, part_number, van_number)
-        self.cursor.execute(stmt, values)
-        if check_input(part_name, part_number):
-            self.conn.commit()
+        try:
+            stmt = self.stmt.get_insert_statement()
+            values = (part_name, part_number, van_number)
+            self.cursor.execute(stmt, values)
+            if check_input(part_name, part_number, van_number):
+                self.conn.commit()
+        except TypeError as e:
+            print(str(e) + '\n' + 'Blank input detected, row not inserted')
 
     # Delete entries from database by ID
     def delete(self, row_id):
@@ -67,7 +71,7 @@ class DatabaseManipulator:
             stmt = self.stmt.get_update_statement()
             values = (part_name, part_number, van_number, int(row_id))
             self.cursor.execute(stmt, values)
-            if check_input(part_name, part_number):
+            if check_input(part_name, part_number, van_number):
                 self.conn.commit()
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, database not manipulated')
