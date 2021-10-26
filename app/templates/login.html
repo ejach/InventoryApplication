@@ -19,6 +19,9 @@
 <!--        Create a button if you need to create a new account-->
         <a href="/register" class="button">Create new account</a>
     </form>
+        {% if error %}
+            <p class="error"><strong>Error:</strong> {{ error }}
+        {% endif %}
     </div>
 </body>
 </html>

@@ -17,6 +17,9 @@
         <input name="Password" type="password" id="password" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required><br>
         <button type="submit">Create User</button>
     </form>
+        {% if error %}
+            <p class="error"><strong>Error:</strong> {{ error }}
+        {% endif %}
     </div>
 
     <!--    Creating password validation criteria for the creation of an account-->
