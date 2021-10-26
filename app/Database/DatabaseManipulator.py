@@ -1,13 +1,11 @@
-from json import dumps, loads
-
 from app.Database.DatabaseConnector import DatabaseConnector
 from app.Database.DatabaseStatements import DatabaseStatements
 
 
 # Prevents inputs that only contain spaces from being entered into the database
 def check_input(part_name, part_number, van_number):
-    if not part_name and not part_number and not van_number or \
-            not part_name.isspace() and not part_number.isspace() and not van_number.isspace():
+    if not part_name or not part_number or not van_number \
+            or len(part_name) == 0 or len(part_number) == 0 or len(van_number) == 0:
         return False
     else:
         return True
@@ -75,16 +73,3 @@ class DatabaseManipulator:
                 self.conn.commit()
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, database not manipulated')
-
-    # Get all database entries and translate them into JSON
-    def get_json(self):
-        stmt = self.stmt.get_select_statement()
-        self.cursor.execute(stmt)
-        results = self.cursor.fetchall()
-        container = []
-        for tup in results:
-            json_string = {'data': {tup[0]: {"name": tup[1], "part_number": tup[2]}}}
-            j_dump = dumps(json_string, separators=(" , ", " : "))
-            loader = loads(j_dump)
-            container.append(loader)
-        return container
