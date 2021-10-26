@@ -5,7 +5,8 @@ from app.Database.DatabaseStatements import DatabaseStatements
 # Prevents inputs that only contain spaces from being entered into the database
 def check_input(part_name, part_number, van_number):
     if not part_name or not part_number or not van_number \
-            or len(part_name) == 0 or len(part_number) == 0 or len(van_number) == 0:
+            or len(part_name) == 0 or len(part_number) == 0 or len(van_number) == 0 \
+            or part_name.isspace() or part_number.isspace() or van_number.isspace():
         return False
     else:
         return True
