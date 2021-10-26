@@ -1,5 +1,5 @@
 from bleach import clean
-from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify
+from flask import Flask, render_template, request, redirect, url_for
 
 from app.Database.DatabaseConnector import DatabaseConnector
 from app.Database.DatabaseManipulator import DatabaseManipulator
@@ -7,7 +7,8 @@ from app.Database.DatabaseManipulator import DatabaseManipulator
 app = Flask(__name__)
 
 
-@app.route('/', methods=['GET', 'POST'])
+# Main index.html route
+@app.route('/', strict_slashes=False, methods=['GET', 'POST'])
 def index():
     dbm = DatabaseManipulator()
     dbc = DatabaseConnector()
@@ -25,7 +26,7 @@ def index():
 
 
 # Displays the table code in table.html so it can be refreshed dynamically without reloading the page
-@app.route('/table/<table_name>/<van_number>/', methods=['GET', 'POST'])
+@app.route('/table/<table_name>/<van_number>', strict_slashes=False, methods=['GET', 'POST'])
 def table(table_name, van_number):
     dbm = DatabaseManipulator()
     # Requirements to return the results for a van by its number
@@ -43,7 +44,7 @@ def table(table_name, van_number):
 
 
 # Route for the delete method
-@app.route('/delete/', methods=['POST', 'GET'])
+@app.route('/delete', strict_slashes=False, methods=['POST', 'GET'])
 def delete():
     dbm = DatabaseManipulator()
     if request.method == 'POST':
@@ -54,7 +55,7 @@ def delete():
 
 
 # Route to edit table rows using the update method
-@app.route('/update/', methods=['POST', 'GET'])
+@app.route('/update', strict_slashes=False, methods=['POST', 'GET'])
 def update():
     dbm = DatabaseManipulator()
     if request.method == 'POST':
@@ -68,7 +69,7 @@ def update():
 
 
 # Route for /vans
-@app.route('/vans/', methods=['GET', 'POST'])
+@app.route('/vans', strict_slashes=False, methods=['GET', 'POST'])
 def vans():
     dbm = DatabaseManipulator()
     van_numbers = dbm.get_van_nums()
@@ -76,7 +77,7 @@ def vans():
 
 
 # Route for /vans that consumes the van_id
-@app.route('/vans/<van_id>/')
+@app.route('/vans/<van_id>', strict_slashes=False)
 def van_num(van_id=0):
     dbm = DatabaseManipulator()
     results = dbm.get_vans(van_id)
@@ -85,11 +86,3 @@ def van_num(van_id=0):
         return render_template('display_van.html', results=results)
     else:
         return redirect(url_for('vans'))
-
-
-# Display the database in JSON format
-@app.route('/json/', methods=['GET', 'POST'])
-def get_json():
-    dbm = DatabaseManipulator()
-    res = make_response(jsonify(dbm.get_json()))
-    return res
