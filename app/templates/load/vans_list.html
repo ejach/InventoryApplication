@@ -1,0 +1,6 @@
+ <span id="mySpan">
+        {% for row in van_numbers %}
+        <a href="/vans/{{ row[0] }}" id="link"><img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
+                                    width="100px" height="100px" /></a><p id="paragraph">Van {{ row[0] }}</p>
+        {% endfor %}
+</span>
