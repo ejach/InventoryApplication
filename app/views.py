@@ -32,12 +32,16 @@ def table(table_name, van_number):
     # Requirements to return the results for a van by its number
     if table_name == 'vans' and van_number != 'all':
         results = dbm.get_vans(van_number)
-        return render_template('van_table.html', results=results)
+        return render_template('load/van_table.html', results=results)
     # Requirements to return the master list of parts
     elif table_name == 'main' and van_number == 'all':
         results = dbm.fetchall()
         van_nums = dbm.get_van_nums()
-        return render_template('table.html', results=results, van_nums=van_nums)
+        return render_template('load/table.html', results=results, van_nums=van_nums)
+    # if table_name is vans_list, and van_number is all, return the following
+    elif table_name == 'vans_list' and van_number == 'all':
+        van_nums = dbm.get_van_nums()
+        return render_template('load/vans_list.html', van_numbers=van_nums)
     # If the url is attempted to be accessed, redirect to index
     else:
         return redirect(url_for('index'))
@@ -73,6 +77,9 @@ def update():
 def vans():
     dbm = DatabaseManipulator()
     van_numbers = dbm.get_van_nums()
+    if request.method == 'POST':
+        van_number = request.form.get('van_number')
+        dbm.insert_van(van_number)
     return render_template('vans.html', van_numbers=van_numbers)
 
 
