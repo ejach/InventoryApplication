@@ -12,6 +12,14 @@ def check_input(part_name, part_number, van_number):
         return True
 
 
+# Checks if the van number is valid by seeing if it is a space/empty string or if it is a number
+def check_van_number(van_number):
+    if not van_number or van_number.isspace() or not van_number.isdigit():
+        return False
+    else:
+        return True
+
+
 class DatabaseManipulator:
     def __init__(self):
         self.db = DatabaseConnector()
@@ -25,6 +33,30 @@ class DatabaseManipulator:
         self.cursor.execute(stmt)
         results = self.cursor.fetchall()
         return results
+
+    # Checks to see if the van_number exists in the database already
+    def check_duplicates(self, van_number):
+        stmt = self.stmt.get_select_vans_distinct_statement()
+        self.cursor.execute(stmt)
+        results = self.cursor.fetchall()
+        res = [i[0] for i in results]
+        for num in res:
+            if van_number == num:
+                return False
+            else:
+                return True
+
+    # Insert van into the database
+    def insert_van(self, van_number):
+        try:
+            stmt = self.stmt.get_insert_van()
+            val = (van_number,)
+            self.cursor.execute(stmt, val)
+            # If the input is valid and the check_duplicates is valid, commit to DB
+            if check_van_number(van_number) and self.check_duplicates(van_number):
+                self.conn.commit()
+        except TypeError as e:
+            print(str(e) + '\n' + 'Blank input detected, row not inserted')
 
     # Get all vans by van number
     def get_vans(self, van_number):

@@ -2,7 +2,7 @@ import unittest
 from string import ascii_letters, digits
 from random import choice
 
-from app.Database.DatabaseManipulator import DatabaseManipulator, check_input
+from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, check_van_number
 
 dbm = DatabaseManipulator()
 
@@ -20,6 +20,16 @@ class DBMUnitTest(unittest.TestCase):
         print('check_input() Empty Input test -> PASSED' + '\n')
         self.assertFalse(check_input(' ', ' ', ' '))
         print('check_input() Space Input test -> PASSED' + '\n')
+
+    def test_check_van_number(self):
+        self.assertTrue(check_van_number(random_numbers))
+        self.assertTrue(check_van_number(random_digit))
+        print('check_van_numbers() TRUE test -> PASSED' + '\n')
+        self.assertFalse(check_van_number(random_string))
+        self.assertFalse(check_van_number(''))
+        print('check_van_numbers() Empty Input test -> PASSED' + '\n')
+        self.assertFalse(check_van_number(' '))
+        print('check_van_numbers() Empty Space test -> PASSED' + '\n')
 
     def test_insert(self):
         pass

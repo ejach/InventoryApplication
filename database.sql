@@ -1,3 +1,4 @@
+# Used for the parts database
 create table parts
 (
 	id int auto_increment,
@@ -7,3 +8,10 @@ create table parts
 	constraint parts_pk
 		primary key (id)
 );
+
+# Table for the vans
+create table vans
+(
+	van_number text null
+);
+
