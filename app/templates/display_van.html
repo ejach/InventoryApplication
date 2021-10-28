@@ -38,18 +38,22 @@
         <div id="table">
             <table border="1" class="table">
             <th>Part Name</th><th>Part Number</th><th>Van</th><th>Action</th><br/>
-        {% for row in results %}
-              <tr>
-                  <td>{{ row[1] }}</td>
-                  <td>{{ row[2] }}</td>
-                  <td>{{ row[3] }}</td>
-                  <td><input type="button" value="Delete" id="deleteBtn" name="deleteBtn"
-                             onclick="deleteMe({{ row[0] }})" />
-                    <input type="button" name="updateBtn" id="updateBtn" value="Edit"
-                           onclick="updateMe({{ row[0] }}, {{ row[3] }})" />
-                  </td>
-              </tr>
-        {% endfor %}
+        {% if results == None %}
+            <p style="color:red;">The database is empty, consider adding a part.</p>
+        {% else %}
+            {% for row in results %}
+                  <tr>
+                      <td>{{ row[1] }}</td>
+                      <td>{{ row[2] }}</td>
+                      <td>{{ row[3] }}</td>
+                      <td><input type="button" value="Delete" id="deleteBtn" name="deleteBtn"
+                                 onclick="deleteMe({{ row[0] }})" />
+                        <input type="button" name="updateBtn" id="updateBtn" value="Edit"
+                               onclick="updateMe({{ row[0] }}, {{ row[3] }})" />
+                      </td>
+                  </tr>
+            {% endfor %}
+        {% endif %}
             </table>
         </div>
     </div>

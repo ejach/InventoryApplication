@@ -75,14 +75,14 @@ if (window.confirm('Are you sure you want to delete?')) {
 
 
 // Function for sending a POST request to the /update route to update data entries by ID
-function updateMe(id, vanNumber) {
+function updateMe(id) {
   let text;
   let partName = prompt("Please enter the part name:", "PartName");
   let partNumber = prompt("Please enter the part number:", "PartNumber");
   if (partName == null || partName === "" || partNumber == null || partNumber === "") {
       alert('Blank input will not be accepted.');
     } else {
-      text = 'id=' + id + '&part_name=' + partName + '&part_number=' + partNumber + '&van_number=' + vanNumber;
+      text = 'id=' + id + '&part_name=' + partName + '&part_number=' + partNumber + '&van_number=' + vanNum;
     }
   // Send our request
   sendData(text, '/update');
