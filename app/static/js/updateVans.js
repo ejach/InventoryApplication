@@ -69,7 +69,7 @@ if (window.confirm('Are you sure you want to delete?')) {
         // Parameters to be sent in the request
         const params = 'Delete=' + id;
         // Send our request
-        sendData(params, '/delete/van/');
+        sendData(params, '/delete/part/');
     }
 }
 
@@ -85,5 +85,5 @@ function updateMe(id) {
       text = 'id=' + id + '&part_name=' + partName + '&part_number=' + partNumber + '&van_number=' + vanNum;
     }
   // Send our request
-  sendData(text, '/update');
+  sendData(text, '/update/part/');
 }
