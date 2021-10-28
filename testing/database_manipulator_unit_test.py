@@ -35,5 +35,6 @@ class DBMUnitTest(unittest.TestCase):
         self.assertFalse(dbm.check_duplicates('1'))
         print('check_duplicates() duplicate van FALSE test -> PASSED' + '\n')
 
+
 if __name__ == '__main__':
     unittest.main()
