@@ -32,10 +32,12 @@
         {% if van_numbers == [] %}
             <p style="color:red;">The database is empty, consider adding a van.</p>
         {% endif %}
+    <script src= "{{ url_for('static', filename='js/deleteVan.js') }}"></script>
     <span id="mySpan">
         {% for row in van_numbers %}
-        <a href="/vans/{{ row[0] }}" id="link"><img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
-                                    width="100px" height="100px" /></a><p id="paragraph">Van {{ row[0] }}</p>
+        <a href="/vans/{{ row[1] }}" id="link"><img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
+                                    width="100px" height="100px" /></a><p id="paragraph">Van {{ row[1] }}</p>
+                                    <form><input type="button" id="deleteMe" value="Delete" onclick="deleteVan({{ row[0] }})"></form>
         {% endfor %}
     </span>
         <script src= "{{ url_for('static', filename='js/addVan.js') }}"></script>

@@ -66,7 +66,7 @@ function deleteMe(id) {
         // Parameters to be sent in the request
         const params = 'Delete=' + id;
         // Send our request
-        sendData(params, '/delete');
+        sendData(params, '/delete/part/');
     }
 }
 
