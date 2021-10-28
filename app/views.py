@@ -65,14 +65,18 @@ def delete(id_type):
 
 
 # Route to edit table rows using the update method
-@app.route('/update', strict_slashes=False, methods=['POST', 'GET'])
-def update():
-    if request.method == 'POST':
-        part_id = request.form.get('id')
-        part_name = request.form.get('part_name')
-        part_number = request.form.get('part_number')
-        van_number = request.form.get('van_number')
+@app.route('/update/<id_type>', strict_slashes=False, methods=['POST', 'GET'])
+def update(id_type):
+    if request.method == 'POST' and id_type == 'part':
+        part_id = clean(request.form.get('id'))
+        part_name = clean(request.form.get('part_name'))
+        part_number = clean(request.form.get('part_number'))
+        van_number = clean(request.form.get('van_number'))
         dbm.update(part_id, part_name, part_number, van_number)
+    elif request.method == 'POST' and id_type == 'van':
+        van_id = request.form.get('id')
+        van_number = request.form.get('van_number')
+        dbm.update_van(van_id, van_number)
     # If the /update route is accessed, re-route to index
     return redirect(url_for('index'))
 

@@ -2,6 +2,9 @@
         {% for row in van_numbers %}
         <a href="/vans/{{ row[1] }}" id="link"><img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
                                     width="100px" height="100px" /></a><p id="paragraph">Van {{ row[1] }}</p>
-                                    <form><input type="button" id="deleteMe" value="Delete" onclick="deleteVan({{ row[0] }})"></form>
+                                <form>
+                                    <input type="button" id="deleteMe" value="Delete" onclick="deleteVan({{ row[0] }})">
+                                    <input type="button" id="updateMe" value="Edit" onclick="updateVan({{ row[0] }})">
+                                </form>
         {% endfor %}
 </span>
