@@ -35,12 +35,7 @@
             <p id="instructions">Enter the Part Name and Part Number: </p>
             <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^\w+( +\w+)*$" />
             <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^\w+( +\w+)*$" />
-            {#    If van_nums is empty, change the select button to a form submission    #}
-            {% if van_nums == [] %}
-                <input type="text" id="van" name="van" placeholder="Van Number" required pattern="^\d+$" />
-            {% else %}
-                <select name="van" id="van">
-            {% endif %}
+            <select name="van" id="van">
             {% for row in van_nums %}
                 <option value="{{ row[0] }}">Van {{ row[0] }}</option>
             {% endfor %}
