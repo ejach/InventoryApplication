@@ -1,6 +1,6 @@
 import unittest
-from string import ascii_letters, digits
 from random import choice
+from string import ascii_letters, digits
 
 from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, check_van_number
 
@@ -31,15 +31,9 @@ class DBMUnitTest(unittest.TestCase):
         self.assertFalse(check_van_number(' '))
         print('check_van_numbers() Empty Space test -> PASSED' + '\n')
 
-    def test_insert(self):
-        pass
-
-    def test_delete(self):
-        pass
-
-    def test_update(self):
-        pass
-
+    def test_check_duplicates(self):
+        self.assertFalse(dbm.check_duplicates('1'))
+        print('check_duplicates() duplicate van FALSE test -> PASSED' + '\n')
 
 if __name__ == '__main__':
     unittest.main()
