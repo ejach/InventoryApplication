@@ -82,5 +82,5 @@ function updateMe(id) {
       text = 'id=' + id + '&part_name=' + partName + '&part_number=' + partNumber + '&van_number=' + vanNumber;
     }
   // Send our request
-  sendData(text, '/update');
+  sendData(text, '/update/part');
 }
