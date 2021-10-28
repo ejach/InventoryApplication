@@ -88,8 +88,11 @@ def vans():
 def van_num(van_id=0):
     dbm = DatabaseManipulator()
     results = dbm.get_vans(van_id)
+    # If there are no results in the van database, load the page with empty results
+    if results is None:
+        return render_template('display_van.html', results=None)
     # If the results are not None, return the following
-    if results is not None:
+    elif results is not None:
         return render_template('display_van.html', results=results)
     else:
         return redirect(url_for('vans'))
