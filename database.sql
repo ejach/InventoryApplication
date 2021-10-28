@@ -12,6 +12,8 @@ create table parts
 # Table for the vans
 create table vans
 (
-	van_number text null
+	id int auto_increment,
+	van_number text null,
+	constraint vans_pk
+		primary key (id)
 );
-
