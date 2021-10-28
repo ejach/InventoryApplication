@@ -6,12 +6,15 @@ from app.Database.DatabaseManipulator import DatabaseManipulator
 
 app = Flask(__name__)
 
+# Instantiate the DatabaseManipulator
+dbm = DatabaseManipulator()
+# Instantiate the DatabaseConnector
+dbc = DatabaseConnector()
+
 
 # Main index.html route
 @app.route('/', strict_slashes=False, methods=['GET', 'POST'])
 def index():
-    dbm = DatabaseManipulator()
-    dbc = DatabaseConnector()
     results = dbm.fetchall()
     webui_host = dbc.get_webui_host()
     van_nums = dbm.get_van_nums()
@@ -28,7 +31,6 @@ def index():
 # Displays the table code in table.html so it can be refreshed dynamically without reloading the page
 @app.route('/table/<table_name>/<van_number>', strict_slashes=False, methods=['GET', 'POST'])
 def table(table_name, van_number):
-    dbm = DatabaseManipulator()
     # Requirements to return the results for a van by its number
     if table_name == 'vans' and van_number != 'all':
         results = dbm.get_vans(van_number)
@@ -48,12 +50,16 @@ def table(table_name, van_number):
 
 
 # Route for the delete method
-@app.route('/delete', strict_slashes=False, methods=['POST', 'GET'])
-def delete():
-    dbm = DatabaseManipulator()
-    if request.method == 'POST':
+@app.route('/delete/<id_type>', strict_slashes=False, methods=['POST', 'GET'])
+def delete(id_type):
+    # If the id_type is part, delete the part
+    if request.method == 'POST' and id_type == 'part':
         part_id = request.form.get('Delete')
         dbm.delete(part_id)
+    # If the id_type is a van, delete the van
+    elif request.method == 'POST' and id_type == 'van':
+        van_id = request.form.get('Delete')
+        dbm.delete_van(van_id)
     # If the /delete route is accessed, re-route to index
     return redirect(url_for('index'))
 
@@ -61,7 +67,6 @@ def delete():
 # Route to edit table rows using the update method
 @app.route('/update', strict_slashes=False, methods=['POST', 'GET'])
 def update():
-    dbm = DatabaseManipulator()
     if request.method == 'POST':
         part_id = request.form.get('id')
         part_name = request.form.get('part_name')
@@ -75,7 +80,6 @@ def update():
 # Route for /vans
 @app.route('/vans', strict_slashes=False, methods=['GET', 'POST'])
 def vans():
-    dbm = DatabaseManipulator()
     van_numbers = dbm.get_van_nums()
     if request.method == 'POST':
         van_number = request.form.get('van_number')
@@ -86,7 +90,6 @@ def vans():
 # Route for /vans that consumes the van_id
 @app.route('/vans/<van_id>', strict_slashes=False)
 def van_num(van_id=0):
-    dbm = DatabaseManipulator()
     results = dbm.get_vans(van_id)
     # If there are no results in the van database, load the page with empty results
     if results is None:

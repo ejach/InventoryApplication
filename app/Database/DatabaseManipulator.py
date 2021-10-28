@@ -76,8 +76,7 @@ class DatabaseManipulator:
         stmt = self.stmt.get_select_vans_distinct_statement()
         self.cursor.execute(stmt)
         results = self.cursor.fetchall()
-        res = [i[0] for i in results]
-        return res
+        return results
 
     # Insert entries into database
     def insert(self, part_name, part_number, van_number):
@@ -106,3 +105,8 @@ class DatabaseManipulator:
                 self.conn.commit()
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, database not manipulated')
+
+    def delete_van(self, van_id):
+        stmt = self.stmt.get_delete_van()
+        self.cursor.execute(stmt, (int(van_id),))
+        self.conn.commit()
