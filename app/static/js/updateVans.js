@@ -69,7 +69,7 @@ if (window.confirm('Are you sure you want to delete?')) {
         // Parameters to be sent in the request
         const params = 'Delete=' + id;
         // Send our request
-        sendData(params, '/delete');
+        sendData(params, '/delete/van/');
     }
 }
 

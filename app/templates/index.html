@@ -37,7 +37,7 @@
             <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^\w+( +\w+)*$" />
             <select name="van" id="van">
             {% for row in van_nums %}
-                <option value="{{ row[0] }}">Van {{ row[0] }}</option>
+                <option value="{{ row[1] }}">Van {{ row[1] }}</option>
             {% endfor %}
             </select>
             <input type="submit" id="submit" value="Submit">
