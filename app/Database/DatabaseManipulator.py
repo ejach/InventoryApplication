@@ -114,11 +114,11 @@ class DatabaseManipulator:
     # Update van by van_id
     def update_van(self, van_id, van_number):
         try:
+            # Check for duplicates and validate input
             if check_van_number(van_number) and self.check_duplicates(van_number):
                 stmt = self.stmt.get_update_van()
                 values = (van_number, int(van_id),)
                 self.cursor.execute(stmt, values)
-                print(self.check_duplicates(van_number))
                 self.conn.commit()
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, database not manipulated')
