@@ -35,16 +35,12 @@
     min-height: 45%;
     transition: 0.3s;
     margin: 0 auto;
-    margin-right: 68%;
-}
-
-#myCard:first-child {
-  margin-right: 0;
 }
 
 #card {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-gap: 25px;
 }
 
 #mySpan {
@@ -150,10 +146,6 @@ header {
   input, button, .container {
     font-size: 30px;
   }
-   .card {
-     min-height: 100px;
-     margin: 0;
-  }
   p {
     font-size: 30px;
   }
@@ -173,8 +165,10 @@ header {
   .topnav {
     max-width: 45%;
   }
-  .card {
-    max-width: 45%;
+
+  #card > a > img {
+    width: 200px;
+    height: 200px;
   }
   input, button, .container {
     font-size: 20px;
