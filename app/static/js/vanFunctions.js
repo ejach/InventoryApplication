@@ -45,7 +45,7 @@ window.addEventListener("load",function() {
     });
 
     // Set up our request
-    XHR.open("POST","/");
+    XHR.open("POST","/parts");
 
     FD.append('van', vanNum)
 

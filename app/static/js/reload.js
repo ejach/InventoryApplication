@@ -44,7 +44,7 @@ window.addEventListener("load",function() {
     });
 
     // Set up our request
-    XHR.open("POST","/");
+    XHR.open("POST","/parts");
 
     // The data sent is what the user provided in the form
     XHR.send(FD);
