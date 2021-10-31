@@ -19,7 +19,8 @@
         <h3 id="logoName">Inventory Application</h3>
     </div>
     <div id="sidenav" class="sidenav">
-        <a href="/">Inventory</a>
+        <a href="/">Home</a>
+        <a href="/parts">Parts</a>
         <a href="/vans">Vans</a>
     </div>
     {#  JS Package for JQUERY  #}
@@ -27,7 +28,7 @@
     {#  Scripts for the sidenav 'hamburger' animation and functionality  #}
     <script src= "{{ url_for('static', filename='js/sidenav-animation.js') }}"></script>
     <script src= "{{ url_for('static', filename='js/sidenav-change.js') }}"></script>
-    <div class="main" id="card">
+    <div class="main">
     {#    If the van_numbers is empty, throw the following error    #}
         {% if van_numbers == [] %}
             <p style="color:red;">The database is empty, consider adding a van.</p>
@@ -37,7 +38,7 @@
     <span id="mySpan">
         {% for row in van_numbers %}
         <a href="/vans/{{ row[1] }}" id="link"><img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
-                                    width="100px" height="100px" /></a><p id="paragraph">Van {{ row[1] }}</p>
+                                    width="100px" height="100px" /><p id="paragraph">Van {{ row[1] }}</p></a>
                                 <form>
                                     <input type="button" id="deleteMe" value="Delete" onclick="deleteVan({{ row[0] }})">
                                     <input type="button" id="updateMe" value="Edit" onclick="updateVan({{ row[0] }})">
