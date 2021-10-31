@@ -15,6 +15,12 @@ dbc = DatabaseConnector()
 # Main index.html route
 @app.route('/', strict_slashes=False, methods=['GET', 'POST'])
 def index():
+    return render_template('index.html')
+
+
+# parts.html route
+@app.route('/parts', strict_slashes=False, methods=['GET', 'POST'])
+def parts():
     results = dbm.fetchall()
     webui_host = dbc.get_webui_host()
     van_nums = dbm.get_van_nums()
@@ -25,7 +31,7 @@ def index():
         van_number = clean(request.form['van'])
         # Insert into the database
         dbm.insert(part_name=part_name, part_number=part_number, van_number=van_number)
-    return render_template('index.html', results=results, webui_host=webui_host, van_nums=van_nums)
+    return render_template('parts.html', results=results, webui_host=webui_host, van_nums=van_nums)
 
 
 # Displays the table code in table.html so it can be refreshed dynamically without reloading the page

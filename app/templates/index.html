@@ -20,7 +20,8 @@
         <h3 id="logoName">Inventory Application</h3>
     </div>
     <div id="sidenav" class="sidenav">
-        <a href="/">Inventory</a>
+        <a href="/">Home</a>
+        <a href="/parts">Parts</a>
         <a href="/vans">Vans</a>
 
 
@@ -31,39 +32,10 @@
     <script src= "{{ url_for('static', filename='js/sidenav-animation.js') }}"></script>
     <script src= "{{ url_for('static', filename='js/sidenav-change.js') }}"></script>
     <div class="main" id="card">
-    <form id="myForm">
-            <p id="instructions">Enter the Part Name and Part Number: </p>
-            <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^\w+( +\w+)*$" />
-            <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^\w+( +\w+)*$" />
-            <select name="van" id="van">
-            {% for row in van_nums %}
-                <option value="{{ row[1] }}">Van {{ row[1] }}</option>
-            {% endfor %}
-            </select>
-            <input type="submit" id="submit" value="Submit">
-        </form>
-        <div id="table">
-        {#    If the results are empty, throw the following error    #}
-        {% if results == [] %}
-            <p style="color:red;">The database is empty, consider adding a part.</p>
-        {% else %}
-            <table border="1" class="table">
-            <th>Part Name</th><th>Part Number</th><th>Van</th><th>Action</th><br/>
-        {% for row in results %}
-              <tr>
-                  <td>{{ row[1] }}</td>
-                  <td>{{ row[2] }}</td>
-                  <td>{{ row[3] }}</td>
-                  <td><input type="button" value="Delete" id="deleteBtn" name="deleteBtn"
-                             onclick="deleteMe({{ row[0] }})" />
-                    <input type="button" name="updateBtn" id="updateBtn" value="Edit"
-                           onclick="updateMe({{ row[0] }})" />
-                  </td>
-              </tr>
-        {% endfor %}
-            </table>
-        {% endif %}
-        </div>
+        <a href="/vans" id="myCard"><p id="caption">Vans</p><img class="vans" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
+             width="250px" height="250px" /></a>
+        <a href="/parts" id="myCard"><p id="caption">Parts</p><img class="parts" src="{{ url_for('static', filename='assets/toolbox.svg') }}"
+             width="250px" height="250px" /></a>
     </div>
 </body>
 </html>

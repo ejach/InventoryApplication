@@ -27,14 +27,24 @@
   min-height: 250px;
   margin: auto;
   text-align: center;
+  padding-bottom: 5%;
 }
 
 #myCard {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    min-height: 45%;
     transition: 0.3s;
-    max-width: 85%;
-    margin: auto;
-    text-align: center;
+    margin: 0 auto;
+    margin-right: 68%;
+}
+
+#myCard:first-child {
+  margin-right: 0;
+}
+
+#card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
 #mySpan {
@@ -46,6 +56,7 @@
 #paragraph {
   display: block;
 }
+
 
 html {
   font-family: Arial, serif;
@@ -69,6 +80,12 @@ form {
 h1 {
     font-size: 56px;
 }
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
 
 #logoName {
     box-shadow: 0 0 8px 0 rgba(0,0,0,0.2);
