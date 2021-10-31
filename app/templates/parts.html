@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <link rel="shortcut icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
     <link rel=stylesheet href="{{ url_for('static', filename='css/stylesheet.css') }}">
-    <script src= "{{ url_for('static', filename='js/vanFunctions.js') }}"></script>
+    <script src= "{{ url_for('static', filename='js/reload.js') }}"></script>
     {#  JS Package for the HTMX package  #}
     <script src="https://unpkg.com/htmx.org@1.6.0"></script>
     <title>Inventory Application</title>
@@ -23,39 +23,47 @@
         <a href="/">Home</a>
         <a href="/parts">Parts</a>
         <a href="/vans">Vans</a>
+
+
     </div>
     {#  JS Package for JQUERY  #}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     {#  Scripts for the sidenav 'hamburger' animation and functionality  #}
     <script src= "{{ url_for('static', filename='js/sidenav-animation.js') }}"></script>
     <script src= "{{ url_for('static', filename='js/sidenav-change.js') }}"></script>
-    <div class="main" id="card">
-        <form id="myForm">
+    <div class="main">
+    <form id="myForm">
             <p id="instructions">Enter the Part Name and Part Number: </p>
             <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^\w+( +\w+)*$" />
             <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^\w+( +\w+)*$" />
+            <select name="van" id="van">
+            {% for row in van_nums %}
+                <option value="{{ row[1] }}">Van {{ row[1] }}</option>
+            {% endfor %}
+            </select>
             <input type="submit" id="submit" value="Submit">
         </form>
         <div id="table">
-            <table border="1" class="table">
-            <th>Part Name</th><th>Part Number</th><th>Van</th><th>Action</th><br/>
-        {% if results == None %}
+        {#    If the results are empty, throw the following error    #}
+        {% if results == [] %}
             <p style="color:red;">The database is empty, consider adding a part.</p>
         {% else %}
-            {% for row in results %}
-                  <tr>
-                      <td>{{ row[1] }}</td>
-                      <td>{{ row[2] }}</td>
-                      <td>{{ row[3] }}</td>
-                      <td><input type="button" value="Delete" id="deleteBtn" name="deleteBtn"
-                                 onclick="deleteMe({{ row[0] }})" />
-                        <input type="button" name="updateBtn" id="updateBtn" value="Edit"
-                               onclick="updateMe({{ row[0] }}, {{ row[3] }})" />
-                      </td>
-                  </tr>
-            {% endfor %}
-        {% endif %}
+            <table border="1" class="table">
+            <th>Part Name</th><th>Part Number</th><th>Van</th><th>Action</th><br/>
+        {% for row in results %}
+              <tr>
+                  <td>{{ row[1] }}</td>
+                  <td>{{ row[2] }}</td>
+                  <td>{{ row[3] }}</td>
+                  <td><input type="button" value="Delete" id="deleteBtn" name="deleteBtn"
+                             onclick="deleteMe({{ row[0] }})" />
+                    <input type="button" name="updateBtn" id="updateBtn" value="Edit"
+                           onclick="updateMe({{ row[0] }})" />
+                  </td>
+              </tr>
+        {% endfor %}
             </table>
+        {% endif %}
         </div>
     </div>
 </body>
