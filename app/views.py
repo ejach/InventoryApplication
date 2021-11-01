@@ -12,6 +12,13 @@ dbm = DatabaseManipulator()
 dbc = DatabaseConnector()
 
 
+# Handle Exceptions
+@app.errorhandler(Exception)
+def error_handle():
+    error = str(Exception)
+    return render_template('error.html', error=error)
+
+
 # Main index.html route
 @app.route('/', strict_slashes=False, methods=['GET', 'POST'])
 def index():
