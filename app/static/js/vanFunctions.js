@@ -1,6 +1,8 @@
+const currentURL = (window.location.pathname);
 const getPath = '/table' + window.location.pathname;
 // Gets the number of the current van selected by the end of the pathname
-const vanNum = getPath.slice(-1);
+const vanNum = currentURL.split("/")[2];
+
 
 function sendData(content, dest) {
   const XHR = new XMLHttpRequest();
