@@ -59,7 +59,7 @@ class DatabaseManipulator:
     def insert_van(self, van_number):
         try:
             # If the input is valid and the check_duplicates is valid, commit to DB
-            if self.check_duplicates(van_number):
+            if self.check_duplicates(van_number) and check_input(van_number):
                 stmt = self.stmt.get_insert_van()
                 val = (van_number,)
                 self.cursor.execute(stmt, val)
