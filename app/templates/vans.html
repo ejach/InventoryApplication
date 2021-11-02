@@ -38,7 +38,7 @@
     <span id="mySpan">
         {% for row in van_numbers %}
         <a href="/vans/{{ row[1] }}" id="link"><img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
-                                    width="100px" height="100px" /><p id="paragraph">Van {{ row[1] }}</p></a>
+                                    width="100px" height="100px" /><p id="paragraph">{{ row[1] }}</p></a>
                                 <form>
                                     <input type="button" id="deleteMe" value="Delete" onclick="deleteVan({{ row[0] }})">
                                     <input type="button" id="updateMe" value="Edit" onclick="updateVan({{ row[0] }})">
@@ -52,7 +52,7 @@
         <span id="addVan">
         <img id="myCard" src="{{ url_for('static', filename='assets/add-button.svg') }}" width="100px" height="100px" />
         </span><p id="paragraph">Add Van</p><form style="display: none;" id="formElement">
-        <input type="text" placeholder="Van Number" name="van_number" pattern="^[0-9]{1}$" required>
+        <input type="text" placeholder="Van Number" name="van_number" required>
         <input type="submit" value="Add Van"></form>
     </div>
 
