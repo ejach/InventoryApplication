@@ -2,7 +2,7 @@ import unittest
 from random import choice
 from string import ascii_letters, digits
 
-from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, check_van_number
+from app.Database.DatabaseManipulator import DatabaseManipulator, check_input
 
 dbm = DatabaseManipulator()
 
@@ -14,22 +14,14 @@ random_digit = ''.join(choice(digits) for z in range(1))
 class DBMUnitTest(unittest.TestCase):
     # Tests the check_input function
     def test_check_input(self):
-        self.assertTrue(check_input(random_string, random_numbers, random_digit))
+        self.assertTrue(check_input(random_string))
+        self.assertTrue(check_input(random_digit))
+        self.assertTrue(check_input(random_numbers))
         print('check_input() TRUE test -> PASSED' + '\n')
-        self.assertFalse(check_input('', '', ''))
+        self.assertFalse(check_input(''))
         print('check_input() Empty Input test -> PASSED' + '\n')
-        self.assertFalse(check_input(' ', ' ', ' '))
+        self.assertFalse(check_input(' '))
         print('check_input() Space Input test -> PASSED' + '\n')
-
-    def test_check_van_number(self):
-        self.assertTrue(check_van_number(random_numbers))
-        self.assertTrue(check_van_number(random_digit))
-        print('check_van_numbers() TRUE test -> PASSED' + '\n')
-        self.assertFalse(check_van_number(random_string))
-        self.assertFalse(check_van_number(''))
-        print('check_van_numbers() Empty Input test -> PASSED' + '\n')
-        self.assertFalse(check_van_number(' '))
-        print('check_van_numbers() Empty Space test -> PASSED' + '\n')
 
     def test_check_duplicates(self):
         self.assertFalse(dbm.check_duplicates('1'))

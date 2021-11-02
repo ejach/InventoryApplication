@@ -12,13 +12,6 @@ dbm = DatabaseManipulator()
 dbc = DatabaseConnector()
 
 
-# Handle Exceptions
-@app.errorhandler(Exception)
-def error_handle():
-    error = str(Exception)
-    return render_template('error.html', error=error)
-
-
 # Main index.html route
 @app.route('/', strict_slashes=False, methods=['GET', 'POST'])
 def index():
@@ -47,7 +40,8 @@ def table(table_name, van_number):
     # Requirements to return the results for a van by its number
     if table_name == 'vans' and van_number != 'all':
         results = dbm.get_vans(van_number)
-        return render_template('load/van_table.html', results=results)
+        check_exist = dbm.check_if_exists(van_number)
+        return render_template('load/van_table.html', results=results, check_exist=check_exist)
     # Requirements to return the master list of parts
     elif table_name == 'main' and van_number == 'all':
         results = dbm.fetchall()
@@ -108,11 +102,13 @@ def vans():
 @app.route('/vans/<van_id>', strict_slashes=False)
 def van_num(van_id=0):
     results = dbm.get_vans(van_id)
-    # If there are no results in the van database, load the page with empty results
-    if results is None:
-        return render_template('display_van.html', results=None)
+    check_exist = dbm.check_if_exists(van_id)
+    # If there are no results in the van database, but it exists, execute the following
+    if results is None and check_exist:
+        return render_template('display_van.html', results=None, check_exist=check_exist)
     # If the results are not None, return the following
     elif results is not None:
         return render_template('display_van.html', results=results)
+    # Otherwise, redirect to the main /vans page
     else:
         return redirect(url_for('vans'))

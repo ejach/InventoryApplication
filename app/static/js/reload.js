@@ -76,7 +76,7 @@ function updateMe(id) {
   let partName = prompt("Please enter the part name:", "PartName");
   let partNumber = prompt("Please enter the part number:", "PartNumber");
   let vanNumber = prompt("Please enter the van number:", "vanNumber");
-  if (partName == null || partName === "" || partNumber == null || partNumber === "" || vanNumber == null || vanNumber === "" || isNaN(vanNumber)) {
+  if (partName == null || partName === "" || partNumber == null || partNumber === "" || vanNumber == null || vanNumber === "") {
       alert('Blank input will not be accepted.');
     } else {
       text = 'id=' + id + '&part_name=' + partName + '&part_number=' + partNumber + '&van_number=' + vanNumber;
