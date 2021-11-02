@@ -3,7 +3,8 @@ class DatabaseStatements:
     def __init__(self):
         self.select = 'SELECT * FROM parts.parts'
         self.select_vans = 'SELECT * FROM parts.parts WHERE `van_number` = %s'
-        self.select_vans_distinct = 'SELECT * FROM parts.vans ORDER BY `van_number`'
+        self.select_vans_order = 'SELECT * FROM parts.vans ORDER BY `van_number`'
+        self.select_vans_distinct = 'SELECT DISTINCT `van_number` from parts.parts ORDER BY `van_number`'
         self.select_vans_dupes = 'SELECT `van_number` from parts.vans'
         self.insert_van = 'INSERT INTO parts.vans (van_number) VALUE (%s)'
         self.delete_van = 'DELETE FROM parts.vans WHERE `id` = %s'
@@ -18,7 +19,10 @@ class DatabaseStatements:
     def get_select_vans_statement(self):
         return self.select_vans
 
-    def get_select_vans_distinct_statement(self):
+    def get_select_vans_order_statement(self):
+        return self.select_vans_order
+
+    def get_select_vans_distinct(self):
         return self.select_vans_distinct
 
     def get_vans_dupes(self):
