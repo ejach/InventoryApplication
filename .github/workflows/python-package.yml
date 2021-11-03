@@ -25,4 +25,4 @@ jobs:
           python -m pip list
       - name: Python unit tests
         run: |
-          python -m unittest
+          python -m unittest ./testing/*
