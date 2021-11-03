@@ -5,4 +5,3 @@ cryptography~=35.0.0
 bleach~=4.1.0
 mysql-connector-python~=8.0.26
 responses~=0.14.0
-Werkzeug~=2.0.2
