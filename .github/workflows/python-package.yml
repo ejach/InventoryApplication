@@ -1,0 +1,28 @@
+name: Test
+on:
+  push:
+    branches: '*'
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Install Ubuntu packages
+        run: |
+          sudo apt-get -y install build-essential gcc gfortran libblas-dev liblapack-dev
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - uses: BSFishy/pip-action@v1
+        with:
+          requirements: requirements.txt
+      - name: List python packages
+        run: |
+          python -m pip list
+      - name: Python unit tests
+        run: |
+          python -m unittest
