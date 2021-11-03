@@ -1,6 +1,5 @@
 from bleach import clean
-from flask import Flask, render_template, request, redirect, url_for, abort
-from werkzeug.exceptions import HTTPException
+from flask import Flask, render_template, request, redirect, url_for
 
 from app.Database.DatabaseConnector import DatabaseConnector
 from app.Database.DatabaseManipulator import DatabaseManipulator
@@ -13,27 +12,10 @@ dbm = DatabaseManipulator()
 dbc = DatabaseConnector()
 
 
-# Handle the 404 error
-@app.errorhandler(404)
-def not_found(e):
-    return render_template('error.html', e=e)
-
-
-# Handle the 500 error
-@app.errorhandler(500)
-def internal_error(e):
-    return render_template('error.html', e=e)
-
-
 # Main index.html route
 @app.route('/', strict_slashes=False, methods=['GET', 'POST'])
 def index():
-    try:
-        return render_template('index.html')
-    except IndexError:
-        abort(404), 404
-    except HTTPException:
-        abort(500)
+    return render_template('index.html')
 
 
 # parts.html route
@@ -49,12 +31,7 @@ def parts():
         van_number = clean(request.form['van'])
         # Insert into the database
         dbm.insert(part_name=part_name, part_number=part_number, van_number=van_number)
-    try:
-        return render_template('parts.html', results=results, webui_host=webui_host, van_nums=van_nums)
-    except IndexError:
-        abort(404), 404
-    except HTTPException:
-        abort(500)
+    return render_template('parts.html', results=results, webui_host=webui_host, van_nums=van_nums)
 
 
 # Displays the table code in table.html so it can be refreshed dynamically without reloading the page
@@ -118,12 +95,7 @@ def vans():
     if request.method == 'POST':
         van_number = request.form.get('van_number')
         dbm.insert_van(van_number)
-    try:
-        return render_template('vans.html', van_numbers=van_numbers)
-    except IndexError:
-        abort(404), 404
-    except HTTPException:
-        abort(500)
+    return render_template('vans.html', van_numbers=van_numbers)
 
 
 # Route for /vans that consumes the van_id
