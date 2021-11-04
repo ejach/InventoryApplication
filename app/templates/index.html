@@ -1,38 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<meta name="viewport" content="user-scalable=no" />
-<head>
-    <meta charset="UTF-8">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
-    <link rel=stylesheet href="{{ url_for('static', filename='css/stylesheet.css') }}">
-    <title>Inventory Application</title>
-</head>
-<div id="container" class="container">
-  <div class="bar1"></div>
-  <div class="bar2"></div>
-  <div class="bar3"></div>
-</div>
-<body>
-    <div class="header">
-        <h3 id="logoName">Inventory Application</h3>
-    </div>
-    <div id="sidenav" class="sidenav">
-        <a href="/">Home</a>
-        <a href="/parts">Parts</a>
-        <a href="/vans">Vans</a>
-
-
-    </div>
-    {#  JS Package for JQUERY  #}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    {#  Scripts for the sidenav 'hamburger' animation and functionality  #}
-    <script src= "{{ url_for('static', filename='js/sidenav-animation.js') }}"></script>
-    <script src= "{{ url_for('static', filename='js/sidenav-change.js') }}"></script>
-    <div class="main" id="card">
+{% extends "base.html" %}
+{% block content %}
+    <div id="card">
         <a href="/vans" id="myCard"><p id="caption">Vans</p><img class="vans" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
              width="250px" height="250px" /></a>
         <a href="/parts" id="myCard"><p id="caption">Parts</p><img class="parts" src="{{ url_for('static', filename='assets/toolbox.svg') }}"
              width="250px" height="250px" /></a>
     </div>
-</body>
-</html>
+{% endblock %}
