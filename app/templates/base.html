@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <link rel="shortcut icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
     <link rel=stylesheet href="{{ url_for('static', filename='css/stylesheet.css') }}">
+    {% block scripts %}
+    {% endblock %}
+    {#  JS Package for the HTMX package  #}
+    <script src="https://unpkg.com/htmx.org@1.6.0"></script>
     <title>Inventory Application</title>
 </head>
 <div id="container" class="container">
@@ -29,7 +33,8 @@
     <script src= "{{ url_for('static', filename='js/sidenav-animation.js') }}"></script>
     <script src= "{{ url_for('static', filename='js/sidenav-change.js') }}"></script>
     <div class="main">
-         <h3 style="color: red;">{{ e }}</h3>
+    {% block content %}
+    {% endblock %}
     </div>
 </body>
 </html>
