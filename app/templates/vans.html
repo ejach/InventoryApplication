@@ -8,8 +8,6 @@
         {% if van_numbers == [] %}
             <p style="color:red;">The database is empty, consider adding a van.</p>
         {% endif %}
-    <script src= "{{ url_for('static', filename='js/deleteVan.js') }}"></script>
-    <script src= "{{ url_for('static', filename='js/updateVan.js') }}"></script>
     <span id="mySpan">
         {% for row in van_numbers %}
         <a href="/vans/{{ row[1] }}" id="link"><img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
