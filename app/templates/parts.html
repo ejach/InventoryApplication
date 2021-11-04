@@ -1,37 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<meta name="viewport" content="user-scalable=no" />
-<head>
-    <meta charset="UTF-8">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
-    <link rel=stylesheet href="{{ url_for('static', filename='css/stylesheet.css') }}">
-    <script src= "{{ url_for('static', filename='js/reload.js') }}"></script>
-    {#  JS Package for the HTMX package  #}
-    <script src="https://unpkg.com/htmx.org@1.6.0"></script>
-    <title>Inventory Application</title>
-</head>
-<div id="container" class="container">
-  <div class="bar1"></div>
-  <div class="bar2"></div>
-  <div class="bar3"></div>
-</div>
-<body>
-    <div class="header">
-        <h3 id="logoName">Inventory Application</h3>
-    </div>
-    <div id="sidenav" class="sidenav">
-        <a href="/">Home</a>
-        <a href="/parts">Parts</a>
-        <a href="/vans">Vans</a>
-
-
-    </div>
-    {#  JS Package for JQUERY  #}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    {#  Scripts for the sidenav 'hamburger' animation and functionality  #}
-    <script src= "{{ url_for('static', filename='js/sidenav-animation.js') }}"></script>
-    <script src= "{{ url_for('static', filename='js/sidenav-change.js') }}"></script>
-    <div class="main">
+{% extends "base.html" %}
+{% block scripts %}
+<script src= "{{ url_for('static', filename='js/reload.js') }}"></script>
+{% endblock %}
+{% block content %}
     <form id="myForm">
             <p id="instructions">Enter the Part Name and Part Number: </p>
             <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^\w+( +\w+)*$" />
@@ -41,7 +12,7 @@
                 <option value="{{ row[1] }}">{{ row[1] }}</option>
             {% endfor %}
             </select>
-            <input type="submit" id="submit" value="Submit">
+            <input type="submit" id="submit" value="Add Part">
         </form>
         <div id="table">
         {#    If the results are empty, throw the following error    #}
@@ -65,6 +36,4 @@
             </table>
         {% endif %}
         </div>
-    </div>
-</body>
-</html>
+{% endblock %}
