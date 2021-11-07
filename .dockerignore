@@ -1,0 +1,7 @@
+.github/
+venv/
+testing/
+CODE_OF_CONDUCT.md
+README.md
+LICENSE
+database.sql
