@@ -7,4 +7,4 @@ mysql-connector-python~=8.0.26
 responses~=0.14.0
 Werkzeug~=2.0.2
 bcrypt~=3.2.0
-Flask-SSLify~=0.1.5
+flask-talisman~=0.8.1
