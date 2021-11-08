@@ -138,9 +138,6 @@ a {
   background-color: #2E86C1;
   color: white;
 }
-header {
-  position:fixed; top:0; left:5%;
-}
 
 @media (orientation: portrait) {
   input, button, .container {

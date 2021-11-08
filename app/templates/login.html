@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block scripts %}
+<script src= "{{ url_for('static', filename='js/login.js') }}"></script>
+{% endblock %}
+{% block content %}
+<form id="loginForm">
+    <input type="text" name="username" placeholder="Username" required pattern="^\w+( +\w+)*$" /><br />
+    <input type="password" name="password" placeholder="Password" required pattern="^\w+( +\w+)*$" /><br />
+    <input type="submit" value="Login"><br />
+    <a href="/register" id="registerText">Click here to create an account</a>
+    {% if msg != None %}
+    <br />{{ msg }}
+    {% endif %}
+</form>
+{% endblock %}

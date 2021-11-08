@@ -17,3 +17,13 @@ create table vans
 	constraint vans_pk
 		primary key (id)
 );
+
+# Table for accounts
+create table accounts
+(
+	id int auto_increment,
+	username text null,
+	password text null,
+	constraint accounts_pk
+		primary key (id)
+);
