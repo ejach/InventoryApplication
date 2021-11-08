@@ -32,8 +32,8 @@ password=root
 db_port=3306
 # Database schema name in the MySQL database (default is parts)
 db_schema=parts
-# Database table in the MySQL database (default is parts)
-db=parts
+# A string of text or characters used in the Flask sessions module
+SECRET_KEY=YOURKEY
 ```
 5. Install the requirements `$ pip install -r requirements.txt`
 
