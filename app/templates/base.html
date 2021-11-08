@@ -33,8 +33,10 @@
     {#  JS Package for JQUERY  #}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     {#  Scripts for the sidenav 'hamburger' animation and functionality  #}
+    {% if 'logged_in' in session %}
     <script src= "{{ url_for('static', filename='js/sidenav-animation.js') }}"></script>
     <script src= "{{ url_for('static', filename='js/sidenav-change.js') }}"></script>
+    {% endif %}
     <div class="main">
     {% block content %}
     {% endblock %}

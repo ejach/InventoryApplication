@@ -32,8 +32,8 @@ def internal_error(e):
 def login():
     try:
         if request.method == 'POST':
-            username = request.form.get('username')
-            password = request.form.get('password')
+            username = clean(request.form.get('username'))
+            password = clean(request.form.get('password'))
             my_login = dbm.login(username=username, password=password)
             if my_login:
                 session['logged_in'] = True
@@ -55,7 +55,14 @@ def login():
 @app.route('/register', strict_slashes=False, methods=['GET', 'POST'])
 def register():
     try:
-        return render_template('register.html')
+        if request.method == 'POST':
+            username = clean(request.form.get('username'))
+            password = clean(request.form.get('password'))
+            conf_password = clean(request.form.get('confPassword'))
+            dbm.register(username, password, conf_password)
+            return redirect(url_for('login'))
+        else:
+            return render_template('register.html')
     except IndexError:
         abort(404), 404
     except HTTPException:
