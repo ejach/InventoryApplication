@@ -2,7 +2,7 @@ from os import environ
 from bleach import clean
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.exceptions import HTTPException, abort
-from flask_talisman import Talisman
+from flask_sslify import SSLify
 
 from app.Database.DatabaseConnector import DatabaseConnector
 from app.Database.DatabaseManipulator import DatabaseManipulator
@@ -10,9 +10,9 @@ from app.Database.DatabaseManipulator import DatabaseManipulator
 app = Flask(__name__)
 app.secret_key = environ.get('SECRET_KEY')
 
-# Only trigger Talisman if the app is running on Heroku
+# Only trigger SSLify if the app is running on Heroku
 if 'DYNO' in environ:
-    Talisman(app)
+    SSLify(app)
 
 # Instantiate the DatabaseManipulator
 dbm = DatabaseManipulator()
