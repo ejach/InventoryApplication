@@ -9,6 +9,9 @@ class DatabaseStatements:
         self.insert_van = 'INSERT INTO parts.vans (van_number) VALUE (%s)'
         self.delete_van = 'DELETE FROM parts.vans WHERE `id` = %s'
         self.update_van = 'UPDATE parts.vans SET `van_number` = %s WHERE `id` = %s'
+        self.login = 'SELECT * FROM parts.accounts WHERE `username` = %s AND `password` = %s'
+        self.register = 'INSERT INTO parts.accounts (username, password) VALUES (%s, %s)'
+        self.check_if_username_exists = 'SELECT * FROM parts.accounts WHERE `username` = %s'
         self.insert = 'INSERT INTO parts.parts (name, part_number, van_number) VALUES (%s, %s, %s)'
         self.delete = 'DELETE FROM parts.parts WHERE `id` = %s'
         self.update = 'UPDATE parts.parts set `name` = %s, `part_number` = %s, `van_number` = %s WHERE `id` = %s'
@@ -31,6 +34,9 @@ class DatabaseStatements:
     def get_insert_statement(self):
         return self.insert
 
+    def get_login(self):
+        return self.login
+
     def get_insert_van(self):
         return self.insert_van
 
@@ -45,3 +51,6 @@ class DatabaseStatements:
 
     def get_update_statement(self):
         return self.update
+
+    def get_register(self):
+        return self.register

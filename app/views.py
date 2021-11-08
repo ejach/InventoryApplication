@@ -1,11 +1,13 @@
+from os import environ
 from bleach import clean
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.exceptions import HTTPException, abort
 
 from app.Database.DatabaseConnector import DatabaseConnector
 from app.Database.DatabaseManipulator import DatabaseManipulator
 
 app = Flask(__name__)
+app.secret_key = environ.get('SECRET_KEY')
 
 # Instantiate the DatabaseManipulator
 dbm = DatabaseManipulator()
@@ -25,36 +27,86 @@ def internal_error(e):
     return render_template('error.html', e=e)
 
 
-# Main index.html route
-@app.route('/', strict_slashes=False, methods=['GET', 'POST'])
-def index():
+# app route for /login
+@app.route('/login', strict_slashes=False, methods=['GET', 'POST'])
+def login():
     try:
-        return render_template('index.html')
+        if request.method == 'POST':
+            username = request.form.get('username')
+            password = request.form.get('password')
+            my_login = dbm.login(username=username, password=password)
+            if my_login:
+                session['logged_in'] = True
+                session['username'] = username
+                return render_template('index.html')
+            elif not my_login:
+                return render_template('login.html')
+        if 'logged_in' not in session:
+            return render_template('login.html')
+        else:
+            return redirect(url_for('index'))
     except IndexError:
         abort(404), 404
     except HTTPException:
         abort(500)
+
+
+# app route for /register
+@app.route('/register', strict_slashes=False, methods=['GET', 'POST'])
+def register():
+    try:
+        return render_template('register.html')
+    except IndexError:
+        abort(404), 404
+    except HTTPException:
+        abort(500)
+
+
+# app route for /logout
+@app.route('/logout', strict_slashes=False, methods=['GET', 'POST'])
+def logout():
+    session.pop('logged_in', default=None)
+    session.pop('username', default=None)
+    return redirect(url_for('index'))
+
+
+# Main index.html route
+@app.route('/', strict_slashes=False, methods=['GET', 'POST'])
+def index():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+    else:
+        try:
+            username = session['username']
+            return render_template('index.html', username=username)
+        except IndexError:
+            abort(404), 404
+        except HTTPException:
+            abort(500)
 
 
 # parts.html route
 @app.route('/parts', strict_slashes=False, methods=['GET', 'POST'])
 def parts():
-    results = dbm.fetchall()
-    webui_host = dbc.get_webui_host()
-    van_nums = dbm.get_van_nums()
-    if request.method == 'POST':
-        # Sanitizes the input using bleach
-        part_name = clean(request.form['partName'])
-        part_number = clean(request.form['partNumber'])
-        van_number = clean(request.form['van'])
-        # Insert into the database
-        dbm.insert(part_name=part_name, part_number=part_number, van_number=van_number)
-    try:
-        return render_template('parts.html', results=results, webui_host=webui_host, van_nums=van_nums)
-    except IndexError:
-        abort(404), 404
-    except HTTPException:
-        abort(500)
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+    else:
+        results = dbm.fetchall()
+        webui_host = dbc.get_webui_host()
+        van_nums = dbm.get_van_nums()
+        if request.method == 'POST':
+            # Sanitizes the input using bleach
+            part_name = clean(request.form['partName'])
+            part_number = clean(request.form['partNumber'])
+            van_number = clean(request.form['van'])
+            # Insert into the database
+            dbm.insert(part_name=part_name, part_number=part_number, van_number=van_number)
+        try:
+            return render_template('parts.html', results=results, webui_host=webui_host, van_nums=van_nums)
+        except IndexError:
+            abort(404), 404
+        except HTTPException:
+            abort(500)
 
 
 # Displays the table code in table.html so it can be refreshed dynamically without reloading the page
@@ -114,29 +166,35 @@ def update(id_type):
 # Route for /vans
 @app.route('/vans', strict_slashes=False, methods=['GET', 'POST'])
 def vans():
-    van_numbers = dbm.get_van_nums()
-    if request.method == 'POST':
-        van_number = request.form.get('van_number')
-        dbm.insert_van(van_number)
-    try:
-        return render_template('vans.html', van_numbers=van_numbers)
-    except IndexError:
-        abort(404), 404
-    except HTTPException:
-        abort(500)
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+    else:
+        van_numbers = dbm.get_van_nums()
+        if request.method == 'POST':
+            van_number = request.form.get('van_number')
+            dbm.insert_van(van_number)
+        try:
+            return render_template('vans.html', van_numbers=van_numbers)
+        except IndexError:
+            abort(404), 404
+        except HTTPException:
+            abort(500)
 
 
 # Route for /vans that consumes the van_id
 @app.route('/vans/<van_id>', strict_slashes=False)
 def van_num(van_id=0):
-    results = dbm.get_vans(van_id)
-    check_exist = dbm.check_if_exists(van_id)
-    # If there are no results in the van database, but it exists, execute the following
-    if results is None and check_exist:
-        return render_template('display_van.html', results=None, check_exist=check_exist)
-    # If the results are not None, return the following
-    elif results is not None:
-        return render_template('display_van.html', results=results)
-    # Otherwise, redirect to the main /vans page
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
     else:
-        return redirect(url_for('vans'))
+        results = dbm.get_vans(van_id)
+        check_exist = dbm.check_if_exists(van_id)
+        # If there are no results in the van database, but it exists, execute the following
+        if results is None and check_exist:
+            return render_template('display_van.html', results=None, check_exist=check_exist)
+        # If the results are not None, return the following
+        elif results is not None:
+            return render_template('display_van.html', results=results)
+        # Otherwise, redirect to the main /vans page
+        else:
+            return redirect(url_for('vans'))
