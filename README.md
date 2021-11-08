@@ -42,7 +42,7 @@ db=parts
 6. Run the program using `python wsgi.py`
 
 ### Docker Run
-`$ docker run -it -e host=<host> -e port=<port> -e webui_host=<webui_host> -e webui_port=<webui_port> -e db_port=<db_port> -e db=<db> ghcr.io/ejach/inventoryapplication:latest`
+`$ docker run -it -e host=<host> -e db_port=<db_port> -e username=<username> -e password=<password> -e webui_host=<webui_host> -e webui_port=<webui_port> -e db_port=<db_port> -e db=<db> -e db_schema=<db_schema> ghcr.io/ejach/inventoryapplication:latest`
 
 _Change the corresponding environment variables as needed_
 
