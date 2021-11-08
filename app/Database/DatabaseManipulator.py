@@ -1,3 +1,5 @@
+from bcrypt import gensalt, hashpw, checkpw
+
 from app.Database.DatabaseConnector import DatabaseConnector
 from app.Database.DatabaseStatements import DatabaseStatements
 
@@ -8,6 +10,30 @@ def check_input(test_input):
         return False
     else:
         return True
+
+
+# Create MD5 hash of password to insert into database
+def create_password_hash(password):
+    salt = gensalt()
+    hashed = hashpw(password, salt)
+    if check_password_hash(password, hashed):
+        return hashed
+
+
+# Check if the password is equal to each other
+def check_password(password, conf_password):
+    if password == conf_password:
+        return True
+    else:
+        return False
+
+
+# Check if MD5 hash matches the password given
+def check_password_hash(password, my_hash):
+    if checkpw(password, my_hash):
+        return True
+    else:
+        return False
 
 
 class DatabaseManipulator:
@@ -132,3 +158,22 @@ class DatabaseManipulator:
                 self.conn.commit()
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, database not manipulated')
+
+    # Login by username and password
+    def login(self, username, password):
+        stmt = self.stmt.get_login()
+        values = (username, password,)
+        self.cursor.execute(stmt, values)
+        results = self.cursor.fetchall()
+        if not results:
+            return False
+        else:
+            return True
+
+    # Register by username, password, and conf_password
+    def register(self, username, password, conf_password):
+        stmt = self.stmt.get_register()
+        if check_password(password, conf_password):
+            hashed_pw = create_password_hash(password)
+            values = (username, hashed_pw,)
+            self.cursor.execute(stmt, values)
