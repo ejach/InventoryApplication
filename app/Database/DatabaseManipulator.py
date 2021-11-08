@@ -76,7 +76,6 @@ class DatabaseManipulator:
         values = (username,)
         self.cursor.execute(stmt, values)
         get_username_results = self.cursor.fetchall()
-        print(get_username_results)
         if not get_username_results:
             return False
         else:
