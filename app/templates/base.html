@@ -11,7 +11,7 @@
     <script src="https://unpkg.com/htmx.org@1.6.0"></script>
     <title>Inventory Application</title>
 </head>
-{% if 'logged_in' in session %}
+{% if session['logged_in'] %}
 <div id="container" class="container">
   <div class="bar1"></div>
   <div class="bar2"></div>
@@ -22,7 +22,7 @@
     <div class="header">
         <h3 id="logoName">Inventory Application</h3>
     </div>
-    {% if 'logged_in' in session %}
+    {% if session['logged_in'] %}
     <div id="sidenav" class="sidenav">
         <a href="/">Home</a>
         <a href="/parts">Parts</a>
@@ -33,7 +33,7 @@
     {#  JS Package for JQUERY  #}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     {#  Scripts for the sidenav 'hamburger' animation and functionality  #}
-    {% if 'logged_in' in session %}
+    {% if session['logged_in'] %}
     <script src= "{{ url_for('static', filename='js/sidenav-animation.js') }}"></script>
     <script src= "{{ url_for('static', filename='js/sidenav-change.js') }}"></script>
     {% endif %}
