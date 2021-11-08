@@ -61,6 +61,27 @@ class DatabaseManipulator:
         else:
             return True
 
+    # Get password by username
+    def get_password_by_username(self, username):
+        stmt = self.stmt.get_check_if_username_exists()
+        values = (username,)
+        self.cursor.execute(stmt, values)
+        username_res = self.cursor.fetchall()
+        fin_res = [i[2] for i in username_res]
+        return fin_res
+
+    # Check if account exists in the database
+    def check_if_account_exists(self, username):
+        stmt = self.stmt.get_check_if_username_exists()
+        values = (username,)
+        self.cursor.execute(stmt, values)
+        get_username_results = self.cursor.fetchall()
+        print(get_username_results)
+        if not get_username_results:
+            return False
+        else:
+            return True
+
     # Check if the van exists and has a part within it from either the parts or vans DB
     def check_if_exists(self, van_number):
         # Use the distinct select statement in the parts DB
@@ -161,11 +182,8 @@ class DatabaseManipulator:
 
     # Login by username and password
     def login(self, username, password):
-        stmt = self.stmt.get_login()
-        values = (username, password,)
-        self.cursor.execute(stmt, values)
-        results = self.cursor.fetchall()
-        if not results:
+        hash_pw = self.get_password_by_username(username)
+        if not check_password_hash(password.encode('utf8'), hash_pw[0].encode('utf8')):
             return False
         else:
             return True
@@ -173,7 +191,10 @@ class DatabaseManipulator:
     # Register by username, password, and conf_password
     def register(self, username, password, conf_password):
         stmt = self.stmt.get_register()
-        if check_password(password, conf_password):
-            hashed_pw = create_password_hash(password)
-            values = (username, hashed_pw,)
-            self.cursor.execute(stmt, values)
+        if check_password(password, conf_password) and check_input(password) and check_input(conf_password) \
+                and not self.check_if_account_exists(username):
+            hashed_pw = create_password_hash(password.encode('utf-8'))
+            if check_password_hash(password.encode('utf-8'), hashed_pw):
+                values = (username, hashed_pw,)
+                self.cursor.execute(stmt, values)
+                self.conn.commit()
