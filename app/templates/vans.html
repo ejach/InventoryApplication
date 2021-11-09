@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
     {#    If the van_numbers is empty, throw the following error    #}
-        {% if not van_numbers %}
+        {% if van_numbers == [] %}
             <p style="color:red;">The database is empty, consider adding a van.</p>
         {% endif %}
     <span id="mySpan">
