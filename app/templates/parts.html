@@ -7,7 +7,8 @@
             <p id="instructions">Enter the Part Name and Part Number: </p>
             <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^\w+( +\w+)*$" />
             <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^\w+( +\w+)*$" />
-            <select name="van" id="van">
+            <select name="van" id="van" required>
+                <option value="" disabled selected>Select Van</option>
             {% for row in van_nums %}
                 <option value="{{ row[1] }}">{{ row[1] }}</option>
             {% endfor %}
