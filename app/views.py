@@ -43,9 +43,8 @@ def login():
             if my_login:
                 session['logged_in'] = True
                 session['username'] = username
-                return render_template('index.html')
-            elif not my_login:
-                return render_template('login.html')
+            else:
+                return redirect(url_for('login'))
         if 'logged_in' not in session:
             return render_template('login.html')
         else:
