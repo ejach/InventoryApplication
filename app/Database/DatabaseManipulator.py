@@ -182,10 +182,11 @@ class DatabaseManipulator:
     # Login by username and password
     def login(self, username, password):
         hash_pw = self.get_password_by_username(username)
-        if not check_password_hash(password.encode('utf8'), hash_pw[0].encode('utf8')):
-            return False
-        else:
+        if check_password_hash(password.encode('utf8'), hash_pw[0].encode('utf8')) \
+                and self.check_if_account_exists(username):
             return True
+        else:
+            return False
 
     # Register by username, password, and conf_password
     def register(self, username, password, conf_password):
