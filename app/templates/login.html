@@ -8,8 +8,8 @@
     <input type="password" name="password" placeholder="Password" required pattern="^\w+( +\w+)*$" /><br />
     <input type="submit" value="Login"><br />
     <a href="/register" id="registerText">Click here to create an account</a>
-    {% if msg != None %}
-    <br />{{ msg }}
+    {% if error != None %}
+    <br /><p style="color: red;">{{ error }}</p>
     {% endif %}
 </form>
 {% endblock %}

@@ -12,7 +12,7 @@
         <div id="table">
             <table border="1" class="table">
             <th>Part Name</th><th>Part Number</th><th>Van</th><th>Action</th><br/>
-        {% if results == None %}
+        {% if not results %}
             <p style="color:red;">The database is empty, consider adding a part.</p>
         {% else %}
             {% for row in results %}
