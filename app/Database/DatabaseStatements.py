@@ -16,8 +16,6 @@ class DatabaseStatements:
         self.insert = 'INSERT INTO parts.parts (name, part_number, van_number) VALUES (%s, %s, %s)'
         self.delete = 'DELETE FROM parts.parts WHERE `id` = %s'
         self.update = 'UPDATE parts.parts set `name` = %s, `part_number` = %s, `van_number` = %s WHERE `id` = %s'
-        self.get_id_by_username = 'SELECT `id` FROM parts.accounts WHERE `username` = %s'
-        self.delete_account_by_id = 'DELETE FROM parts.accounts WHERE id = %s'
 
     def get_select_statement(self):
         return self.select
@@ -63,9 +61,3 @@ class DatabaseStatements:
 
     def get_password_by_username(self):
         return self.get_password_by_username
-
-    def get_get_id_by_username(self):
-        return self.get_id_by_username
-
-    def get_delete_account_by_id(self):
-        return self.delete_account_by_id
