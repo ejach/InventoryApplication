@@ -3,15 +3,28 @@ from string import ascii_letters, digits
 from unittest import TestCase, main
 from app.Database.DatabaseManipulator import DatabaseManipulator, check_password, \
     check_password_hash, create_password_hash
+from app.Database.TestDatabaseStatements import TestDatabaseStatements
 
 random_string = ''.join(choice(ascii_letters) for x in range(10))
 random_numbers = ''.join(choice(digits) for y in range(10))
 random_digit = ''.join(choice(digits) for z in range(1))
+
 dbm = DatabaseManipulator()
+tdbs = TestDatabaseStatements()
+
+
+# Get id by username, delete by ID
+def delete_account(username):
+    get_account = tdbs.get_get_id_by_username()
+    values = (username,)
+    dbm.cursor.execute(get_account, values)
+    account_res = dbm.cursor.fetchone()
+    delete_me = tdbs.get_delete_account_by_id()
+    dbm.cursor.execute(delete_me, account_res)
+    dbm.conn.commit()
 
 
 class TestLoginRegister(TestCase):
-
     # Test the check_password function
     def test_check_password(self):
         # Create random password
@@ -40,7 +53,7 @@ class TestLoginRegister(TestCase):
         self.assertTrue(dbm.check_if_account_exists(username))
         print('register() TRUE test -> PASSED' + '\n')
         # Delete when finished
-        dbm.delete_account(username)
+        delete_account(username)
         self.assertFalse(dbm.check_if_account_exists(username))
         print('register() test -> PASSED' + '\n')
 
@@ -58,7 +71,7 @@ class TestLoginRegister(TestCase):
         self.assertFalse(dbm.login(username, random_numbers))
         print('login() FALSE test -> PASSED' + '\n')
         # Delete when finished
-        dbm.delete_account(username)
+        delete_account(username)
         self.assertFalse(dbm.check_if_account_exists(username))
         print('login() test -> PASSED' + '\n')
 
