@@ -198,13 +198,3 @@ class DatabaseManipulator:
                 values = (username, hashed_pw,)
                 self.cursor.execute(stmt, values)
                 self.conn.commit()
-
-    # Get id by username, delete by ID
-    def delete_account(self, username):
-        get_account = self.stmt.get_get_id_by_username()
-        values = (username,)
-        self.cursor.execute(get_account, values)
-        account_res = self.cursor.fetchone()
-        delete_account = self.stmt.get_delete_account_by_id()
-        self.cursor.execute(delete_account, account_res)
-        self.conn.commit()
