@@ -3,12 +3,23 @@ from random import choice
 from string import ascii_letters, digits
 
 from app.Database.DatabaseManipulator import DatabaseManipulator, check_input
+from app.Database.TestDatabaseStatements import TestDatabaseStatements
 
 dbm = DatabaseManipulator()
+tdbs = TestDatabaseStatements()
 
 random_string = ''.join(choice(ascii_letters) for x in range(10))
 random_numbers = ''.join(choice(digits) for y in range(10))
 random_digit = ''.join(choice(digits) for z in range(1))
+
+
+# Get last id of entry that was inserted into the database
+def get_last_id():
+    get_id = tdbs.get_get_last_id()
+    dbm.cursor.execute(get_id)
+    id_res = dbm.cursor.fetchone()
+    final_res = (','.join(str(a) for a in id_res))
+    return str(final_res)
 
 
 class DBMUnitTest(TestCase):
@@ -35,7 +46,7 @@ class DBMUnitTest(TestCase):
         self.assertTrue(dbm.check_if_exists(van_name))
         print('insert_van() test -> PASSED' + '\n')
         # Get the lastrowid and delete it from the database
-        van_id = dbm.cursor.getlastrowid()
+        van_id = get_last_id()
         dbm.delete_van(van_id)
         # Assert that check_if_exists will return False since it is now deleted
         self.assertFalse(dbm.check_if_exists(van_name))
@@ -48,7 +59,7 @@ class DBMUnitTest(TestCase):
         # Insert it into the database
         dbm.insert_van(van_name)
         # Delete the van from the database after getting the lastrowid
-        van_id = dbm.cursor.getlastrowid()
+        van_id = get_last_id()
         dbm.delete_van(van_id)
         # Check if it exists in the database after deleting
         self.assertFalse(dbm.check_if_exists(van_name))
@@ -63,7 +74,7 @@ class DBMUnitTest(TestCase):
         # Insert it into the database
         dbm.insert_van(van_name)
         # Get the row id after inserting
-        van_id = dbm.cursor.getlastrowid()
+        van_id = get_last_id()
         # Update it to a new van name
         dbm.update_van(van_id, new_van_name)
         # Check if the van exists
@@ -84,7 +95,7 @@ class DBMUnitTest(TestCase):
         self.assertFalse(dbm.check_duplicates(van_name))
         print('check_duplicates() duplicate van FALSE test -> PASSED' + '\n')
         # Get the lastrowid and delete it
-        van_id = dbm.cursor.getlastrowid()
+        van_id = get_last_id()
         dbm.delete_van(van_id)
         # Since it is now deleted, check if check_duplicates will return True
         self.assertTrue(dbm.check_duplicates(van_name))
