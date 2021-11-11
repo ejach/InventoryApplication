@@ -13,11 +13,10 @@ dbm = DatabaseManipulator()
 tdbs = TestDatabaseStatements()
 
 
-# Get id by username, delete by ID
-def delete_account(username):
-    get_account = tdbs.get_get_id_by_username()
-    values = (username,)
-    dbm.cursor.execute(get_account, values)
+# Delete account by ID using get_last_id()
+def delete_account():
+    get_account = tdbs.get_get_last_id()
+    dbm.cursor.execute(get_account)
     account_res = dbm.cursor.fetchone()
     delete_me = tdbs.get_delete_account_by_id()
     dbm.cursor.execute(delete_me, account_res)
@@ -53,7 +52,7 @@ class TestLoginRegister(TestCase):
         self.assertTrue(dbm.check_if_account_exists(username))
         print('register() TRUE test -> PASSED' + '\n')
         # Delete when finished
-        delete_account(username)
+        delete_account()
         self.assertFalse(dbm.check_if_account_exists(username))
         print('register() test -> PASSED' + '\n')
 
@@ -71,7 +70,7 @@ class TestLoginRegister(TestCase):
         self.assertFalse(dbm.login(username, random_numbers))
         print('login() FALSE test -> PASSED' + '\n')
         # Delete when finished
-        delete_account(username)
+        delete_account()
         self.assertFalse(dbm.check_if_account_exists(username))
         print('login() test -> PASSED' + '\n')
 
