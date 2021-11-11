@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.secret_key = environ.get('SECRET_KEY')
 
 # Only trigger SSLify if the app is running on Heroku
-if 'DYNO' in environ:
+if environ.get('DYNO') == 'TRUE':
     SSLify(app)
 
 # Instantiate the DatabaseManipulator

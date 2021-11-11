@@ -1,6 +1,6 @@
 from os import environ
 
-from mysql.connector import connect, Error
+from pymysql import connect, Error
 
 
 class DatabaseConnector:
@@ -37,7 +37,7 @@ class DatabaseConnector:
     # Test if the connection is successful; print errors if it was not
     def get_conn(self):
         try:
-            if self.conn.is_connected():
+            if self.conn.open:
                 return self.conn
         except Error as e:
             print(e)
