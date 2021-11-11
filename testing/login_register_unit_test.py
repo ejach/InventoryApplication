@@ -13,7 +13,7 @@ dbm = DatabaseManipulator()
 tdbs = TestDatabaseStatements()
 
 
-# Get id by username, delete by ID
+# Delete account by ID using get_last_id()
 def delete_account():
     get_account = tdbs.get_get_last_id()
     dbm.cursor.execute(get_account)
