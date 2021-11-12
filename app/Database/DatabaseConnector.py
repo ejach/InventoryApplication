@@ -34,6 +34,9 @@ class DatabaseConnector:
     def get_webui_host(self):
         return self.webui_host
 
+    def get_db(self):
+        return self.db
+
     # Test if the connection is successful; print errors if it was not
     def get_conn(self):
         try:
