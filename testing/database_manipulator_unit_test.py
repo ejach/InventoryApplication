@@ -1,13 +1,15 @@
-from time import time
-from unittest import TestCase, main
 from random import choice
 from string import ascii_letters, digits
+from time import time
+from unittest import TestCase, main
 
 from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, create_password_hash, check_password, \
     check_password_hash
 from app.Database.TestDatabaseStatements import TestDatabaseStatements
+from app.Database.DatabaseConnector import DatabaseConnector
 
 dbm = DatabaseManipulator()
+dbc = DatabaseConnector()
 tdbs = TestDatabaseStatements()
 
 random_string = ''.join(choice(ascii_letters) for x in range(10))
@@ -53,6 +55,18 @@ def check_if_part_exist(part_name, part_number, van_number):
 
 
 class DBMUnitTest(TestCase):
+    def setUp(self) -> None:
+        print('***SETUP***')
+        # If the connection is not open, open it
+        if not dbc.conn.open:
+            dbc.conn.connect()
+
+    def tearDown(self) -> None:
+        print('***TEARDOWN***')
+        # If the connection is open, close it
+        if dbc.conn.open:
+            dbc.conn.close()
+
     # Checks the different functions that interact with the parts database
     def test_parts(self):
         part_name = random_string + random_time_string
@@ -139,6 +153,9 @@ class DBMUnitTest(TestCase):
         dbm.update_van(van_id, new_van_name)
         # Check if the van exists
         self.assertTrue(dbm.check_if_exists(new_van_name))
+        dbm.update_van(van_id, '')
+        self.assertRaises(TypeError)
+        print('update_van() TypeError test -> PASSED' + '\n')
         # When finished, delete the van from the database
         dbm.delete_van(van_id)
         # Make sure this operation was successful
