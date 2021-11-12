@@ -1,11 +1,10 @@
 from app.Database.DatabaseConnector import DatabaseConnector
 
-dbc = DatabaseConnector()
-
 
 class DatabaseStatements:
     def __init__(self):
-        self.db = dbc.get_db()
+        self.dbc = DatabaseConnector()
+        self.db = self.dbc.get_db()
         self.select = f'SELECT * FROM {self.db}.parts'
         self.select_vans = f'SELECT * FROM {self.db}.parts WHERE `van_number` = %s'
         self.select_vans_order = f'SELECT * FROM {self.db}.vans ORDER BY `van_number`'
