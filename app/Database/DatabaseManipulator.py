@@ -43,7 +43,7 @@ class DatabaseManipulator:
         self.conn = self.db.get_conn()
         self.stmt = DatabaseStatements()
 
-    # Get all entries from database
+    # Get all parts entries from database
     def fetchall(self):
         stmt = self.stmt.get_select_statement()
         self.cursor.execute(stmt)
