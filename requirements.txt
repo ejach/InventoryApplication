@@ -8,3 +8,4 @@ Werkzeug~=2.0.2
 bcrypt~=3.2.0
 Flask-SSLify~=0.1.5
 PyMySQL~=1.0.2
+SQLAlchemy~=1.4.27
