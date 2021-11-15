@@ -1,6 +1,7 @@
 from os import environ
 
 from pymysql import connect, Error
+from sqlalchemy import create_engine
 
 
 class DatabaseConnector:
@@ -14,6 +15,9 @@ class DatabaseConnector:
         self.db = environ.get('db')
         self.conn = connect(host=self.host, user=self.user, password=self.password, database=self.db,
                             port=self.db_port, autocommit=True)
+        self.engine = create_engine(f'mysql+pymysql://{self.user}:{self.password}@'
+                                    f'{self.host}:{environ.get("db_port")}/{self.db}', pool_recycle=3600,
+                                    pool_size=5, max_overflow=10, isolation_level='AUTOCOMMIT')
         self.cursor = self.conn.cursor()
 
     def get_host(self):
@@ -38,8 +42,6 @@ class DatabaseConnector:
     def get_conn(self):
         try:
             if self.conn.open:
-                return self.conn
-            elif not self.conn.open:
-                self.conn.ping(reconnect=True)
+                return self.engine
         except Error as e:
             print(e)
