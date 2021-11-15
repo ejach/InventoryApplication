@@ -39,7 +39,6 @@ def delete_account():
     account_res = dbm.cursor.fetchone()
     delete_me = tdbs.get_delete_account_by_id()
     dbm.cursor.execute(delete_me, account_res)
-    dbm.conn.commit()
 
 
 # Check if part exists
@@ -58,6 +57,7 @@ class DBMUnitTest(TestCase):
     def setUp(self) -> None:
         print('***SETUP***')
         # If the connection is not open, open it
+        print(dbc.conn.open)
         if not dbc.conn.open:
             dbc.conn.connect()
 
@@ -65,7 +65,7 @@ class DBMUnitTest(TestCase):
         print('***TEARDOWN***')
         # If the connection is open, close it
         if dbc.conn.open:
-            dbc.conn.close()
+            dbc.engine.dispose()
 
     # Checks the different functions that interact with the parts database
     def test_parts(self):
