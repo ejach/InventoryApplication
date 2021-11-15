@@ -109,7 +109,6 @@ class DatabaseManipulator:
                 stmt = self.stmt.get_insert_van()
                 val = (van_number,)
                 self.cursor.execute(stmt, val)
-                self.conn.commit()
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, row not inserted')
 
@@ -138,9 +137,8 @@ class DatabaseManipulator:
         try:
             stmt = self.stmt.get_insert_statement()
             values = (part_name, part_number, van_number)
-            self.cursor.execute(stmt, values)
             if check_input(part_name) and check_input(part_number) and check_input(van_number):
-                self.conn.commit()
+                self.cursor.execute(stmt, values)
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, row not inserted')
 
@@ -148,16 +146,14 @@ class DatabaseManipulator:
     def delete(self, row_id):
         stmt = self.stmt.get_delete_statement()
         self.cursor.execute(stmt, (int(row_id),))
-        self.conn.commit()
 
     # Update entries from database by ID
     def update(self, row_id, part_name, part_number, van_number):
         try:
             stmt = self.stmt.get_update_statement()
             values = (part_name, part_number, van_number, int(row_id))
-            self.cursor.execute(stmt, values)
             if check_input(part_name) and check_input(part_number) and check_input(van_number):
-                self.conn.commit()
+                self.cursor.execute(stmt, values)
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, database not manipulated')
 
@@ -165,7 +161,6 @@ class DatabaseManipulator:
     def delete_van(self, van_id):
         stmt = self.stmt.get_delete_van()
         self.cursor.execute(stmt, (int(van_id),))
-        self.conn.commit()
 
     # Update van by van_id
     def update_van(self, van_id, van_number):
@@ -175,7 +170,6 @@ class DatabaseManipulator:
                 stmt = self.stmt.get_update_van()
                 values = (van_number, int(van_id),)
                 self.cursor.execute(stmt, values)
-                self.conn.commit()
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, database not manipulated')
 
@@ -197,4 +191,3 @@ class DatabaseManipulator:
             if check_password_hash(password.encode('utf-8'), hashed_pw):
                 values = (username, hashed_pw,)
                 self.cursor.execute(stmt, values)
-                self.conn.commit()
