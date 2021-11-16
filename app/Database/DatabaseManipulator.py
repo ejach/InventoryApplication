@@ -1,5 +1,4 @@
 from bcrypt import gensalt, hashpw, checkpw
-from sqlalchemy import exc
 
 from app.Database.DatabaseConnector import DatabaseConnector
 from app.Database.DatabaseStatements import DatabaseStatements
