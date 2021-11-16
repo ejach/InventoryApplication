@@ -1,4 +1,5 @@
 from bcrypt import gensalt, hashpw, checkpw
+from pymysql import Error
 
 from app.Database.DatabaseConnector import DatabaseConnector
 from app.Database.DatabaseStatements import DatabaseStatements
@@ -51,7 +52,7 @@ class DatabaseManipulator:
             self.cursor.execute(stmt)
             results = self.cursor.fetchall()
             return results
-        except exc.DisconnectionError as e:
+        except Error as e:
             print(e)
         finally:
             if self.conn is not None:
@@ -69,7 +70,7 @@ class DatabaseManipulator:
                 return False
             else:
                 return True
-        except exc.DisconnectionError as e:
+        except Error as e:
             print(e)
         finally:
             if self.conn is not None:
@@ -85,7 +86,7 @@ class DatabaseManipulator:
             username_res = self.cursor.fetchall()
             fin_res = [i[2] for i in username_res]
             return fin_res
-        except exc.DisconnectionError as e:
+        except Error as e:
             print(e)
         finally:
             if self.conn is not None:
@@ -103,7 +104,7 @@ class DatabaseManipulator:
                 return False
             else:
                 return True
-        except exc.DisconnectionError as e:
+        except Error as e:
             print(e)
         finally:
             if self.conn is not None:
@@ -130,7 +131,7 @@ class DatabaseManipulator:
                 return True
             else:
                 return False
-        except exc.DisconnectionError as e:
+        except Error as e:
             print(e)
         finally:
             if self.conn is not None:
@@ -147,6 +148,8 @@ class DatabaseManipulator:
                 self.cursor.execute(stmt, val)
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, row not inserted')
+        except Error as e:
+            print(e)
         finally:
             if self.conn is not None:
                 self.conn.close()
@@ -165,7 +168,7 @@ class DatabaseManipulator:
             # Else, return the following
             else:
                 return results
-        except exc.DisconnectionError as e:
+        except Error as e:
             print(e)
         finally:
             if self.conn is not None:
@@ -179,7 +182,7 @@ class DatabaseManipulator:
             self.cursor.execute(stmt)
             results = self.cursor.fetchall()
             return results
-        except exc.DisconnectionError as e:
+        except Error as e:
             print(e)
         finally:
             if self.conn is not None:
@@ -195,8 +198,8 @@ class DatabaseManipulator:
                 self.cursor.execute(stmt, values)
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, row not inserted')
-        except exc.DisconnectionError as err:
-            print(err)
+        except Error as e:
+            print(e)
         finally:
             if self.conn is not None:
                 self.conn.close()
@@ -207,7 +210,7 @@ class DatabaseManipulator:
             self.conn.connect()
             stmt = self.stmt.get_delete_statement()
             self.cursor.execute(stmt, (int(row_id),))
-        except exc.DisconnectionError as e:
+        except Error as e:
             print(e)
         finally:
             if self.conn is not None:
@@ -223,7 +226,7 @@ class DatabaseManipulator:
                 self.cursor.execute(stmt, values)
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, database not manipulated')
-        except exc.DisconnectionError as e:
+        except Error as e:
             print(e)
         finally:
             if self.conn is not None:
@@ -235,7 +238,7 @@ class DatabaseManipulator:
             self.conn.ping()
             stmt = self.stmt.get_delete_van()
             self.cursor.execute(stmt, (int(van_id),))
-        except exc.DisconnectionError as e:
+        except Error as e:
             print(e)
         finally:
             if self.conn is not None:
@@ -252,7 +255,7 @@ class DatabaseManipulator:
                 self.cursor.execute(stmt, values)
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, database not manipulated')
-        except exc.DisconnectionError as e:
+        except Error as e:
             print(e)
         finally:
             if self.conn is not None:
@@ -268,7 +271,7 @@ class DatabaseManipulator:
                 return True
             else:
                 return False
-        except exc.DisconnectionError as e:
+        except Error as e:
             print(e)
         finally:
             if self.conn is not None:
@@ -285,7 +288,7 @@ class DatabaseManipulator:
                 if check_password_hash(password.encode('utf-8'), hashed_pw):
                     values = (username, hashed_pw,)
                     self.cursor.execute(stmt, values)
-        except exc.DisconnectionError as e:
+        except Error as e:
             print(e)
         finally:
             if self.conn is not None:
