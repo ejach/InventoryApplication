@@ -40,6 +40,7 @@ class DatabaseConnector:
     def get_conn(self):
         try:
             if self.conn.open:
+                self.engine.connect()
                 return self.engine
         except exc.DisconnectionError as e:
             print(e)
