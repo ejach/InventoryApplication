@@ -51,12 +51,10 @@ class DatabaseManipulator:
             stmt = self.stmt.get_select_statement()
             self.cursor.execute(stmt)
             results = self.cursor.fetchall()
+            self.conn.close()
             return results
         except Error as e:
-            print(e)
-        finally:
-            if self.conn is not None:
-                self.conn.close()
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
 
     # Checks to see if the van_number exists in the database already
     def check_duplicates(self, van_number):
@@ -71,7 +69,7 @@ class DatabaseManipulator:
             else:
                 return True
         except Error as e:
-            print(e)
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
         finally:
             if self.conn is not None:
                 self.conn.close()
@@ -87,7 +85,7 @@ class DatabaseManipulator:
             fin_res = [i[2] for i in username_res]
             return fin_res
         except Error as e:
-            print(e)
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
         finally:
             if self.conn is not None:
                 self.conn.close()
@@ -105,7 +103,7 @@ class DatabaseManipulator:
             else:
                 return True
         except Error as e:
-            print(e)
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
         finally:
             if self.conn is not None:
                 self.conn.close()
@@ -132,7 +130,7 @@ class DatabaseManipulator:
             else:
                 return False
         except Error as e:
-            print(e)
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
         finally:
             if self.conn is not None:
                 self.conn.close()
@@ -140,16 +138,16 @@ class DatabaseManipulator:
     # Insert van into the database
     def insert_van(self, van_number):
         try:
-            self.conn.ping()
             # If the input is valid and the check_duplicates is valid, commit to DB
             if self.check_duplicates(van_number) and check_input(van_number):
+                self.conn.ping()
                 stmt = self.stmt.get_insert_van()
                 val = (van_number,)
                 self.cursor.execute(stmt, val)
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, row not inserted')
         except Error as e:
-            print(e)
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
         finally:
             if self.conn is not None:
                 self.conn.close()
@@ -169,24 +167,22 @@ class DatabaseManipulator:
             else:
                 return results
         except Error as e:
-            print(e)
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
         finally:
             if self.conn is not None:
                 self.conn.close()
 
     # Get list of van numbers that exist in the database
     def get_van_nums(self):
+        self.conn.ping()
         try:
-            self.conn.ping()
             stmt = self.stmt.get_select_vans_order_statement()
             self.cursor.execute(stmt)
             results = self.cursor.fetchall()
+            self.conn.close()
             return results
         except Error as e:
-            print(e)
-        finally:
-            if self.conn is not None:
-                self.conn.close()
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
 
     # Insert entries into database
     def insert(self, part_name, part_number, van_number):
@@ -199,7 +195,7 @@ class DatabaseManipulator:
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, row not inserted')
         except Error as e:
-            print(e)
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
         finally:
             if self.conn is not None:
                 self.conn.close()
@@ -211,7 +207,7 @@ class DatabaseManipulator:
             stmt = self.stmt.get_delete_statement()
             self.cursor.execute(stmt, (int(row_id),))
         except Error as e:
-            print(e)
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
         finally:
             if self.conn is not None:
                 self.conn.close()
@@ -227,7 +223,7 @@ class DatabaseManipulator:
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, database not manipulated')
         except Error as e:
-            print(e)
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
         finally:
             if self.conn is not None:
                 self.conn.close()
@@ -239,7 +235,7 @@ class DatabaseManipulator:
             stmt = self.stmt.get_delete_van()
             self.cursor.execute(stmt, (int(van_id),))
         except Error as e:
-            print(e)
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
         finally:
             if self.conn is not None:
                 self.conn.close()
@@ -256,7 +252,7 @@ class DatabaseManipulator:
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, database not manipulated')
         except Error as e:
-            print(e)
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
         finally:
             if self.conn is not None:
                 self.conn.close()
@@ -264,7 +260,6 @@ class DatabaseManipulator:
     # Login by username and password
     def login(self, username, password):
         try:
-            self.conn.ping()
             hash_pw = self.get_password_by_username(username)
             if check_password_hash(password.encode('utf8'), hash_pw[0].encode('utf8')) \
                     and self.check_if_account_exists(username):
@@ -272,24 +267,19 @@ class DatabaseManipulator:
             else:
                 return False
         except Error as e:
-            print(e)
-        finally:
-            if self.conn is not None:
-                self.conn.close()
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
 
     # Register by username, password, and conf_password
     def register(self, username, password, conf_password):
         try:
-            self.conn.ping()
             stmt = self.stmt.get_register()
             if check_password(password, conf_password) and check_input(password) and check_input(conf_password) \
                     and not self.check_if_account_exists(username):
                 hashed_pw = create_password_hash(password.encode('utf-8'))
                 if check_password_hash(password.encode('utf-8'), hashed_pw):
+                    self.conn.ping()
                     values = (username, hashed_pw,)
                     self.cursor.execute(stmt, values)
+                    self.conn.close()
         except Error as e:
-            print(e)
-        finally:
-            if self.conn is not None:
-                self.conn.close()
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')

@@ -13,7 +13,7 @@ class DatabaseConnector:
         self.webui_host = environ.get('webui_host')
         self.db = environ.get('db')
         self.conn = connect(host=self.host, user=self.user, password=self.password, database=self.db,
-                            port=self.db_port)
+                            port=self.db_port, autocommit=True)
         self.cursor = self.conn.cursor()
 
     def get_host(self):
