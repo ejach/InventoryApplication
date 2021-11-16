@@ -47,7 +47,7 @@ class DatabaseManipulator:
     # Get all parts entries from database
     def fetchall(self):
         try:
-            self.db.engine.connect()
+            self.conn.ping()
             stmt = self.stmt.get_select_statement()
             self.cursor.execute(stmt)
             results = self.cursor.fetchall()
@@ -55,12 +55,13 @@ class DatabaseManipulator:
         except exc.DisconnectionError as e:
             print(e)
         finally:
-            self.db.engine.dispose()
+            if self.conn is not None:
+                self.conn.close()
 
     # Checks to see if the van_number exists in the database already
     def check_duplicates(self, van_number):
         try:
-            self.db.engine.connect()
+            self.conn.ping()
             stmt = self.stmt.get_vans_dupes()
             self.cursor.execute(stmt)
             results = self.cursor.fetchall()
@@ -72,12 +73,13 @@ class DatabaseManipulator:
         except exc.DisconnectionError as e:
             print(e)
         finally:
-            self.db.engine.dispose()
+            if self.conn is not None:
+                self.conn.close()
 
     # Get password by username
     def get_password_by_username(self, username):
         try:
-            self.db.engine.connect()
+            self.conn.ping()
             stmt = self.stmt.get_check_if_username_exists()
             values = (username,)
             self.cursor.execute(stmt, values)
@@ -87,12 +89,13 @@ class DatabaseManipulator:
         except exc.DisconnectionError as e:
             print(e)
         finally:
-            self.db.engine.dispose()
+            if self.conn is not None:
+                self.conn.close()
 
     # Check if account exists in the database
     def check_if_account_exists(self, username):
         try:
-            self.db.engine.connect()
+            self.conn.ping()
             stmt = self.stmt.get_check_if_username_exists()
             values = (username,)
             self.cursor.execute(stmt, values)
@@ -104,12 +107,13 @@ class DatabaseManipulator:
         except exc.DisconnectionError as e:
             print(e)
         finally:
-            self.db.engine.dispose()
+            if self.conn is not None:
+                self.conn.close()
 
     # Check if the van exists and has a part within it from either the parts or vans DB
     def check_if_exists(self, van_number):
         try:
-            self.db.engine.connect()
+            self.conn.ping()
             # Use the distinct select statement in the parts DB
             get_vans_dist = self.stmt.get_select_vans_distinct()
             self.cursor.execute(get_vans_dist)
@@ -130,12 +134,13 @@ class DatabaseManipulator:
         except exc.DisconnectionError as e:
             print(e)
         finally:
-            self.db.engine.dispose()
+            if self.conn is not None:
+                self.conn.close()
 
     # Insert van into the database
     def insert_van(self, van_number):
         try:
-            self.db.engine.connect()
+            self.conn.ping()
             # If the input is valid and the check_duplicates is valid, commit to DB
             if self.check_duplicates(van_number) and check_input(van_number):
                 stmt = self.stmt.get_insert_van()
@@ -144,12 +149,13 @@ class DatabaseManipulator:
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, row not inserted')
         finally:
-            self.db.engine.dispose()
+            if self.conn is not None:
+                self.conn.close()
 
     # Get all vans by van number
     def get_vans(self, van_number):
         try:
-            self.db.engine.connect()
+            self.conn.ping()
             stmt = self.stmt.get_select_vans_statement()
             val = (van_number,)
             self.cursor.execute(stmt, val)
@@ -163,12 +169,13 @@ class DatabaseManipulator:
         except exc.DisconnectionError as e:
             print(e)
         finally:
-            self.db.engine.dispose()
+            if self.conn is not None:
+                self.conn.close()
 
     # Get list of van numbers that exist in the database
     def get_van_nums(self):
         try:
-            self.db.engine.connect()
+            self.conn.ping()
             stmt = self.stmt.get_select_vans_order_statement()
             self.cursor.execute(stmt)
             results = self.cursor.fetchall()
@@ -176,12 +183,13 @@ class DatabaseManipulator:
         except exc.DisconnectionError as e:
             print(e)
         finally:
-            self.db.engine.dispose()
+            if self.conn is not None:
+                self.conn.close()
 
     # Insert entries into database
     def insert(self, part_name, part_number, van_number):
         try:
-            self.db.engine.connect()
+            self.conn.ping()
             stmt = self.stmt.get_insert_statement()
             values = (part_name, part_number, van_number)
             if check_input(part_name) and check_input(part_number) and check_input(van_number):
@@ -191,23 +199,25 @@ class DatabaseManipulator:
         except exc.DisconnectionError as err:
             print(err)
         finally:
-            self.db.engine.dispose()
+            if self.conn is not None:
+                self.conn.close()
 
     # Delete entries from database by ID
     def delete(self, row_id):
         try:
-            self.db.engine.connect()
+            self.conn.connect()
             stmt = self.stmt.get_delete_statement()
             self.cursor.execute(stmt, (int(row_id),))
         except exc.DisconnectionError as e:
             print(e)
         finally:
-            self.db.engine.dispose()
+            if self.conn is not None:
+                self.conn.close()
 
     # Update entries from database by ID
     def update(self, row_id, part_name, part_number, van_number):
         try:
-            self.db.engine.connect()
+            self.conn.ping()
             stmt = self.stmt.get_update_statement()
             values = (part_name, part_number, van_number, int(row_id))
             if check_input(part_name) and check_input(part_number) and check_input(van_number):
@@ -217,23 +227,25 @@ class DatabaseManipulator:
         except exc.DisconnectionError as e:
             print(e)
         finally:
-            self.db.engine.dispose()
+            if self.conn is not None:
+                self.conn.close()
 
     # Delete van by van_id
     def delete_van(self, van_id):
         try:
-            self.db.engine.connect()
+            self.conn.ping()
             stmt = self.stmt.get_delete_van()
             self.cursor.execute(stmt, (int(van_id),))
         except exc.DisconnectionError as e:
             print(e)
         finally:
-            self.db.engine.dispose()
+            if self.conn is not None:
+                self.conn.close()
 
     # Update van by van_id
     def update_van(self, van_id, van_number):
         try:
-            self.db.engine.connect()
+            self.conn.ping()
             # Check for duplicates and validate input
             if check_input(van_number) and self.check_duplicates(van_number):
                 stmt = self.stmt.get_update_van()
@@ -244,12 +256,13 @@ class DatabaseManipulator:
         except exc.DisconnectionError as e:
             print(e)
         finally:
-            self.db.engine.dispose()
+            if self.conn is not None:
+                self.conn.close()
 
     # Login by username and password
     def login(self, username, password):
         try:
-            self.db.engine.connect()
+            self.conn.ping()
             hash_pw = self.get_password_by_username(username)
             if check_password_hash(password.encode('utf8'), hash_pw[0].encode('utf8')) \
                     and self.check_if_account_exists(username):
@@ -259,12 +272,13 @@ class DatabaseManipulator:
         except exc.DisconnectionError as e:
             print(e)
         finally:
-            self.db.engine.dispose()
+            if self.conn is not None:
+                self.conn.close()
 
     # Register by username, password, and conf_password
     def register(self, username, password, conf_password):
         try:
-            self.db.engine.connect()
+            self.conn.ping()
             stmt = self.stmt.get_register()
             if check_password(password, conf_password) and check_input(password) and check_input(conf_password) \
                     and not self.check_if_account_exists(username):
@@ -275,4 +289,5 @@ class DatabaseManipulator:
         except exc.DisconnectionError as e:
             print(e)
         finally:
-            self.db.engine.dispose()
+            if self.conn is not None:
+                self.conn.close()
