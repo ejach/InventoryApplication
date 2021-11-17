@@ -34,8 +34,8 @@ db_port=3306
 db_schema=parts
 # A string of text or characters used in the Flask sessions module
 SECRET_KEY=YOURKEY
-# Only use/uncomment if you are planning on deploying to Heroku
-# DYNO=TRUE
+# Only use/uncomment if you are planning on deploying to Heroku; Default is False
+DYNO=FALSE
 ```
 5. Install the requirements `$ pip install -r requirements.txt`
 
