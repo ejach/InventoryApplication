@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block scripts %}
-    <script src= "{{ url_for('static', filename='js/register.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/register.js') }}"></script>
 {% endblock %}
 {% block content %}
 <form id="registerForm">
-    <input type="text" id="username" name="username" placeholder="Username" pattern="^\w+( +\w+)*$" required /><br/>
-    <input type="password" id="password" name="password" placeholder="Password" pattern="^\w+( +\w+)*$" required /><br/>
-    <input type="password" id="confPassword" name="confPassword" placeholder="Confirm Password" pattern="^\w+( +\w+)*$" required /><br/>
-    <input type="submit" id="registerBtn" value="Register" /><br/>
-    <a href="/login" id="registerText">Already have an account? Click here to Login</a><br/>
-    <br/><p id="error" style="color: red;"></p>
+  <input type="text" id="username" name="username" placeholder="Username" pattern="^\w+( +\w+)*$" required /><br/>
+  <input type="password" id="password" name="password" placeholder="Password" pattern="^\w+( +\w+)*$" required /><br/>
+  <input type="password" id="confPassword" name="confPassword" placeholder="Confirm Password" pattern="^\w+( +\w+)*$" required /><br/>
+  <input type="submit" id="registerBtn" value="Register" /><br/>
+  <a href="/login" id="registerText">Already have an account? Click here to Login</a><br/>
+  <br/><p id="error" style="color: red;"></p>
 </form>
 {% endblock %}
