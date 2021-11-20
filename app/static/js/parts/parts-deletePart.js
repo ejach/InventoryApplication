@@ -2,7 +2,7 @@
     // Path to obtain the van table
     const getPath = '/table/main/all';
     // On submit, execute the following
-    $('.deleteBtn').click(function () {
+    $(document).on('click', '.deleteBtn', function () {
     if (window.confirm('Are you sure you want to delete?')) {
         let id = this.dataset.value;
         // Parameters to be sent in the request
