@@ -122,6 +122,7 @@ class DatabaseManipulator:
             get_duplicates = self.stmt.get_vans_dupes()
             self.cursor.execute(get_duplicates)
             dupe_results = self.cursor.fetchall()
+            self.conn.close()
             # List the results in an array
             fin_dupes = [i[0] for i in dupe_results]
             # If the van_number exists in either database, return True; otherwise return False
@@ -131,9 +132,6 @@ class DatabaseManipulator:
                 return False
         except Error as e:
             print(str(e) + '\n' + 'Lost connection to the MySQL server.')
-        finally:
-            if self.conn is not None:
-                self.conn.close()
 
     # Insert van into the database
     def insert_van(self, van_number):
@@ -144,13 +142,11 @@ class DatabaseManipulator:
                 stmt = self.stmt.get_insert_van()
                 val = (van_number,)
                 self.cursor.execute(stmt, val)
+                self.conn.close()
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, row not inserted')
         except Error as e:
             print(str(e) + '\n' + 'Lost connection to the MySQL server.')
-        finally:
-            if self.conn is not None:
-                self.conn.close()
 
     # Get all vans by van number
     def get_vans(self, van_number):
@@ -243,9 +239,9 @@ class DatabaseManipulator:
     # Update van by van_id
     def update_van(self, van_id, van_number):
         try:
-            self.conn.ping()
             # Check for duplicates and validate input
             if check_input(van_number) and self.check_duplicates(van_number):
+                self.conn.ping()
                 stmt = self.stmt.get_update_van()
                 values = (van_number, int(van_id),)
                 self.cursor.execute(stmt, values)
@@ -280,6 +276,8 @@ class DatabaseManipulator:
                     self.conn.ping()
                     values = (username, hashed_pw,)
                     self.cursor.execute(stmt, values)
-                    self.conn.close()
         except Error as e:
             print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+        finally:
+            if self.conn is not None:
+                self.conn.close()

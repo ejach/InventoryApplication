@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block scripts %}
-<script src= "{{ url_for('static', filename='js/deleteVan.js') }}"></script>
-<script src= "{{ url_for('static', filename='js/updateVan.js') }}"></script>
+    <script src= "{{ url_for('static', filename='js/van/van-deleteVan.js') }}"></script>
+    <script src= "{{ url_for('static', filename='js/van/van-updateVan.js') }}"></script>
+    <script src= "{{ url_for('static', filename='js/van/van-addVan.js') }}"></script>
+    <script src= "{{ url_for('static', filename='js/van/van-button-animation.js') }}"></script>
 {% endblock %}
 {% block content %}
     {#    If the van_numbers is empty, throw the following error    #}
@@ -13,18 +15,14 @@
         <a href="/vans/{{ row[1] }}" id="link"><img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
                                     width="100px" height="100px" /><p id="paragraph">{{ row[1] }}</p></a>
                                 <form>
-                                    <input type="button" id="deleteMe" value="Delete" onclick="deleteVan({{ row[0] }})">
-                                    <input type="button" id="updateMe" value="Edit" onclick="updateVan({{ row[0] }})">
+                                    <input type="button" id="deleteMe" class="deleteMe" value="Delete" data-value="{{ row[0] }}">
+                                    <input type="button" id="updateMe" class="updateMe" value="Edit" data-value="{{ row[0] }}">
                                 </form>
         {% endfor %}
     </span>
-        <script src= "{{ url_for('static', filename='js/addVan.js') }}"></script>
-        {#  JS Package for JQUERY  #}
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src= "{{ url_for('static', filename='js/van-button-animation.js') }}"></script>
         <span id="addVan">
         <img id="myCard" src="{{ url_for('static', filename='assets/add-button.svg') }}" width="100px" height="100px" />
         </span><p id="paragraph">Add Van</p><form style="display: none;" id="formElement">
         <input type="text" placeholder="Van Number" name="van_number" required>
-        <input type="submit" value="Add Van"></form>
+        <input id="btnSubmit" type="submit" value="Add Van"></form>
 {% endblock %}
