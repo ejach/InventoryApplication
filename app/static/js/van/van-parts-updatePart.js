@@ -4,7 +4,7 @@ $(document).ready(function(){
   // Gets the number of the current van selected by the end of the pathname
   const vanNum = currentURL.split("/")[2];
   // On click, execute the following
-  $('#table').on('click', '.updateMe', function(){
+  $(document).on('click', '.updateMe', function(){
     // ID to be updated
     let id = this.dataset.value;
     let text;

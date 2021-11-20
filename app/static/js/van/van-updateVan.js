@@ -2,7 +2,7 @@ $(document).ready(function(){
   // Path to update van list
   const getPath = '/table/vans_list/all';
   // On click, execute the following
-  $('.main').on('click', '.updateMe', function(){
+  $(document).on('click', '.updateMe', function(){
     let text;
     // ID to be updated
     let id = this.dataset.value;

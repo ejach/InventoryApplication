@@ -1,7 +1,7 @@
  $(document).ready(function() {
     const getPath = '/table' + window.location.pathname;
     // On submit, execute the following
-    $('.deleteMe').click(function () {
+    $(document).on('click', '.deleteMe', function () {
     if (window.confirm('Are you sure you want to delete?')) {
         let id = this.dataset.value;
         // Parameters to be sent in the request
