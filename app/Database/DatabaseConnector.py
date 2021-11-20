@@ -36,10 +36,9 @@ class DatabaseConnector:
 
     # Test if the connection is successful; print errors if it was not
     def get_conn(self):
-        try:
-            if self.conn.open:
-                return self.conn
-        except Error as e:
-            print(e)
-        finally:
-            self.conn.close()
+        with self.conn as connection:
+            try:
+                if connection.open:
+                    return connection
+            except Error as e:
+                print(e)
