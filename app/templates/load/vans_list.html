@@ -3,8 +3,8 @@
         <a href="/vans/{{ row[1] }}" id="link"><img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
                                     width="100px" height="100px" /><p id="paragraph">{{ row[1] }}</p></a>
                                 <form>
-                                    <input type="button" id="deleteMe" value="Delete" data-value="{{ row[0] }}">
-                                    <input type="button" id="updateMe" value="Edit" data-value="{{ row[0] }}">
+                                    <input type="button" id="deleteMe" class="deleteMe" value="Delete" data-value="{{ row[0] }}">
+                                    <input type="button" id="updateMe" class="updateMe" value="Edit" data-value="{{ row[0] }}">
                                 </form>
         {% endfor %}
 </span>

@@ -1,6 +1,6 @@
 $(document).ready(function(){
     const getPath = '/table/vans_list/all';
-  $('.main').on('click', '.deleteMe', function(){
+  $(document).on('click', '.deleteMe', function(){
       if (window.confirm('Are you sure you want to delete?')) {
           let id = this.dataset.value;
           $.ajax({

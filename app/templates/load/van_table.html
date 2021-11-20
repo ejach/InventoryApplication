@@ -9,12 +9,13 @@
                       <td>{{ row[1] }}</td>
                       <td>{{ row[2] }}</td>
                       <td>{{ row[3] }}</td>
-                      <td><input type="button" class="deleteBtn" value="Delete" id="deleteBtn" name="deleteBtn"
+                      <td><input type="button" class="deleteMe" value="Delete" id="deleteBtn" name="deleteBtn"
                                  data-value="{{ row[0] }}" />
-                        <input type="button" name="updateBtn" id="updateBtn" value="Edit"
+                        <input type="button" class="updateMe" name="updateBtn" id="updateBtn" value="Edit"
                                data-value="{{ row[0] }}" />
                       </td>
                   </tr>
             {% endfor %}
         {% endif %}
-</table>
+            </table>
+</div>
