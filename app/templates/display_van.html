@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block scripts %}
-<script src= "{{ url_for('static', filename='js/vanFunctions.js') }}"></script>
+    <script src= "{{ url_for('static', filename='js/van/van-parts-addPart.js') }}"></script>
+    <script src= "{{ url_for('static', filename='js/van/van-parts-deletePart.js') }}"></script>
+    <script src= "{{ url_for('static', filename='js/van/van-parts-updatePart.js') }}"></script>
 {% endblock %}
 {% block content %}
         <form id="myForm">
@@ -20,10 +22,10 @@
                       <td>{{ row[1] }}</td>
                       <td>{{ row[2] }}</td>
                       <td>{{ row[3] }}</td>
-                      <td><input type="button" value="Delete" id="deleteBtn" name="deleteBtn"
-                                 onclick="deleteMe({{ row[0] }})" />
-                        <input type="button" name="updateBtn" id="updateBtn" value="Edit"
-                               onclick="updateMe({{ row[0] }}, {{ row[3] }})" />
+                      <td><input type="button" class="deleteMe" value="Delete" id="deleteBtn" name="deleteBtn"
+                                 data-value="{{ row[0] }}" />
+                        <input type="button" class="updateMe" name="updateBtn" id="updateBtn" value="Edit"
+                               data-value="{{ row[0] }}" />
                       </td>
                   </tr>
             {% endfor %}

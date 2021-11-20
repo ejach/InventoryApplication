@@ -8,8 +8,7 @@
     <meta charset="UTF-8">
     <link rel="shortcut icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
     <link rel=stylesheet href="{{ url_for('static', filename='css/stylesheet.css') }}">
-    {#  JS Package for the HTMX package  #}
-    <script src="https://unpkg.com/htmx.org@1.6.0"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     {% block scripts %}
     {% endblock %}
     <title>Inventory Application</title>
@@ -33,8 +32,6 @@
         <a href="/logout">Logout</a>
     </div>
     {% endif %}
-    {#  JS Package for JQUERY  #}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     {#  Scripts for the sidenav 'hamburger' animation and functionality  #}
     {% if session['logged_in'] %}
     <script src= "{{ url_for('static', filename='js/sidenav-animation.js') }}"></script>

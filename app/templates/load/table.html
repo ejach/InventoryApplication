@@ -1,6 +1,6 @@
 <div id="table">
         {#    If the results are empty, throw the following error    #}
-        {% if results == [] %}
+        {% if not results %}
             <p style="color:red;">The database is empty, consider adding a part.</p>
         {% else %}
             <table border="1" class="table">
@@ -10,13 +10,13 @@
                   <td>{{ row[1] }}</td>
                   <td>{{ row[2] }}</td>
                   <td>{{ row[3] }}</td>
-                  <td><input type="button" value="Delete" id="deleteBtn" name="deleteBtn"
-                             onclick="deleteMe({{ row[0] }})" />
-                    <input type="button" name="updateBtn" id="updateBtn" value="Edit"
-                           onclick="updateMe({{ row[0] }})" />
+                  <td><input type="button" class="deleteBtn" value="Delete" id="deleteBtn" name="deleteBtn"
+                             data-value="{{ row[0] }}" />
+                    <input type="button" class="updateBtn" name="updateBtn" id="updateBtn" value="Edit"
+                           data-value="{{ row[0] }}" />
                   </td>
               </tr>
         {% endfor %}
             </table>
         {% endif %}
-        </div>
+</div>

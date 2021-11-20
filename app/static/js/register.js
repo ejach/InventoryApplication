@@ -1,40 +1,41 @@
-window.addEventListener("load",function() {
-    const newURL = '/login';
-    const form = document.getElementById("registerForm");
-
-    // Get the myForm element and assign it to a variable
-    function registerPOST() {
-        const XHR = new XMLHttpRequest();
-
-        // Bind the FormData object and the form element
-        const FD = new FormData(form);
-
-        // On a successful submission, it gets an AJAX request to refresh the contents of the table
-        XHR.addEventListener("load", function () {
-            location.replace(newURL);
-        });
-
-        // Define what happens in case of error
-        XHR.addEventListener("error", function () {
-            console.log('POST request was not successful.');
-        });
-
-        // Set up our request
-        XHR.open("POST", "/register");
-
-        // The data sent is what the user provided in the form
-        XHR.send(FD);
-    }
-// Replace the submit event with our sendData function
-    document.getElementById('registerForm').addEventListener("submit", function (event) {
-        let password = document.getElementById('password').value;
-        let confPass = document.getElementById('confPassword').value;
-        event.preventDefault();
-        if (password === confPass && password && confPass) {
-            registerPOST();
-            form.reset();
-        } else if (password !== confPass || !password || !confPass) {
-            document.getElementById('error').innerHTML = 'Passwords do not match or are empty'
+$(document).ready(function() {
+  // On submit, execute the following
+  $("#registerBtn").click(function (event) {
+    let password = $('#password').val();
+    let confPass = $('#confPassword').val();
+    event.preventDefault();
+    if (password === confPass && password && confPass) {
+      // Prevents form from submitting
+      event.preventDefault();
+      const form = $('#registerForm')[0];
+      const data = new FormData(form);
+      // Disable submit button until something happens
+      $("#registerBtn").prop("disabled", true);
+      $.ajax({
+        type: 'POST',
+        enctype: 'multipart/form-data',
+        url: '/register',
+        data: data,
+        processData: false,
+        contentType: false,
+        cache: false,
+        timeout: 800000,
+        // On success, redirect to /login
+        success: function () {
+          $("#registerBtn").prop("disabled", false);
+          window.location.replace('/login');
+        },
+        // On failure, print errors and re-enable the submit button
+        error: function (e) {
+          console.log("ERROR : ", e);
+          $("#registerBtn").prop("disabled", false);
         }
-    });
+      });
+      $(form).trigger('reset');
+    } else if (password !== confPass || !password || !confPass) {
+      $('#error').html('Passwords do not match or are empty');
+    } else {
+      $('#error').html(null);
+    }
+  });
 });
