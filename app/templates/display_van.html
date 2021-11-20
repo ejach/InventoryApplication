@@ -1,35 +1,35 @@
 {% extends "base.html" %}
 {% block scripts %}
-    <script src= "{{ url_for('static', filename='js/van/van-parts-addPart.js') }}"></script>
-    <script src= "{{ url_for('static', filename='js/van/van-parts-deletePart.js') }}"></script>
-    <script src= "{{ url_for('static', filename='js/van/van-parts-updatePart.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/van/van-parts-addPart.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/van/van-parts-deletePart.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/van/van-parts-updatePart.js') }}"></script>
 {% endblock %}
 {% block content %}
-        <form id="myForm">
-            <p id="instructions">Enter the Part Name and Part Number: </p>
-            <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^\w+( +\w+)*$" />
-            <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^\w+( +\w+)*$" />
-            <input type="submit" id="submit" value="Add Part">
-        </form>
-        <div id="table">
-            <table border="1" class="table">
-            <th>Part Name</th><th>Part Number</th><th>Van</th><th>Action</th><br/>
-        {% if not results %}
-            <p style="color:red;">The database is empty, consider adding a part.</p>
-        {% else %}
-            {% for row in results %}
-                  <tr>
-                      <td>{{ row[1] }}</td>
-                      <td>{{ row[2] }}</td>
-                      <td>{{ row[3] }}</td>
-                      <td><input type="button" class="deleteMe" value="Delete" id="deleteBtn" name="deleteBtn"
-                                 data-value="{{ row[0] }}" />
-                        <input type="button" class="updateMe" name="updateBtn" id="updateBtn" value="Edit"
-                               data-value="{{ row[0] }}" />
-                      </td>
-                  </tr>
-            {% endfor %}
-        {% endif %}
-            </table>
-        </div>
+<form id="myForm">
+  <p id="instructions">Enter the Part Name and Part Number: </p>
+  <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^\w+( +\w+)*$" />
+  <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^\w+( +\w+)*$" />
+  <input type="submit" id="submit" value="Add Part">
+</form>
+<div id="table">
+  <table class="table">
+    <th>Part Name</th><th>Part Number</th><th>Van</th><th>Action</th><br/>
+    {% if not results %}
+    <p style="color:red;">The database is empty, consider adding a part.</p>
+    {% else %}
+    {% for row in results %}
+    <tr>
+      <td>{{ row[1] }}</td>
+      <td>{{ row[2] }}</td>
+      <td>{{ row[3] }}</td>
+      <td><input type="button" class="deleteMe" name="deleteBtn" value="Delete"
+        data-value="{{ row[0] }}" />
+        <input type="button" class="updateMe" name="updateBtn" value="Edit"
+        data-value="{{ row[0] }}" />
+      </td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+  </table>
+</div>
 {% endblock %}

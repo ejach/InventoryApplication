@@ -1,42 +1,42 @@
 {% extends "base.html" %}
 {% block scripts %}
-    <script src= "{{ url_for('static', filename='js/parts/parts-addPart.js') }}"></script>
-    <script src= "{{ url_for('static', filename='js/parts/parts-deletePart.js') }}"></script>
-    <script src= "{{ url_for('static', filename='js/parts/parts-updatePart.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/parts/parts-addPart.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/parts/parts-deletePart.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/parts/parts-updatePart.js') }}"></script>
 {% endblock %}
 {% block content %}
-    <form id="myForm">
-            <p id="instructions">Enter the Part Name and Part Number: </p>
-            <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^\w+( +\w+)*$" />
-            <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^\w+( +\w+)*$" />
-            <select name="van" id="van" required>
-                <option value="" disabled selected>Select Van</option>
-            {% for row in van_nums %}
-                <option value="{{ row[1] }}">{{ row[1] }}</option>
-            {% endfor %}
-            </select>
-            <input type="submit" id="submit" value="Add Part">
-        </form>
-        <div id="table">
-        {#    If the results are empty, throw the following error    #}
-        {% if not results %}
-            <p style="color:red;">The database is empty, consider adding a part.</p>
-        {% else %}
-            <table border="1" class="table">
-            <th>Part Name</th><th>Part Number</th><th>Van</th><th>Action</th><br/>
-        {% for row in results %}
-              <tr>
-                  <td>{{ row[1] }}</td>
-                  <td>{{ row[2] }}</td>
-                  <td>{{ row[3] }}</td>
-                  <td><input type="button" class="deleteBtn" value="Delete" id="deleteBtn" name="deleteBtn"
-                             data-value="{{ row[0] }}" />
-                    <input type="button" class="updateBtn" name="updateBtn" id="updateBtn" value="Edit"
-                           data-value="{{ row[0] }}" />
-                  </td>
-              </tr>
-        {% endfor %}
-            </table>
-        {% endif %}
-        </div>
+<form id="myForm">
+  <p id="instructions">Enter the Part Name and Part Number: </p>
+  <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^\w+( +\w+)*$" />
+  <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^\w+( +\w+)*$" />
+  <select name="van" id="van" required>
+    <option value="" disabled selected>Select Van</option>
+    {% for row in van_nums %}
+    <option value="{{ row[1] }}">{{ row[1] }}</option>
+    {% endfor %}
+  </select>
+  <input type="submit" id="submit" value="Add Part">
+</form>
+<div id="table">
+  {#    If the results are empty, throw the following error    #}
+  {% if not results %}
+  <p style="color:red;">The database is empty, consider adding a part.</p>
+  {% else %}
+  <table border="1" class="table">
+    <th>Part Name</th><th>Part Number</th><th>Van</th><th>Action</th><br/>
+    {% for row in results %}
+    <tr>
+      <td>{{ row[1] }}</td>
+      <td>{{ row[2] }}</td>
+      <td>{{ row[3] }}</td>
+      <td><input type="button" class="deleteBtn" value="Delete" id="deleteBtn" name="deleteBtn"
+        data-value="{{ row[0] }}" />
+        <input type="button" class="updateBtn" name="updateBtn" id="updateBtn" value="Edit"
+        data-value="{{ row[0] }}" />
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+</div>
 {% endblock %}

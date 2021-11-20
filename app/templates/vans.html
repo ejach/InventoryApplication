@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 {% block scripts %}
-    <script src= "{{ url_for('static', filename='js/van/van-deleteVan.js') }}"></script>
-    <script src= "{{ url_for('static', filename='js/van/van-updateVan.js') }}"></script>
-    <script src= "{{ url_for('static', filename='js/van/van-addVan.js') }}"></script>
-    <script src= "{{ url_for('static', filename='js/van/van-button-animation.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/van/van-deleteVan.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/van/van-updateVan.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/van/van-addVan.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/van/van-button-animation.js') }}"></script>
 {% endblock %}
 {% block content %}
-    {#    If the van_numbers is empty, throw the following error    #}
-        {% if van_numbers == [] %}
-            <p style="color:red;">The database is empty, consider adding a van.</p>
-        {% endif %}
-    <span id="mySpan">
-        {% for row in van_numbers %}
-        <a href="/vans/{{ row[1] }}" id="link"><img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
-                                    width="100px" height="100px" /><p id="paragraph">{{ row[1] }}</p></a>
-                                <form>
-                                    <input type="button" id="deleteMe" class="deleteMe" value="Delete" data-value="{{ row[0] }}">
-                                    <input type="button" id="updateMe" class="updateMe" value="Edit" data-value="{{ row[0] }}">
-                                </form>
-        {% endfor %}
-    </span>
-        <span id="addVan">
-        <img id="myCard" src="{{ url_for('static', filename='assets/add-button.svg') }}" width="100px" height="100px" />
-        </span><p id="paragraph">Add Van</p><form style="display: none;" id="formElement">
-        <input type="text" placeholder="Van Number" name="van_number" required>
-        <input id="btnSubmit" type="submit" value="Add Van"></form>
-{% endblock %}
+{#    If the van_numbers is empty, throw the following error    #}
+{% if van_numbers == [] %}
+<p style="color:red;">The database is empty, consider adding a van.</p>
+{% endif %}
+<span id="mySpan">
+  {% for row in van_numbers %}
+  <a href="/vans/{{ row[1] }}" id="link"><img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
+    width="100px" height="100px" /><p id="paragraph">{{ row[1] }}</p></a>
+    <form>
+      <input type="button" id="deleteMe" class="deleteMe" value="Delete" data-value="{{ row[0] }}">
+      <input type="button" id="updateMe" class="updateMe" value="Edit" data-value="{{ row[0] }}">
+    </form>
+    {% endfor %}
+  </span>
+  <span id="addVan">
+    <img id="myCard" src="{{ url_for('static', filename='assets/add-button.svg') }}" width="100px" height="100px" />
+  </span><p id="paragraph">Add Van</p><form style="display: none;" id="formElement">
+    <input type="text" placeholder="Van Number" name="van_number" required>
+    <input id="btnSubmit" type="submit" value="Add Van"></form>
+  {% endblock %}
