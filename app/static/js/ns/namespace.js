@@ -42,4 +42,4 @@
 
   window.ns = namespace;
 
-})(this.jQuery);
+})(jQuery);
