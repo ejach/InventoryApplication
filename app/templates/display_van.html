@@ -22,9 +22,14 @@
       <td>{{ row[1] }}</td>
       <td>{{ row[2] }}</td>
       <td>{{ row[3] }}</td>
-      <td><input type="button" class="deleteMe" name="deleteBtn" value="Delete"
+      <td><p class="confirmMe" id="confirmMe{{ row[0] }}">Are you sure?
+        <input type="button" class="yesBtn" id="yesBtn{{ row[0] }}" value="Yes" name="yesBtn"
         data-value="{{ row[0] }}" />
-        <input type="button" class="updateMe" name="updateBtn" value="Edit"
+        <input type="button" class="noBtn" id="noBtn{{ row[0] }}" value="No" name="noBtn"
+        data-value="{{ row[0] }}" /></p>
+        <input type="button" class="deleteBtn" value="Delete" id="deleteBtn{{ row[0] }}" name="deleteBtn"
+        data-value="{{ row[0] }}" />
+        <input type="button" class="updateBtn" name="updateBtn" id="updateBtn{{ row[0] }}" value="Edit"
         data-value="{{ row[0] }}" />
       </td>
     </tr>
