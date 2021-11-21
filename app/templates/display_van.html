@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block scripts %}
+<script src= "{{ url_for('static', filename='js/ns/namespace.js') }}"></script>
 <script src= "{{ url_for('static', filename='js/van/van-parts-addPart.js') }}"></script>
 <script src= "{{ url_for('static', filename='js/van/van-parts-deletePart.js') }}"></script>
 <script src= "{{ url_for('static', filename='js/van/van-parts-updatePart.js') }}"></script>
