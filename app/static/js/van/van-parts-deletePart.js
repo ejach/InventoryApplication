@@ -1,25 +1,37 @@
- $(document).ready(function() {
+$(document).ready(function() {
+  // Path to obtain the van table
     const getPath = '/table' + window.location.pathname;
-    // On submit, execute the following
-    $(document).on('click', '.deleteMe', function () {
-    if (window.confirm('Are you sure you want to delete?')) {
-        let id = this.dataset.value;
-        // Parameters to be sent in the request
-        const data = 'Delete=' + id;
+  // On submit, execute the following
+  $(document).on('click', '.deleteBtn', function () {
+    let id = this.dataset.value;
+    $(".deleteBtn").prop("disabled", true);
+    $('#deleteBtn'+ id).hide();
+    $('#updateBtn'+ id).hide();
+    $('#confirmMe'+ id).toggle();
+    $('.table').off('click').on('click', '#yesBtn' + id, function () {
+      // Parameters to be sent in the request
+      const data = 'Delete=' + id;
       $.ajax({
-          type: 'POST',
-          url: '/delete/part/',
-          data: data,
-          timeout: 800000,
-          // On success, load the span from the getPath and re-enable the submit button
-          success: function () {
-              $('#table').load(getPath);
-          },
-          // On failure, print errors and re-enable the submit button
-          error: function (e) {
-              console.log("ERROR : ", e);
-          }
+        type: 'POST',
+        url: '/delete/part/',
+        data: data,
+        timeout: 800000,
+        // On success, load the span from the getPath and re-enable the submit button
+        success: function () {
+          $('#table').load(getPath);
+          $(".deleteBtn").prop("disabled", false);
+        },
+        // On failure, print errors and re-enable the submit button
+        error: function (e) {
+          console.log("ERROR : ", e);
+        }
       });
-    }
+      });
+    $(document).on('click', '#noBtn' + id, function () {
+        $('#deleteBtn'+ id).show();
+        $('#updateBtn'+ id).show();
+        $('#confirmMe'+ id).hide();
+        $(".deleteBtn").prop("disabled", false);
+      });
+    });
   });
-});
