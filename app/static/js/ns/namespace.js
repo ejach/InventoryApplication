@@ -1,5 +1,6 @@
 (function($) {
 
+  // Initialize our namespace
   let namespace;
 
   namespace = {
@@ -40,6 +41,7 @@
     }
   };
 
+  // Let ns be called in the current window to access functions
   window.ns = namespace;
 
 })(jQuery);
