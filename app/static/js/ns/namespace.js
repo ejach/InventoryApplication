@@ -1,5 +1,6 @@
 (function($) {
 
+  // Initialize our namespace
   let namespace;
 
   namespace = {
@@ -37,9 +38,42 @@
           $(".deleteBtn").prop("disabled", false);
         });
       });
+    },
+    addPart : function ($getPath) {
+      $('#submit').click(function (event) {
+        // Prevents form from submitting
+        event.preventDefault();
+        const form = $('#myForm')[0];
+        const data = new FormData(form);
+        // Append vanNum from URL to the formData object if the current window is not /parts
+        if (window.location.pathname !== '/parts') {
+          let vanNum = window.location.pathname.split("/")[2];
+          data.append('van', vanNum);
+        }
+        $.ajax({
+          type: 'POST',
+          enctype: 'multipart/form-data',
+          url: '/parts',
+          data: data,
+          processData: false,
+          contentType: false,
+          cache: false,
+          timeout: 800000,
+          // On success, load the span from the getPath
+          success: function () {
+            $('#table').load($getPath);
+          },
+          // On failure, print errors
+          error: function (e) {
+            console.log("ERROR : ", e);
+          }
+        });
+        $(form).trigger('reset');
+      });
     }
   };
 
+  // Let ns be called in the current window to access functions
   window.ns = namespace;
 
-})(this.jQuery);
+})(jQuery);
