@@ -9,6 +9,7 @@
       $(document).on('click', '.deleteBtn', function () {
         let id = this.dataset.value;
         $(".deleteBtn").prop("disabled", true);
+        $(".updateBtn").prop("disabled", true);
         $('#deleteBtn' + id).hide();
         $('#updateBtn' + id).hide();
         $('#confirmMe' + id).show();
@@ -24,10 +25,13 @@
             success: function () {
               $('#table').load($getPath);
               $(".deleteBtn").prop("disabled", false);
+              $(".updateBtn").prop("disabled", false);
             },
             // On failure, print errors and re-enable the submit button
             error: function (e) {
               console.log("ERROR : ", e);
+              $(".deleteBtn").prop("disabled", false);
+              $(".updateBtn").prop("disabled", false);
             }
           });
         });
@@ -36,6 +40,7 @@
           $('#updateBtn' + id).show();
           $('#confirmMe' + id).hide();
           $(".deleteBtn").prop("disabled", false);
+          $(".updateBtn").prop("disabled", false);
         });
       });
     },
@@ -69,6 +74,37 @@
           }
         });
         $(form).trigger('reset');
+      });
+    },
+    updatePart : function($getPath) {
+      // On click, execute the following
+      $(document).on('click', '.updateBtn', function(){
+        // ID to be updated
+        let id = this.dataset.value;
+        let text;
+        let partName = prompt("Please enter the part name:", "PartName");
+        let partNumber = prompt("Please enter the part number:", "PartNumber");
+        let vanNum;
+        // If the window location is not /parts, get it from the URL, else prompt the user for the vanNum
+        if (window.location.pathname !== '/parts') {
+          vanNum = window.location.pathname.split("/")[2];
+        } else {
+          vanNum = prompt("Please enter the van number:", "vanNumber");
+        }
+        if (partName == null || partName === "" || partNumber == null || partNumber === "") {
+          alert('Blank input will not be accepted.');
+        } else {
+          text = 'id=' + id + '&part_name=' + partName + '&part_number=' + partNumber + '&van_number=' + vanNum;
+        }
+        // Send our POST request
+        $.ajax({
+          url: '/update/part/',
+          type: 'POST',
+          data: text,
+          success: function() {
+            $("#table").load($getPath);
+          }
+        });
       });
     }
   };

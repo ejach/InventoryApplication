@@ -130,7 +130,14 @@ a {
 .confirmMe {
     display: none;
 }
-
+.yesBtn {
+  color: white;
+  background-color: green;
+}
+.noBtn {
+  color: white;
+  background-color: red;
+}
 #table tr:nth-child(even){background-color: #f2f2f2;}
 
 #table tr:hover {background-color: #ddd;}
@@ -141,7 +148,9 @@ a {
   background-color: #2E86C1;
   color: white;
 }
-
+.selectVan {
+    height: 25%;
+}
 @media (orientation: portrait) {
   input, button, .container {
     font-size: 30px;
