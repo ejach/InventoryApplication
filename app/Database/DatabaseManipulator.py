@@ -7,7 +7,7 @@ from app.Database.DatabaseStatements import DatabaseStatements
 
 # Prevents inputs that only contain spaces from being entered into the database
 def check_input(test_input):
-    if not test_input or len(test_input) == 0 or test_input.isspace():
+    if not test_input or test_input.isspace():
         return False
     else:
         return True
