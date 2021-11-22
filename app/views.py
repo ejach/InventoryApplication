@@ -6,7 +6,7 @@ from flask_talisman import Talisman
 from app.csp import csp
 
 from app.Database.DatabaseConnector import DatabaseConnector
-from app.Database.DatabaseManipulator import DatabaseManipulator
+from app.Database.DatabaseManipulator import DatabaseManipulator, check_input
 
 app = Flask(__name__)
 app.secret_key = environ.get('SECRET_KEY')
@@ -161,18 +161,23 @@ def delete(id_type):
 # Route to edit table rows using the update method
 @app.route('/update/<id_type>', strict_slashes=False, methods=['POST', 'GET'])
 def update(id_type):
-    if request.method == 'POST' and id_type == 'part':
-        part_id = clean(request.form.get('id'))
-        part_name = clean(request.form.get('part_name'))
-        part_number = clean(request.form.get('part_number'))
-        van_number = clean(request.form.get('van_number'))
-        dbm.update(part_id, part_name, part_number, van_number)
-    elif request.method == 'POST' and id_type == 'van':
-        van_id = request.form.get('id')
-        van_number = request.form.get('van_number')
-        dbm.update_van(van_id, van_number)
-    # If the /update route is accessed, re-route to index
-    return redirect(url_for('index'))
+    try:
+        if request.method == 'POST' and id_type == 'part':
+            part_id = clean(request.form.get('id'))
+            part_name = clean(request.form.get('part_name'))
+            part_number = clean(request.form.get('part_number'))
+            van_number = clean(request.form.get('van_number'))
+            if check_input(part_id) and check_input(part_name) and check_input(part_number) and check_input(van_number):
+                dbm.update(part_id, part_name, part_number, van_number)
+        elif request.method == 'POST' and id_type == 'van':
+            van_id = request.form.get('id')
+            van_number = request.form.get('van_number')
+            if check_input(van_id) and check_input(van_number):
+                dbm.update_van(van_id, van_number)
+        # If the /update route is accessed, re-route to index
+        return redirect(url_for('index'))
+    except TypeError as e:
+        print(str(e) + '\n' + 'Blank input detected, database not manipulated.')
 
 
 # Route for /vans
