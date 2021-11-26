@@ -156,6 +156,7 @@ class DatabaseManipulator:
             val = (van_number,)
             self.cursor.execute(stmt, val)
             results = self.cursor.fetchall()
+            self.conn.close()
             # If the results are empty (i.e. the van_number doesn't exist) return None
             if not results:
                 return None
@@ -164,9 +165,6 @@ class DatabaseManipulator:
                 return results
         except Error as e:
             print(str(e) + '\n' + 'Lost connection to the MySQL server.')
-        finally:
-            if self.conn is not None:
-                self.conn.close()
 
     # Get list of van numbers that exist in the database
     def get_van_nums(self):
