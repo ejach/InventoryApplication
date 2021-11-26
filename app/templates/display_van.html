@@ -13,16 +13,18 @@
   <input type="submit" id="submit" value="Add Part">
 </form>
 <div id="table">
-  <table>
+  <table class="table">
     <th>Part Name</th><th>Part Number</th><th>Van</th><th>Action</th><br/>
     {% if not results %}
     <p style="color:red;">The database is empty, consider adding a part.</p>
     {% else %}
     {% for row in results %}
     <tr>
-      <td>{{ row[1] }}</td>
-      <td>{{ row[2] }}</td>
-      <td>{{ row[3] }}</td>
+        <td><p class="thisPartName" id="thisPartName{{ row[0] }}">{{ row[1] }}</p>
+            <input type="text" class="partName" id="partName{{ row[0] }}" name="partName" value="{{ row[1] }}" data-value="{{ row[0] }}" /></td>
+        <td><p class="thisPartNumber" id="thisPartNumber{{ row[0] }}">{{ row[2] }}</p>
+            <input type="text" class="partNumber" id="partNumber{{ row[0] }}" name="partNumber" value="{{ row[2] }}" data-value="{{ row[0] }}" /></td>
+        <td>{{ row[3] }}</td>
       <td><p class="confirmMe" id="confirmMe{{ row[0] }}">Are you sure?
         <input type="button" class="yesBtn" id="yesBtn{{ row[0] }}" value="Yes" name="yesBtn"
         data-value="{{ row[0] }}" />
@@ -31,6 +33,10 @@
         <input type="button" class="deleteBtn" value="Delete" id="deleteBtn{{ row[0] }}" name="deleteBtn"
         data-value="{{ row[0] }}" />
         <input type="button" class="updateBtn" name="updateBtn" id="updateBtn{{ row[0] }}" value="Edit"
+        data-value="{{ row[0] }}" />
+        <input type="button" class="confirmUpdateBtn" name="confirmUpdateBtn" id="confirmUpdateBtn{{ row[0] }}" value="Submit"
+        data-value="{{ row[0] }}" />
+        <input type="button" class="cancelUpdateBtn" name="cancelUpdateBtn" id="cancelUpdateBtn{{ row[0] }}" value="Cancel"
         data-value="{{ row[0] }}" />
       </td>
     </tr>
