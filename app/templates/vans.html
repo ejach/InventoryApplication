@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block scripts %}
+<script src= "{{ url_for('static', filename='js/ns/namespace.js') }}"></script>
 <script src= "{{ url_for('static', filename='js/van/van-deleteVan.js') }}"></script>
 <script src= "{{ url_for('static', filename='js/van/van-updateVan.js') }}"></script>
 <script src= "{{ url_for('static', filename='js/van/van-addVan.js') }}"></script>
@@ -10,13 +11,18 @@
 {% if van_numbers == [] %}
 <p style="color:red;">The database is empty, consider adding a van.</p>
 {% endif %}
-<span id="mySpan">
+<span id="mySpan" class="table">
   {% for row in van_numbers %}
   <a href="/vans/{{ row[1] }}" id="link"><img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
     width="100px" height="100px" /><p id="paragraph">{{ row[1] }}</p></a>
     <form>
-      <input type="button" id="deleteMe" class="deleteMe" value="Delete" data-value="{{ row[0] }}">
-      <input type="button" id="updateMe" class="updateMe" value="Edit" data-value="{{ row[0] }}">
+      <input type="button" id="deleteBtn{{ row[0] }}" class="deleteBtn" value="Delete" data-value="{{ row[0] }}">
+      <input type="button" id="updateBtn{{ row[0] }}" class="updateBtn" value="Edit" data-value="{{ row[0] }}">
+        <p class="confirmMe" id="confirmMe{{ row[0] }}">Are you sure?
+        <input type="button" class="yesBtn" id="yesBtn{{ row[0] }}" value="Yes" name="yesBtn"
+        data-value="{{ row[0] }}" />
+        <input type="button" class="noBtn" id="noBtn{{ row[0] }}" value="No" name="noBtn"
+        data-value="{{ row[0] }}" /></p>
     </form>
     {% endfor %}
   </span>
