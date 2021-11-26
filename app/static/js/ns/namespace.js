@@ -16,7 +16,6 @@
         } else {
           element = '.table';
         }
-        console.log(element)
         $('.deleteBtn').prop('disabled', true);
         $('.updateBtn').prop('disabled', true);
         $('#deleteBtn' + id).hide();
