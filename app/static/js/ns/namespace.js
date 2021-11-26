@@ -8,16 +8,24 @@
     deleteThis : function ($getPath) {
       $(document).on('click', '.deleteBtn', function () {
         let id = this.dataset.value;
-        let element = (window.location.pathname !== '/parts') ? '#mySpan' : '.table';
-        $(".deleteBtn").prop("disabled", true);
-        $(".updateBtn").prop("disabled", true);
+        let element;
+        if (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) {
+          element = '#mySpan';
+        } else if (window.location.pathname.split('/vans/')[1]) {
+          element = '#table';
+        } else {
+          element = '.table';
+        }
+        console.log(element)
+        $('.deleteBtn').prop('disabled', true);
+        $('.updateBtn').prop('disabled', true);
         $('#deleteBtn' + id).hide();
         $('#updateBtn' + id).hide();
         $('#confirmMe' + id).show();
         // Un-attach and re-attach the event listener
         $(element).off('click').on('click', '#yesBtn' + id, function () {
           // Parameters to be sent in the request
-          let url = (window.location.pathname !== '/parts') ? '/delete/van/' : '/delete/part/';
+          let url = (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) ? '/delete/van/' : '/delete/part/';
           let data = 'Delete=' + id;
             $.ajax({
               type: 'POST',
@@ -27,14 +35,14 @@
               // On success, load the span from the getPath and re-enable the submit button
               success: function () {
                 $(element).load($getPath);
-                $(".deleteBtn").prop("disabled", false);
-                $(".updateBtn").prop("disabled", false);
+                $('.deleteBtn').prop('disabled', false);
+                $('.updateBtn').prop('disabled', false);
               },
               // On failure, print errors and re-enable the submit button
               error: function (e) {
-                console.log("ERROR : ", e);
-                $(".deleteBtn").prop("disabled", false);
-                $(".updateBtn").prop("disabled", false);
+                console.log('ERROR : ', e);
+                $('.deleteBtn').prop('disabled', false);
+                $('.updateBtn').prop('disabled', false);
               }
             });
         });
@@ -42,8 +50,8 @@
           $('#deleteBtn' + id).show();
           $('#updateBtn' + id).show();
           $('#confirmMe' + id).hide();
-          $(".deleteBtn").prop("disabled", false);
-          $(".updateBtn").prop("disabled", false);
+          $('.deleteBtn').prop('disabled', false);
+          $('.updateBtn').prop('disabled', false);
         });
       });
     },
@@ -51,12 +59,12 @@
       $('#submit').click(function (event) {
         // Prevents form from submitting
         event.preventDefault();
-        $("#submit").prop("disabled", true);
+        $('#submit').prop('disabled', true);
         const form = $('#myForm')[0];
         const data = new FormData(form);
         // Append vanNum from URL to the formData object if the current window is not /parts
         if (window.location.pathname !== '/parts') {
-          let vanNum = window.location.pathname.split("/")[2];
+          let vanNum = window.location.pathname.split('/')[2];
           data.append('van', vanNum);
         }
         $.ajax({
@@ -71,12 +79,12 @@
           // On success, load the span from the getPath
           success: function () {
             $('#table').load($getPath);
-            $("#submit").prop("disabled", false);
+            $('#submit').prop('disabled', false);
           },
           // On failure, print errors
           error: function (e) {
-            console.log("ERROR : ", e);
-            $("#submit").prop("disabled", false);
+            console.log('ERROR : ', e);
+            $('#submit').prop('disabled', false);
           }
         });
         $(form).trigger('reset');
@@ -87,17 +95,12 @@
       $(document).on('click', '.updateBtn', function(){
         // ID to be updated
         let id = this.dataset.value;
-        let partName = prompt("Please enter the part name:", "PartName");
-        let partNumber = prompt("Please enter the part number:", "PartNumber");
-        let vanNum;
+        let partName = prompt('Please enter the part name:', 'PartName');
+        let partNumber = prompt('Please enter the part number:', 'PartNumber');
         // If the window location is not /parts, get it from the URL, else prompt the user for the vanNum
-        if (window.location.pathname !== '/parts') {
-          vanNum = window.location.pathname.split("/")[2];
-        } else {
-          vanNum = prompt("Please enter the van number:", "vanNumber");
-        }
-        if (partName === null || partName === "" || partNumber === null || partNumber === "" || vanNum === null
-            || vanNum === "") {
+        let vanNum = (window.location.pathname !== '/parts') ? window.location.pathname.split('/')[2] : prompt('Please enter the van number:', 'vanNumber');
+        if (partName === null || partName === '' || partNumber === null || partNumber === '' || vanNum === null
+            || vanNum === '') {
           alert('Blank input will not be accepted.');
         } else {
           let text = 'id=' + id + '&part_name=' + partName + '&part_number=' + partNumber + '&van_number=' + vanNum;
@@ -107,7 +110,7 @@
             type: 'POST',
             data: text,
             success: function() {
-              $("#table").load($getPath);
+              $('#table').load($getPath);
             }
           });
         }
