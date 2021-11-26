@@ -90,19 +90,45 @@
       });
     },
    updatePart : function($getPath) {
+      // Toggle the form/table elements
+      let toggleElem = function (id) {
+        if (window.location.pathname === '/parts') {
+         $('#thisPartName' + id +', #thisPartNumber' + id + ', #thisVanNumber' + id +
+            ', #updateBtn' + id + ', #confirmUpdateBtn' + id + ', #deleteBtn'
+            + id + ', #partName' + id + ', #partNumber' + id + ', #vanNumber' + id + ', #cancelUpdateBtn' + id).toggle();
+        } else {
+          $('#thisPartName' + id +', #thisPartNumber' + id + ', #updateBtn' + id +
+            ', #confirmUpdateBtn' + id + ', #deleteBtn' + id + ', #partName' + id + ', #partNumber' + id
+              + ', #cancelUpdateBtn' + id).toggle();
+        }
+      }
+      // Reset element passed in to its original value
+      let origVal = function (elem) {
+        return $(elem).attr("value");
+      }
       // On click, execute the following
-      $(document).on('click', '.updateBtn', function(){
+      $('#table').off('click').on('click', '.updateBtn', function(){
         // ID to be updated
         let id = this.dataset.value;
-        let partName = prompt('Please enter the part name:', 'PartName');
-        let partNumber = prompt('Please enter the part number:', 'PartNumber');
-        // If the window location is not /parts, get it from the URL, else prompt the user for the vanNum
-        let vanNum = (window.location.pathname !== '/parts') ? window.location.pathname.split('/')[2] : prompt('Please enter the van number:', 'vanNumber');
-        if (partName === null || partName === '' || partNumber === null || partNumber === '' || vanNum === null
-            || vanNum === '') {
-          alert('Blank input will not be accepted.');
+        toggleElem(id);
+        let vanNum = $('#thisVanNumber'+id);
+        let partName = $('#partName'+id);
+        let partNumber = $('#partNumber'+id);
+        let optValue = vanNum.html();
+        let selectElem = $('#vanNumber'+id);
+        selectElem.find('option[value="'+optValue+'"]').attr('selected',true);
+        $('.deleteBtn').prop('disabled', true);
+        $('.updateBtn').prop('disabled', true);
+        $(document).off('click').on('click', '#confirmUpdateBtn'+id, function(){
+          let partNumberHtml = partNumber.val();
+          let partNameHtml = partName.val();
+          // If the window location is not /parts, get it from the URL, else prompt the user for the vanNum
+        let vanNumHtml = (window.location.pathname !== '/parts') ? window.location.pathname.split('/')[2] : $('#vanNumber'+id+' option:selected').text();
+        if (!partNameHtml || !partNumberHtml) {
+          $('#instructions').html('Blank input will not be accepted.').css('color', 'red');
         } else {
-          let text = 'id=' + id + '&part_name=' + partName + '&part_number=' + partNumber + '&van_number=' + vanNum;
+          let text = 'id=' + id + '&part_name=' + partNameHtml + '&part_number=' + partNumberHtml + '&van_number=' + vanNumHtml;
+          $('#instructions').html('Enter the Part Name and Part Number: ').css('color', 'black');
           // Send our POST request
           $.ajax({
             url: '/update/part/',
@@ -110,9 +136,23 @@
             data: text,
             success: function() {
               $('#table').load($getPath);
+              $('.deleteBtn').prop('disabled', false);
+              $('.updateBtn').prop('disabled', false);
+              toggleElem(id);
             }
           });
         }
+        });
+        // Cancel button implementation
+        $('.table').off('click').on('click', '#cancelUpdateBtn'+id, function(){
+          toggleElem(id);
+          // Reset to original values
+          partName.val(origVal(partName));
+          partNumber.val(origVal(partNumber));
+          selectElem.val(optValue);
+          $('.deleteBtn').prop('disabled', false);
+          $('.updateBtn').prop('disabled', false);
+        });
       });
     }
   };
