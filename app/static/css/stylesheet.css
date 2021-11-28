@@ -127,6 +127,11 @@ a {
   padding: 8px;
 }
 
+.partName, .partNumber, .vanNumber, .confirmUpdateBtn, .cancelUpdateBtn {
+  display: none;
+}
+
+
 .confirmMe {
     display: none;
 }
@@ -147,6 +152,9 @@ a {
   padding-bottom: 12px;
   background-color: #2E86C1;
   color: white;
+}
+.error {
+    color: red;
 }
 .selectVan {
     height: 25%;

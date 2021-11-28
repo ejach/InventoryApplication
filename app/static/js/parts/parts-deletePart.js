@@ -1,4 +1,4 @@
 $(function() {
   const getPath = '/table/main/all';
-  ns.deletePart(getPath);
+  ns.deleteThis(getPath);
 });
