@@ -98,36 +98,23 @@
       // Toggle the form/table elements
       let toggleElem = function (id) {
         if (window.location.pathname === '/parts') {
-          $('#thisPartName' + id + ', #thisPartNumber' + id + ', #thisVanNumber' + id +
-          ', #updateBtn' + id + ', #confirmUpdateBtn' + id + ', #deleteBtn'
+          $('#thisPartName' + id + ', #thisPartNumber' + id + ', #thisVanNumber' + id + ', #thisAmount' + id +
+          ', #newPartAmount' + id + ', #updateBtn' + id + ', #confirmUpdateBtn' + id + ', #deleteBtn'
           + id + ', #partName' + id + ', #partNumber' + id + ', #vanNumber' + id + ', #cancelUpdateBtn' + id).toggle();
         } else if (!window.location.pathname.split('/vans/')[1]) {
-          $('#deleteBtn' + id + ', #thisVanNumber' + id + ', #vanNumber' + id + ', #updateBtn' + id + ', #confirmUpdateBtn' + id +
-          ', #partNumber' + id + ', #cancelUpdateBtn' + id).toggle();
+          $('#deleteBtn' + id + ', #thisVanNumber' + id + ', #vanNumber' + id + ', #updateBtn' + id +
+              ', #confirmUpdateBtn' + id +  ', #partNumber' + id + ', #cancelUpdateBtn' + id).toggle();
         } else {
-          $('#thisPartName' + id +', #thisPartNumber' + id + ', #updateBtn' + id +
-          ', #confirmUpdateBtn' + id + ', #deleteBtn' + id + ', #partName' + id + ', #partNumber' + id
-          + ', #cancelUpdateBtn' + id).toggle();
+          $('#thisPartName' + id +', #thisPartNumber' + id + ', #updateBtn' + id + ', #thisAmount' + id +
+              ', #newPartAmount' + id + ', #confirmUpdateBtn' + id + ', #deleteBtn' + id + ', #partName' + id +
+              ', #partNumber' + id  + ', #cancelUpdateBtn' + id).toggle();
         }
       }
       // Reset element passed in to its original value
       let origVal = function (elem) {
         return $(elem).attr("value");
       }
-      // Get page location and return the coordinating element
-      let pageElem = function () {
-        let pageElem;
-        if (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) {
-          pageElem = '#mySpan';
-          return pageElem;
-        } else if (window.location.pathname.split('/vans/')[1]) {
-          pageElem = '#table';
-          return pageElem;
-        } else {
-          pageElem = '.table';
-          return pageElem;
-        }
-      }
+
       // Send POST request
       let postReq = function (url, text, reloadElem, id) {
         $.ajax({
@@ -151,6 +138,7 @@
         let partNumber = $('#partNumber'+id);
         let optValue = vanNum.html();
         let selectElem = $('#vanNumber'+id);
+        let partAmount = $('#newPartAmount'+id);
         // Make sure the select element selects the original value
         selectElem.find('option[value="'+optValue+'"]').attr('selected',true);
         toggleProps('.deleteBtn', '.updateBtn');
@@ -169,12 +157,13 @@
           } else {
             let partNumberHtml = partNumber.val();
             let partNameHtml = partName.val();
+            let partAmountHtml = partAmount.val();
             // If the window location is not /parts, get it from the URL, else prompt the user for the vanNum
             let vanNumHtml = (window.location.pathname !== '/parts') ? window.location.pathname.split('/')[2] : $('#vanNumber'+id+' option:selected').text();
-            if (!partNameHtml || !partNumberHtml) {
+            if (!partNameHtml || !partNumberHtml || !partAmountHtml) {
               $('#instructions').html('Blank input will not be accepted.').css('color', 'red');
             } else {
-              text = 'id=' + id + '&part_name=' + partNameHtml + '&part_number=' + partNumberHtml + '&van_number=' + vanNumHtml;
+              text = 'id=' + id + '&part_name=' + partNameHtml + '&part_amount=' + partAmountHtml + '&part_number=' + partNumberHtml + '&van_number=' + vanNumHtml;
               $('#instructions').html('Enter the Part Name and Part Number: ').css('color', 'black');
               url = (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) ? '/update/van/' : '/update/part/';
               postReq(url, text, '#table', id);
@@ -182,7 +171,7 @@
           }
         });
         // Cancel button implementation
-        $(pageElem()).off('click').on('click', '#cancelUpdateBtn'+id, function(){
+        $('.table').off('click').on('click', '#cancelUpdateBtn'+id, function(){
           toggleElem(id);
           // Reset to original values
           if (!window.location.pathname.split('/')[2] && window.location.pathname !== '/parts') {
@@ -190,6 +179,7 @@
           } else {
             partName.val(origVal(partName));
             partNumber.val(origVal(partNumber));
+            partAmount.val(origVal(partAmount));
             selectElem.val(optValue);
           }
           toggleProps('.deleteBtn', '.updateBtn');
