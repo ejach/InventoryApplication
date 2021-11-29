@@ -10,7 +10,7 @@
   <p id="instructions">Enter the Part Name and Part Number: </p>
   <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^\w+( +\w+)*$" />
   <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^\w+( +\w+)*$" />
-  <input type="submit" id="submit" value="Add Part">
+  <input type="number" id="partAmount" name="partAmount" min="1" value="1" required pattern="[0-9]{1,5}" />
 </form>
 <div id="table">
   {#    If the results are empty, throw the following error    #}

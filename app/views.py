@@ -109,10 +109,11 @@ def parts():
         if request.method == 'POST':
             # Sanitizes the input using bleach
             part_name = clean(request.form['partName'])
+            part_amount = clean(request.form['partAmount'])
             part_number = clean(request.form['partNumber'])
             van_number = clean(request.form['van'])
             # Insert into the database
-            dbm.insert(part_name=part_name, part_number=part_number, van_number=van_number)
+            dbm.insert(part_name=part_name, part_amount=part_amount, part_number=part_number, van_number=van_number)
         try:
             return render_template('parts.html', results=results, webui_host=webui_host, van_nums=van_nums)
         except IndexError:
