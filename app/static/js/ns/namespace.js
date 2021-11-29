@@ -6,23 +6,16 @@
   namespace = {
     // On submit, execute the following
     deleteThis : function ($getPath) {
-      $(document).on('click', '.deleteBtn', function () {
+      let element = $('#table');
+      $(document).off('click').on('click', '.deleteBtn', function(){
         let id = this.dataset.value;
-        let element;
-        if (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) {
-          element = '#mySpan';
-        } else if (window.location.pathname.split('/vans/')[1]) {
-          element = '#table';
-        } else {
-          element = '.table';
-        }
         $('.deleteBtn').prop('disabled', true);
         $('.updateBtn').prop('disabled', true);
-        $('#deleteBtn' + id).hide();
-        $('#updateBtn' + id).hide();
-        $('#confirmMe' + id).show();
+        $('#deleteBtn' + id).toggle();
+        $('#updateBtn' + id).toggle();
+        $('#confirmMe' + id).toggle();
         // Un-attach and re-attach the event listener
-        $(element).off('click').on('click', '#yesBtn' + id, function () {
+        $(element).off().on('click', '#yesBtn' + id, function () {
           // Parameters to be sent in the request
           let url = (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) ? '/delete/van/' : '/delete/part/';
           let data = 'Delete=' + id;
@@ -45,10 +38,10 @@
             }
           });
         });
-        $(document).on('click', '#noBtn' + id, function () {
-          $('#deleteBtn' + id).show();
-          $('#updateBtn' + id).show();
-          $('#confirmMe' + id).hide();
+        $('.table').off().on('click', '#noBtn' + id, function () {
+          $('#deleteBtn' + id).toggle();
+          $('#updateBtn' + id).toggle();
+          $('#confirmMe' + id).toggle();
           $('.deleteBtn').prop('disabled', false);
           $('.updateBtn').prop('disabled', false);
         });
@@ -109,6 +102,20 @@
       let origVal = function (elem) {
         return $(elem).attr("value");
       }
+      // Get page location and return the coordinating element
+      let pageElem = function () {
+        let pageElem;
+        if (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) {
+          pageElem = '#mySpan';
+          return pageElem;
+        } else if (window.location.pathname.split('/vans/')[1]) {
+          pageElem = '#table';
+          return pageElem;
+        } else {
+          pageElem = '.table';
+          return pageElem;
+        }
+      }
       // Send POST request
       let postReq = function (url, text, reloadElem, id) {
             $.ajax({
@@ -124,7 +131,7 @@
             });
       }
       // On click, execute the following
-      $('#table').off('click').on('click', '.updateBtn', function(){
+      $(document.body).off('click').on('click', '.updateBtn', function(){
         // ID to be updated
         let id = this.dataset.value;
         toggleElem(id);
@@ -136,7 +143,7 @@
         selectElem.find('option[value="'+optValue+'"]').attr('selected',true);
         $('.deleteBtn').prop('disabled', true);
         $('.updateBtn').prop('disabled', true);
-        $(document).off('click').on('click', '#confirmUpdateBtn'+id, function(){
+        $('#table').off('click').on('click', '#confirmUpdateBtn'+id, function(){
           let text;
           let url;
           if (!window.location.pathname.split('/')[2] && window.location.pathname !== '/parts') {
@@ -164,7 +171,7 @@
           }
         });
         // Cancel button implementation
-        $('.table').off('click').on('click', '#cancelUpdateBtn'+id, function(){
+        $(pageElem()).off('click').on('click', '#cancelUpdateBtn'+id, function(){
           toggleElem(id);
           // Reset to original values
           if (!window.location.pathname.split('/')[2] && window.location.pathname !== '/parts') {
