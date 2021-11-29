@@ -198,12 +198,13 @@ class DatabaseManipulator:
             print(str(e) + '\n' + 'Lost connection to the MySQL server.')
 
     # Update entries from database by ID
-    def update(self, row_id, part_name, part_number, van_number):
+    def update(self, row_id, part_name, part_amount, part_number, van_number):
         try:
             self.conn.ping()
             stmt = self.stmt.get_update_statement()
-            values = (part_name, part_number, van_number, int(row_id))
-            if check_input(part_name) and check_input(part_number) and check_input(van_number):
+            values = (part_name, int(part_amount), part_number, van_number, int(row_id))
+            if check_input(part_name) and check_input(part_amount) and check_input(part_number) \
+                    and check_input(van_number):
                 self.cursor.execute(stmt, values)
                 self.conn.close()
         except TypeError as e:

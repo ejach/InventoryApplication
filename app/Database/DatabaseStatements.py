@@ -19,7 +19,8 @@ class DatabaseStatements:
         self.get_password_by_username = f'SELECT `password` FROM {self.db}.accounts WHERE `username` = %s'
         self.insert = f'INSERT INTO {self.db}.parts (name, amount, part_number, van_number) VALUES (%s, %s, %s, %s)'
         self.delete = f'DELETE FROM {self.db}.parts WHERE `id` = %s'
-        self.update = f'UPDATE {self.db}.parts set `name` = %s, `part_number` = %s, `van_number` = %s WHERE `id` = %s'
+        self.update = f'UPDATE {self.db}.parts set `name` = %s, `amount` = %s, `part_number` = %s, `van_number` = %s ' \
+                      f'WHERE `id` = %s'
 
     def get_select_statement(self):
         return self.select

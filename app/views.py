@@ -122,7 +122,7 @@ def parts():
             abort(500)
 
 
-# Displays the table code in table.html so it can be refreshed dynamically without reloading the page
+# Displays the table code in parts_table.html so it can be refreshed dynamically without reloading the page
 @app.route('/table/<table_name>/<van_number>', strict_slashes=False, methods=['GET', 'POST'])
 def table(table_name, van_number):
     # Requirements to return the results for a van by its number
@@ -134,7 +134,7 @@ def table(table_name, van_number):
     elif table_name == 'main' and van_number == 'all':
         results = dbm.fetchall()
         van_nums = dbm.get_van_nums()
-        return render_template('load/table.html', results=results, van_nums=van_nums)
+        return render_template('load/parts_table.html', results=results, van_nums=van_nums)
     # if table_name is vans_list, and van_number is all, return the following
     elif table_name == 'vans_list' and van_number == 'all':
         van_nums = dbm.get_van_nums()
@@ -166,10 +166,12 @@ def update(id_type):
         if request.method == 'POST' and id_type == 'part':
             part_id = clean(request.form.get('id'))
             part_name = clean(request.form.get('part_name'))
+            part_amount = clean(request.form.get('part_amount'))
             part_number = clean(request.form.get('part_number'))
             van_number = clean(request.form.get('van_number'))
-            if check_input(part_id) and check_input(part_name) and check_input(part_number) and check_input(van_number):
-                dbm.update(part_id, part_name, part_number, van_number)
+            if check_input(part_id) and check_input(part_name) and check_input(part_amount) \
+                    and check_input(part_number) and check_input(van_number):
+                dbm.update(part_id, part_name, part_amount, part_number, van_number)
         elif request.method == 'POST' and id_type == 'van':
             van_id = request.form.get('id')
             van_number = request.form.get('van_number')
