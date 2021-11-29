@@ -6,23 +6,16 @@
   namespace = {
     // On submit, execute the following
     deleteThis : function ($getPath) {
+      let element = $('#table');
       $(document).off('click').on('click', '.deleteBtn', function(){
         let id = this.dataset.value;
-        let element;
-        if (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) {
-          element = '#mySpan';
-        } else if (window.location.pathname.split('/vans/')[1]) {
-          element = '#table';
-        } else {
-          element = '.table';
-        }
         $('.deleteBtn').prop('disabled', true);
         $('.updateBtn').prop('disabled', true);
         $('#deleteBtn' + id).toggle();
         $('#updateBtn' + id).toggle();
         $('#confirmMe' + id).toggle();
         // Un-attach and re-attach the event listener
-        $(element).off('click').on('click', '#yesBtn' + id, function () {
+        $(element).off().on('click', '#yesBtn' + id, function () {
           // Parameters to be sent in the request
           let url = (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) ? '/delete/van/' : '/delete/part/';
           let data = 'Delete=' + id;
@@ -45,7 +38,7 @@
             }
           });
         });
-        $(element).off().on('click', '#noBtn' + id, function () {
+        $('.table').off().on('click', '#noBtn' + id, function () {
           $('#deleteBtn' + id).toggle();
           $('#updateBtn' + id).toggle();
           $('#confirmMe' + id).toggle();
