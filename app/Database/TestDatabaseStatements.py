@@ -7,8 +7,8 @@ class TestDatabaseStatements:
         self.dbc = DatabaseConnector()
         self.db = self.dbc.get_db()
         self.delete_account_by_id = f'DELETE FROM {self.db}.accounts WHERE id = %s'
-        self.get_last_id = 'SELECT last_insert_id()'
-        self.check_part_existence = f'SELECT * FROM {self.db}.parts WHERE name = %s AND part_number = %s AND van_number = %s'
+        self.get_last_id = 'SELECT MAX( id ) FROM parts'
+        self.check_part_existence = f'SELECT * FROM {self.db}.parts WHERE name = %s AND amount = %s AND part_number = %s AND van_number = %s'
 
     def get_delete_account_by_id(self):
         return self.delete_account_by_id
