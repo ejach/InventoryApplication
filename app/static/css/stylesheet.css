@@ -63,11 +63,16 @@ body {
     margin: 0;
 }
 table {
-    width: 50%;
+    width: 75%;
     margin-left: auto;
     margin-right: auto;
     transition: length 1s;
 }
+
+.partName, .partNumber, .newPartAmount {
+  width: 50%;
+}
+
 form {
     font-size: 20px;
 }
