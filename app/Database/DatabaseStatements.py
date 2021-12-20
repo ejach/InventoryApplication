@@ -7,7 +7,7 @@ class DatabaseStatements:
         self.db = self.dbc.get_db()
         self.select = f'SELECT * FROM {self.db}.parts'
         self.select_vans = f'SELECT * FROM {self.db}.parts WHERE `van_number` = %s'
-        self.select_vans_order = f'SELECT * FROM {self.db}.vans ORDER BY `van_number`'
+        self.select_vans_order = f'SELECT * FROM {self.db}.vans ORDER BY LENGTH(van_number), van_number'
         self.select_vans_distinct = f'SELECT DISTINCT `van_number` from {self.db}.parts ORDER BY `van_number`'
         self.select_vans_dupes = f'SELECT `van_number` from {self.db}.vans'
         self.insert_van = f'INSERT INTO {self.db}.vans (van_number) VALUE (%s)'
