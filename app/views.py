@@ -1,6 +1,7 @@
 from os import environ
 from bleach import clean
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask_wtf import CSRFProtect
 from werkzeug.exceptions import HTTPException, abort
 from flask_talisman import Talisman
 
@@ -11,8 +12,13 @@ from app.csp import csp
 from app.Database.DatabaseConnector import DatabaseConnector
 from app.Database.DatabaseManipulator import DatabaseManipulator, check_input
 
+# Initialize the app
 app = Flask(__name__)
 app.secret_key = environ.get('SECRET_KEY')
+
+# Initialize Cross-Site Request Forgery protection
+csrf = CSRFProtect()
+csrf.init_app(app)
 
 # Only trigger SSLify if the app is running on Heroku
 if 'DYNO' in environ:
