@@ -3,6 +3,9 @@ from bleach import clean
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.exceptions import HTTPException, abort
 from flask_talisman import Talisman
+
+from app.Forms.LoginForm import LoginForm
+from app.Forms.RegisterForm import RegisterForm
 from app.csp import csp
 
 from app.Database.DatabaseConnector import DatabaseConnector
@@ -52,17 +55,18 @@ def index():
 @app.route('/login', strict_slashes=False, methods=['GET', 'POST'])
 def login():
     try:
+        form = LoginForm()
         if request.method == 'POST':
-            username = clean(request.form.get('username'))
-            password = clean(request.form.get('password'))
+            username = clean(form.username.data)
+            password = clean(form.password.data)
             my_login = dbm.login(username=username, password=password)
             if my_login:
                 session['logged_in'] = True
                 session['username'] = username
             else:
-                return redirect(url_for('login'))
+                return render_template('login.html', form=form)
         if 'logged_in' not in session:
-            return render_template('login.html')
+            return render_template('login.html', form=form)
         else:
             return redirect(url_for('index'))
     except IndexError:
@@ -75,14 +79,15 @@ def login():
 @app.route('/register', strict_slashes=False, methods=['GET', 'POST'])
 def register():
     try:
+        form = RegisterForm()
         if request.method == 'POST':
-            username = clean(request.form.get('username'))
-            password = clean(request.form.get('password'))
-            conf_password = clean(request.form.get('confPassword'))
+            username = clean(form.username.data)
+            password = clean(form.password.data)
+            conf_password = clean(form.confPass.data)
             dbm.register(username, password, conf_password)
             return redirect(url_for('login'))
         elif 'logged_in' not in session:
-            return render_template('register.html')
+            return render_template('register.html', form=form)
         else:
             return redirect(url_for('index'))
     except IndexError:

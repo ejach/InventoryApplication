@@ -3,11 +3,11 @@
 <script src= "{{ url_for('static', filename='js/login.js') }}"></script>
 {% endblock %}
 {% block content %}
-<form id="loginForm">
-  <input type="text" name="username" placeholder="Username" required pattern="^\w+( +\w+)*$" /><br />
-  <input type="password" name="password" placeholder="Password" required pattern="^\w+( +\w+)*$" /><br />
-  <input id="btnLogin" type="submit" value="Login"><br />
-  <a href="/register" id="registerText">Click here to create an account</a>
-  <br /><p id="loginError" style="color: red;"></p>
-</form>
+    <h3 id="instructions">Login</h3>
+    <form id="loginForm">
+      {{ form.username(placeholder='Username', pattern='^\w+( +\w+)*$') }}
+      {{ form.password(placeholder='Password', pattern='^\w+( +\w+)*$') }}
+      {{ form.submit(value='Login') }}
+      <a href="/register" id="registerText">Click here to create an account</a>
+    </form>
 {% endblock %}
