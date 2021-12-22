@@ -5,6 +5,7 @@
 {% block content %}
 <h3 id="instructions">Register</h3>
 <form id="registerForm">
+    {{ form.csrf_token() }}
     {{ form.username(placeholder='Username', pattern='^\w+( +\w+)*$') }}
     {{ form.password(placeholder='Password', pattern='^\w+( +\w+)*$') }}
     {{ form.confPass(placeholder='Confirm Password', pattern='^\w+( +\w+)*$') }}

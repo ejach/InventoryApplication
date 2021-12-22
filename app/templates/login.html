@@ -5,9 +5,10 @@
 {% block content %}
     <h3 id="instructions">Login</h3>
     <form id="loginForm">
-      {{ form.username(placeholder='Username', pattern='^\w+( +\w+)*$') }}
-      {{ form.password(placeholder='Password', pattern='^\w+( +\w+)*$') }}
-      {{ form.submit(value='Login') }}
+        {{ form.csrf_token() }}
+        {{ form.username(placeholder='Username', pattern='^\w+( +\w+)*$') }}
+        {{ form.password(placeholder='Password', pattern='^\w+( +\w+)*$') }}
+        {{ form.submit(value='Login') }}
       <a href="/register" id="registerText">Click here to create an account</a>
     </form>
 {% endblock %}
