@@ -33,6 +33,21 @@ def internal_error(e):
     return render_template('error.html', e=e)
 
 
+# Main index.html route
+@app.route('/', strict_slashes=False, methods=['GET', 'POST'])
+def index():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+    else:
+        try:
+            username = session['username']
+            return render_template('index.html', username=username)
+        except IndexError:
+            abort(404), 404
+        except HTTPException:
+            abort(500)
+
+
 # app route for /login
 @app.route('/login', strict_slashes=False, methods=['GET', 'POST'])
 def login():
@@ -66,8 +81,10 @@ def register():
             conf_password = clean(request.form.get('confPassword'))
             dbm.register(username, password, conf_password)
             return redirect(url_for('login'))
-        else:
+        elif 'logged_in' not in session:
             return render_template('register.html')
+        else:
+            return redirect(url_for('index'))
     except IndexError:
         abort(404), 404
     except HTTPException:
@@ -80,21 +97,6 @@ def logout():
     session.pop('logged_in', default=None)
     session.pop('username', default=None)
     return redirect(url_for('index'))
-
-
-# Main index.html route
-@app.route('/', strict_slashes=False, methods=['GET', 'POST'])
-def index():
-    if 'logged_in' not in session:
-        return redirect(url_for('login'))
-    else:
-        try:
-            username = session['username']
-            return render_template('index.html', username=username)
-        except IndexError:
-            abort(404), 404
-        except HTTPException:
-            abort(500)
 
 
 # parts.html route

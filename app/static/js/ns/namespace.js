@@ -27,7 +27,7 @@
     // On submit, execute the following
     deleteThis : function ($getPath) {
       let element = $('#table');
-      $(document).off('click').on('click', '.deleteBtn', function(){
+      $(document).off().on('click', '.deleteBtn', function(){
         let id = this.dataset.value;
         toggleProps('.deleteBtn', '.updateBtn');
         toggleMe('#deleteBtn' + id, '#updateBtn' + id, '#confirmMe' + id);
