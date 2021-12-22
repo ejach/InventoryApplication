@@ -3,12 +3,12 @@
 <script src= "{{ url_for('static', filename='js/register.js') }}"></script>
 {% endblock %}
 {% block content %}
+<h3 id="instructions">Register</h3>
 <form id="registerForm">
-  <input type="text" id="username" name="username" placeholder="Username" pattern="^\w+( +\w+)*$" required /><br/>
-  <input type="password" id="password" name="password" placeholder="Password" pattern="^\w+( +\w+)*$" required /><br/>
-  <input type="password" id="confPassword" name="confPassword" placeholder="Confirm Password" pattern="^\w+( +\w+)*$" required /><br/>
-  <input type="submit" id="registerBtn" value="Register" /><br/>
+    {{ form.username(placeholder='Username', pattern='^\w+( +\w+)*$') }}
+    {{ form.password(placeholder='Password', pattern='^\w+( +\w+)*$') }}
+    {{ form.confPass(placeholder='Confirm Password', pattern='^\w+( +\w+)*$') }}
+    {{ form.submit(value='Register') }}
   <a href="/login" id="registerText">Already have an account? Click here to Login</a><br/>
-  <br/><p id="error" style="color: red;"></p>
 </form>
 {% endblock %}

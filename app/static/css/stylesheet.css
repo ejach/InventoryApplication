@@ -52,6 +52,12 @@
   display: block;
 }
 
+#loginForm, #registerForm {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
 
 html {
   font-family: Arial, serif;
