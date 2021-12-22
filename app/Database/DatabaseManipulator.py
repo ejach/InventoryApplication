@@ -241,7 +241,7 @@ class DatabaseManipulator:
     def login(self, username, password):
         try:
             hash_pw = self.get_password_by_username(username)
-            if check_password_hash(password.encode('utf8'), hash_pw[0].encode('utf8')) \
+            if hash_pw and check_password_hash(password.encode('utf8'), hash_pw[0].encode('utf8')) \
                     and self.check_if_account_exists(username):
                 return True
             else:

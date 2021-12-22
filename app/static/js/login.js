@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(function() {
     // On submit, execute the following
     $("#btnLogin").click(function (event) {
         // Prevents form from submitting
@@ -20,6 +20,7 @@ $(document).ready(function() {
               success: function () {
                   $("#btnLogin").prop("disabled", false);
                   location.reload();
+                  console.log(location.search);
               },
               // On failure, print errors and re-enable the submit button
               error: function (e) {

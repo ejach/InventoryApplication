@@ -2,7 +2,7 @@
 <html lang="en">
 <meta charset="UTF-8">
 <meta name="viewport" content="user-scalable=no" />
-{% if 'DYNO' in environ %}
+{% if 'https' in request.base_url %}
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 {% endif %}
 <link rel="shortcut icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
