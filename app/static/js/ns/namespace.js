@@ -45,7 +45,8 @@
         $(element).off().on('click', '#yesBtn' + id, function () {
           // Parameters to be sent in the request
           let url = (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) ? '/delete/van/' : '/delete/part/';
-          let data = 'Delete=' + id;
+          // Append csrf token to data string
+          let data = 'Delete=' + id + '&csrf_token=' + csrfToken;
           $.ajax({
             type: 'POST',
             url: url,
@@ -76,6 +77,8 @@
         toggleProps('#submit');
         const form = $('#myForm')[0];
         const data = new FormData(form);
+        // Append csrf token to data object
+        data.append('csrf_token', csrfToken);
         let amount = $('#partAmount');
         let partName = $('#partName');
         let partNumber = $('#partNumber');
@@ -143,7 +146,8 @@
         $.ajax({
           url: url,
           type: 'POST',
-          data: text,
+          // Append the csrf token to the data string
+          data: text + '&csrf_token=' + csrfToken,
           success: function() {
             $(reloadElem).load($getPath);
             toggleProps('.deleteBtn', '.updateBtn');
@@ -152,7 +156,7 @@
         });
       }
       // On click, execute the following
-      $(document.body).off('click').on('click', '.updateBtn', function(){
+      $(document.body).off().on('click', '.updateBtn', function(){
         // ID to be updated
         let id = this.dataset.value;
         toggleElem(id);
@@ -165,7 +169,7 @@
         // Make sure the select element selects the original value
         selectElem.find('option[value="'+optValue+'"]').attr('selected',true);
         toggleProps('.deleteBtn', '.updateBtn');
-        $('#table').off('click').on('click', '#confirmUpdateBtn'+id, function(){
+        $('#table').off('click').on('click', '#confirmUpdateBtn'+id, function() {
           let text;
           let url;
           if (!window.location.pathname.split('/')[2] && window.location.pathname !== '/parts') {
@@ -194,7 +198,7 @@
           }
         });
         // Cancel button implementation
-        $('.table').off('click').on('click', '#cancelUpdateBtn'+id, function(){
+        $('.table').off().on('click', '#cancelUpdateBtn'+id, function(){
           toggleElem(id);
           // Reset to original values
           if (!window.location.pathname.split('/')[2] && window.location.pathname !== '/parts') {
@@ -208,7 +212,104 @@
           toggleProps('.deleteBtn', '.updateBtn');
         });
       });
-    }
+    },
+    loginUser : function () {
+      let username = $('#username');
+    let password = $('#password');
+    let instructions = $('#instructions');
+    let btnLogin = $('#btnLogin');
+    // On submit, execute the following
+    $(btnLogin).click(function (event) {
+        if (!username.val() || !password.val()) {
+            $(instructions).html('Blank input will not be accepted.').css('color', 'red');
+        } else {
+            // Prevents form from submitting
+            event.preventDefault();
+            const form = $('#loginForm')[0];
+            const data = new FormData(form);
+            // Append csrf token to data object
+            data.append('csrf_token', csrfToken);
+            // Disable submit button until something happens
+            $(btnLogin).prop('disabled', true);
+            $.ajax({
+                type: 'POST',
+                enctype: 'multipart/form-data',
+                url: '/login',
+                data: data,
+                processData: false,
+                contentType: false,
+                cache: false,
+                timeout: 800000,
+                // On success, load the span from the getPath and re-enable the submit button
+                success: function () {
+                    $(btnLogin).prop('disabled', false);
+                    $(instructions).html('Login').css('color', 'black');
+                    location.reload();
+                },
+                // On failure, print errors and re-enable the submit button
+                error: function (e) {
+                    if (e.status === 401) {
+                        $(instructions).html('Incorrect login credentials').css('color', 'red');
+                    } else {
+                        console.log('ERROR : ', e);
+                    }
+                    $(btnLogin).prop('disabled', false);
+                }
+            });
+            $(form).trigger('reset');
+        }
+      });
+    },
+        registerUser : function () {
+          let registerBtn = $('#registerBtn');
+          // On submit, execute the following
+          $(registerBtn).click(function (event) {
+            let username = $('#username').val();
+            let password = $('#password').val();
+            let confPass = $('#confPass').val();
+            let instructions = $('#instructions');
+            event.preventDefault();
+            if (password === confPass && username && password && confPass) {
+              // Prevents form from submitting
+              const form = $('#registerForm')[0];
+              const data = new FormData(form);
+              // Append csrf token to data object
+              data.append('csrf_token', csrfToken);
+              // Disable submit button until something happens
+              $(registerBtn).prop('disabled', true);
+              $.ajax({
+                type: 'POST',
+                enctype: 'multipart/form-data',
+                url: '/register',
+                data: data,
+                processData: false,
+                contentType: false,
+                cache: false,
+                timeout: 800000,
+                // On success, redirect to /login
+                success: function () {
+                  $(registerBtn).prop('disabled', false);
+                  window.location.replace('/login');
+                },
+                // On failure, print errors and re-enable the submit button
+                error: function (e) {
+                  if (e.status === 409) {
+                    $(instructions).html('Username already exists, please try again').css('color', 'red');
+                    } else {
+                    console.log('ERROR : ', e);
+                  }
+                  $(registerBtn).prop('disabled', false);
+                }
+              });
+              $(form).trigger('reset');
+              } else if (password !== confPass || !password || !confPass || !username) {
+                $(instructions).html('Username, Password, and Confirm Password must not be empty and passwords must match')
+                    .css('color', 'red');
+              } else {
+                $(instructions).html('Register').css('color', 'black');
+              }
+          });
+        }
   };
 
   // Let ns be called in the current window to access functions

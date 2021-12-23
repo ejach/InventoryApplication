@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block scripts %}
 <script src= "{{ url_for('static', filename='js/login.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/ns/namespace.js') }}"></script>
 {% endblock %}
 {% block content %}
     <h3 id="instructions">Login</h3>
     <form id="loginForm">
-        {{ form.csrf_token() }}
         {{ form.username(placeholder='Username', pattern='^\w+( +\w+)*$') }}
         {{ form.password(placeholder='Password', pattern='^\w+( +\w+)*$') }}
         {{ form.submit(value='Login') }}

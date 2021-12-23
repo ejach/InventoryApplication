@@ -1,6 +1,6 @@
 from os import environ
 from bleach import clean
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, Response
 from flask_wtf import CSRFProtect
 from werkzeug.exceptions import HTTPException, abort
 from flask_talisman import Talisman
@@ -31,10 +31,22 @@ dbm = DatabaseManipulator()
 dbc = DatabaseConnector()
 
 
+# Handle the 401 error
+@app.errorhandler(401)
+def custom_401(e):
+    return Response(e, 401, {'error': '401: Unauthorized'})
+
+
 # Handle the 404 error
 @app.errorhandler(404)
 def not_found(e):
     return render_template('error.html', e=e)
+
+
+# Handle the 409 error
+@app.errorhandler(409)
+def custom_401(e):
+    return Response(e, 409, {'error': '409: Conflict'})
 
 
 # Handle the 500 error
@@ -70,8 +82,9 @@ def login():
             if my_login:
                 session['logged_in'] = True
                 session['username'] = username
+            # If the login is incorrect, throw 401 Unauthorized
             else:
-                return render_template('login.html', form=form)
+                return render_template('login.html', form=form), 401
         if 'logged_in' not in session:
             return render_template('login.html', form=form)
         else:
@@ -91,8 +104,11 @@ def register():
             username = clean(form.username.data)
             password = clean(form.password.data)
             conf_password = clean(form.confPass.data)
-            dbm.register(username, password, conf_password)
-            return redirect(url_for('login'))
+            register_user = dbm.register(username, password, conf_password)
+            if register_user:
+                return redirect(url_for('login'))
+            else:
+                return render_template('register.html', form=form), 409
         elif 'logged_in' not in session:
             return render_template('register.html', form=form)
         else:
