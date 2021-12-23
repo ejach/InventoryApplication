@@ -7,6 +7,7 @@ from flask_talisman import Talisman
 
 from app.Forms.LoginForm import LoginForm
 from app.Forms.RegisterForm import RegisterForm
+from app.Forms.PartsForm import PartsForm
 from app.csp import csp
 
 from app.Database.DatabaseConnector import DatabaseConnector
@@ -119,23 +120,24 @@ def parts():
         results = dbm.fetchall()
         webui_host = dbc.get_webui_host()
         van_nums = dbm.get_van_nums()
+        form = PartsForm()
         if request.method == 'POST':
             # Sanitizes the input using bleach
-            part_name = clean(request.form['partName'])
-            part_amount = clean(request.form['partAmount'])
-            part_number = clean(request.form['partNumber'])
-            van_number = clean(request.form['van'])
+            part_name = clean(form.partName.data)
+            part_amount = clean(str(form.partAmount.data))
+            part_number = clean(form.partNumber.data)
+            van_number = clean(form.van.data)
             # Insert into the database
             dbm.insert(part_name=part_name, part_amount=part_amount, part_number=part_number, van_number=van_number)
         try:
-            return render_template('parts.html', results=results, webui_host=webui_host, van_nums=van_nums)
+            return render_template('parts.html', results=results, webui_host=webui_host, van_nums=van_nums, form=form)
         except IndexError:
             abort(404), 404
         except HTTPException:
             abort(500)
 
 
-# Displays the table code in parts_table.html so it can be refreshed dynamically without reloading the page
+# Displays the table code in parts_table.html, so it can be refreshed dynamically without reloading the page
 @app.route('/table/<table_name>/<van_number>', strict_slashes=False, methods=['GET', 'POST'])
 def table(table_name, van_number):
     # Requirements to return the results for a van by its number
@@ -217,6 +219,7 @@ def vans():
 # Route for /vans that consumes the van_id
 @app.route('/vans/<van_id>', strict_slashes=False)
 def van_num(van_id=0):
+    form = PartsForm()
     if 'logged_in' not in session:
         return redirect(url_for('login'))
     else:
@@ -224,10 +227,10 @@ def van_num(van_id=0):
         check_exist = dbm.check_if_exists(van_id)
         # If there are no results in the van database, but it exists, execute the following
         if results is None and check_exist:
-            return render_template('display_van.html', results=None, check_exist=check_exist)
+            return render_template('display_van.html', results=None, check_exist=check_exist, form=form)
         # If the results are not None, return the following
         elif results is not None:
-            return render_template('display_van.html', results=results)
+            return render_template('display_van.html', results=results, form=form)
         # Otherwise, redirect to the main /vans page
         else:
             return redirect(url_for('vans'))

@@ -23,6 +23,16 @@
     }
   }
 
+  // Set CSRF token for the namespace per the WTForms documentation
+  let csrfToken = $('meta[name=csrf-token]').attr('content');
+  $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+      if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+        xhr.setRequestHeader("X-CSRFToken", csrfToken)
+      }
+    }
+  });
+
   namespace = {
     // On submit, execute the following
     deleteThis : function ($getPath) {
@@ -66,32 +76,45 @@
         toggleProps('#submit');
         const form = $('#myForm')[0];
         const data = new FormData(form);
+        let amount = $('#partAmount');
+        let partName = $('#partName');
+        let partNumber = $('#partNumber');
+        let instructions = $('#instructions');
+        let vanNum = window.location.pathname.split('/')[2] ? window.location.pathname.split('/')[2] : $('#van').val();
         // Append vanNum from URL to the formData object if the current window is not /parts
         if (window.location.pathname !== '/parts') {
           let vanNum = window.location.pathname.split('/')[2];
           data.append('van', vanNum);
         }
-        $.ajax({
-          type: 'POST',
-          enctype: 'multipart/form-data',
-          url: '/parts',
-          data: data,
-          processData: false,
-          contentType: false,
-          cache: false,
-          timeout: 800000,
-          // On success, load the span from the getPath
-          success: function () {
-            $('#table').load($getPath);
-            toggleProps('#submit');
-          },
-          // On failure, print errors
-          error: function (e) {
-            console.log('ERROR : ', e);
-            toggleProps('#submit');
-          }
-        });
-        $(form).trigger('reset');
+        if (!Number.isFinite(amount) && amount.val() && partName.val() && partNumber.val() && vanNum) {
+          $.ajax({
+            type: 'POST',
+            enctype: 'multipart/form-data',
+            url: '/parts',
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 800000,
+            // On success, load the span from the getPath
+            success: function () {
+              $('#table').load($getPath);
+              toggleProps('#submit');
+              $(instructions).html('Enter the Part Name, Part Number, and Part Amount: ')
+              .css('color', 'black');
+            },
+            // On failure, print errors
+            error: function (e) {
+              console.log('ERROR : ', e);
+              toggleProps('#submit');
+            }
+          });
+          $(form).trigger('reset');
+          // If amount is blank, or the amount is NaN notify the user
+        } else if (Number.isNaN(amount) || !amount.val() || !partName.val() || !partNumber.val() || !vanNum) {
+          $(instructions).html('Invalid or blank input').css('color', 'red');
+          toggleProps('#submit');
+        }
       });
     },
     updatePart : function($getPath) {
@@ -103,11 +126,11 @@
           + id + ', #partName' + id + ', #partNumber' + id + ', #vanNumber' + id + ', #cancelUpdateBtn' + id).toggle();
         } else if (!window.location.pathname.split('/vans/')[1]) {
           $('#deleteBtn' + id + ', #thisVanNumber' + id + ', #vanNumber' + id + ', #updateBtn' + id +
-              ', #confirmUpdateBtn' + id +  ', #partNumber' + id + ', #cancelUpdateBtn' + id).toggle();
+          ', #confirmUpdateBtn' + id +  ', #partNumber' + id + ', #cancelUpdateBtn' + id).toggle();
         } else {
           $('#thisPartName' + id +', #thisPartNumber' + id + ', #updateBtn' + id + ', #thisAmount' + id +
-              ', #newPartAmount' + id + ', #confirmUpdateBtn' + id + ', #deleteBtn' + id + ', #partName' + id +
-              ', #partNumber' + id  + ', #cancelUpdateBtn' + id).toggle();
+          ', #newPartAmount' + id + ', #confirmUpdateBtn' + id + ', #deleteBtn' + id + ', #partName' + id +
+          ', #partNumber' + id  + ', #cancelUpdateBtn' + id).toggle();
         }
       }
       // Reset element passed in to its original value
