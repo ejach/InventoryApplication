@@ -34,25 +34,37 @@ dbc = DatabaseConnector()
 # Handle the 401 error
 @app.errorhandler(401)
 def custom_401(e):
-    return Response(e, 401, {'error': '401: Unauthorized'})
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+    else:
+        return Response(e, 401, {'error': '401: Unauthorized'})
 
 
 # Handle the 404 error
 @app.errorhandler(404)
 def not_found(e):
-    return render_template('error.html', e=e)
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+    else:
+        return render_template('error.html', e=e)
 
 
 # Handle the 409 error
 @app.errorhandler(409)
 def custom_401(e):
-    return Response(e, 409, {'error': '409: Conflict'})
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+    else:
+        return Response(e, 409, {'error': '409: Conflict'})
 
 
 # Handle the 500 error
 @app.errorhandler(500)
 def internal_error(e):
-    return render_template('error.html', e=e)
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+    else:
+        return render_template('error.html', e=e)
 
 
 # Main index.html route
