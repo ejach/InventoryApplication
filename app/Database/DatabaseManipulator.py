@@ -261,5 +261,8 @@ class DatabaseManipulator:
                     values = (username, hashed_pw,)
                     self.cursor.execute(stmt, values)
                     self.conn.close()
+                return True
+            else:
+                return False
         except Error as e:
             print(str(e) + '\n' + 'Lost connection to the MySQL server.')
