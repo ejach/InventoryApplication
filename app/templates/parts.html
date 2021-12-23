@@ -7,17 +7,19 @@
 {% endblock %}
 {% block content %}
 <form id="myForm">
-  <p id="instructions">Enter the Part Name,  Part Number, and Part Amount: </p>
-  <input type="text" id="partName" name="partName" placeholder="Part Name" required pattern="^\w+( +\w+)*$" />
-  <input type="text" id="partNumber" name="partNumber" placeholder="Part Number" required pattern="^\w+( +\w+)*$" />
-  <input type="number" id="partAmount" name="partAmount" min="1" value="1" required pattern="[0-9]{1,5}" />
-  <select name="van" class="selectVan" id="van" required>
-    <option value="" disabled selected hidden>Select Van</option>
-    {% for row in van_nums %}
-    <option value="{{ row[1] }}">{{ row[1] }}</option>
+    <p id="instructions">Enter the Part Name,  Part Number, and Part Amount: </p>
+    {{ form.partName(placeholder='Part Name', pattern='^\w+( +\w+)*$') }}
+    {{ form.partNumber(placeholder='Part Number', pattern='^\w+( +\w+)*$') }}
+    {{ form.partAmount(placeholder='Part Amount', pattern='[0-9]{1,5}', value=1, min=1) }}
+    <select name="van" id="van">
+    {% for option in form.van %}
+        {% if loop.first %}
+            <option value="" disabled selected>Select Van</option>
+        {% endif %}
+            {{ option }}
     {% endfor %}
-  </select>
-  <input type="submit" id="submit" value="Add Part">
+    </select>
+    {{ form.submit(value='Add Part') }}
 </form>
 <div id="table">
   {#    If the results are empty, throw the following error    #}

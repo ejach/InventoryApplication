@@ -162,8 +162,8 @@ class DatabaseManipulator:
 
     # Get list of van numbers that exist in the database
     def get_van_nums(self):
-        self.conn.ping()
         try:
+            self.conn.ping()
             stmt = self.stmt.get_select_vans_order_statement()
             self.cursor.execute(stmt)
             results = self.cursor.fetchall()
