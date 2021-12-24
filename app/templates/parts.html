@@ -12,9 +12,10 @@
     {{ form.partNumber(placeholder='Part Number', pattern='^\w+( +\w+)*$') }}
     {{ form.partAmount(placeholder='Part Amount', pattern='[0-9]{1,5}', value=1, min=1) }}
     <select name="van" id="van">
+    {#  Make the first item in the loop a disabled default value of SelectField's label  #}
     {% for option in form.van %}
         {% if loop.first %}
-            <option value="" disabled selected>Select Van</option>
+            <option value="" disabled selected>{{ form.van.label.text }}</option>
         {% endif %}
             {{ option }}
     {% endfor %}
