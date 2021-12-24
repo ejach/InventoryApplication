@@ -23,12 +23,12 @@
     }
   }
 
-  // Set CSRF token for the namespace per the WTForms documentation
+  // Set CSRF token in the header for the namespace per the WTForms documentation
   let csrfToken = $('meta[name=csrf-token]').attr('content');
   $.ajaxSetup({
     beforeSend: function(xhr, settings) {
       if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-        xhr.setRequestHeader("X-CSRFToken", csrfToken)
+        xhr.setRequestHeader('X-CSRFToken', csrfToken)
       }
     }
   });
@@ -46,7 +46,7 @@
           // Parameters to be sent in the request
           let url = (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) ? '/delete/van/' : '/delete/part/';
           // Append csrf token to data string
-          let data = 'Delete=' + id + '&csrf_token=' + csrfToken;
+          let data = 'Delete=' + id;
           $.ajax({
             type: 'POST',
             url: url,
@@ -77,8 +77,6 @@
         toggleProps('#submit');
         const form = $('#myForm')[0];
         const data = new FormData(form);
-        // Append csrf token to data object
-        data.append('csrf_token', csrfToken);
         let amount = $('#partAmount');
         let partName = $('#partName');
         let partNumber = $('#partNumber');
@@ -147,7 +145,7 @@
           url: url,
           type: 'POST',
           // Append the csrf token to the data string
-          data: text + '&csrf_token=' + csrfToken,
+          data: text,
           success: function() {
             $(reloadElem).load($getPath);
             toggleProps('.deleteBtn', '.updateBtn');
@@ -227,8 +225,6 @@
             event.preventDefault();
             const form = $('#loginForm')[0];
             const data = new FormData(form);
-            // Append csrf token to data object
-            data.append('csrf_token', csrfToken);
             // Disable submit button until something happens
             $(btnLogin).prop('disabled', true);
             $.ajax({
@@ -273,8 +269,6 @@
               // Prevents form from submitting
               const form = $('#registerForm')[0];
               const data = new FormData(form);
-              // Append csrf token to data object
-              data.append('csrf_token', csrfToken);
               // Disable submit button until something happens
               $(registerBtn).prop('disabled', true);
               $.ajax({
