@@ -101,8 +101,9 @@
             success: function () {
               $('#table').load($getPath);
               toggleProps('#submit');
-              $(instructions).html('Enter the Part Name, Part Number, and Part Amount: ')
-              .css('color', 'black');
+              window.location.pathname.split('/')[2]
+                  ? $(instructions).html('Enter the Part Name, Part Number, and Part Amount: ').css('color', 'black')
+                  : $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Van Number: ').css('color', 'black');
             },
             // On failure, print errors
             error: function (e) {
@@ -136,7 +137,7 @@
       }
       // Reset element passed in to its original value
       let origVal = function (elem) {
-        return $(elem).attr("value");
+        return $(elem).attr('value');
       }
 
       // Send POST request
@@ -164,6 +165,7 @@
         let optValue = vanNum.html();
         let selectElem = $('#vanNumber'+id);
         let partAmount = $('#newPartAmount'+id);
+        let instructions = $('#instructions');
         // Make sure the select element selects the original value
         selectElem.find('option[value="'+optValue+'"]').attr('selected',true);
         toggleProps('.deleteBtn', '.updateBtn');
@@ -173,11 +175,11 @@
           if (!window.location.pathname.split('/')[2] && window.location.pathname !== '/parts') {
             if (selectElem.val()) {
               url = '/update/van/';
-              text = 'id=' + id + '&van_number=' + selectElem.val();
+              text = 'id=' + id + '&vanNumber=' + selectElem.val();
               postReq(url, text, '#mySpan', id);
-              $('#instructions').html('Select a van: ').css('color', 'black');
+              $(instructions).html('Select a van: ').css('color', 'black');
             } else {
-              $('#instructions').html('Blank input will not be accepted.').css('color', 'red');
+              $(instructions).html('Blank input will not be accepted.').css('color', 'red');
             }
           } else {
             let partNumberHtml = partNumber.val();
@@ -186,10 +188,12 @@
             // If the window location is not /parts, get it from the URL, else prompt the user for the vanNum
             let vanNumHtml = (window.location.pathname !== '/parts') ? window.location.pathname.split('/')[2] : $('#vanNumber'+id+' option:selected').text();
             if (!partNameHtml || !partNumberHtml || !partAmountHtml) {
-              $('#instructions').html('Blank input will not be accepted.').css('color', 'red');
+              $(instructions).html('Blank input will not be accepted.').css('color', 'red');
             } else {
-              text = 'id=' + id + '&part_name=' + partNameHtml + '&part_amount=' + partAmountHtml + '&part_number=' + partNumberHtml + '&van_number=' + vanNumHtml;
-              $('#instructions').html('Enter the Part Name and Part Number: ').css('color', 'black');
+              text = 'id=' + id + '&partName=' + partNameHtml + '&newPartAmount=' + partAmountHtml + '&partNumber=' + partNumberHtml + '&newVan=' + vanNumHtml;
+              window.location.pathname.split('/')[2]
+                  ? $(instructions).html('Enter the Part Name, Part Number, and Part Amount: ').css('color', 'black')
+                  : $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Van Number: ').css('color', 'black');
               url = (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) ? '/update/van/' : '/update/part/';
               postReq(url, text, '#table', id);
             }

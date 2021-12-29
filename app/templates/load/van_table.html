@@ -7,18 +7,13 @@
     <th>Part Name</th><th>Part Number</th><th>Van</th><th>Amount</th><th>Action</th><br/>
     {% for row in results %}
     <tr>
-        <td><p class="thisPartName" id="thisPartName{{ row[0] }}">{{ row[1] }}</p>
-            <input type="text" class="partName" id="partName{{ row[0] }}" name="partName" value="{{ row[1] }}" data-value="{{ row[0] }}" /></td>
+        <td>{{ update_form.id(value=row[0]) }}<p class="thisPartName" id="thisPartName{{ row[0] }}">{{ row[1] }}</p>
+            {{ update_form.partName(class='partName', pattern='^\w+( +\w+)*$', placeholder=update_form.partNumber.label.text, id='partName' ~ row[0], value=row[1], data_value=row[0]) }}</td>
         <td><p class="thisPartNumber" id="thisPartNumber{{ row[0] }}">{{ row[3] }}</p>
-            <input type="text" class="partNumber" id="partNumber{{ row[0] }}" name="partNumber" value="{{ row[3] }}" data-value="{{ row[0] }}" /></td>
+            {{ update_form.partNumber(class='partNumber', pattern='^\w+( +\w+)*$', placeholder=update_form.partNumber.label.text, id='partNumber' ~ row[0], value=row[3], data_value=row[0]) }}</td>
         <td><p class="thisVanNumber" id="thisVanNumber{{ row[0] }}">{{ row[4] }}</p>
-            <select name="newVan" class="vanNumber" id="vanNumber{{ row[0] }}" name="vanNumber" data-value="{{ row[0] }}">
-            {% for row in van_nums %}
-            <option id="select{{ row[1] }}" data-value="{{ row[1] }}" value="{{ row[1] }}">{{ row[1] }}</option>
-            {% endfor %}
-            </select></td>
     <td><p class="thisAmount" id="thisAmount{{ row[0] }}">{{ row[2] }}</p>
-        <input type="number" id="newPartAmount{{ row[0] }}" class="newPartAmount" name="newPartAmount" min="1" value="{{ row[2] }}" required pattern="[0-9]{1,5}" /></td>
+            {{ update_form.newPartAmount(class=update_form.newPartAmount.name, pattern='[0-9]{1,5}', id=update_form.newPartAmount.name ~ row[0], value=row[2], min=1) }}</td>
       <td><p class="confirmMe" id="confirmMe{{ row[0] }}">Are you sure?
         <input type="button" class="yesBtn" id="yesBtn{{ row[0] }}" value="Yes" name="yesBtn"
         data-value="{{ row[0] }}" />
@@ -28,8 +23,7 @@
         data-value="{{ row[0] }}" />
         <input type="button" class="updateBtn" name="updateBtn" id="updateBtn{{ row[0] }}" value="Edit"
         data-value="{{ row[0] }}" />
-        <input type="button" class="confirmUpdateBtn" name="confirmUpdateBtn" id="confirmUpdateBtn{{ row[0] }}" value="Submit"
-        data-value="{{ row[0] }}" />
+        {{ update_form.confirmUpdateBtn(class=update_form.confirmUpdateBtn.name, id=update_form.confirmUpdateBtn.name ~ row[0], data_value=row[0]) }}
         <input type="button" class="cancelUpdateBtn" name="cancelUpdateBtn" id="cancelUpdateBtn{{ row[0] }}" value="Cancel"
         data-value="{{ row[0] }}" />
       </td>
