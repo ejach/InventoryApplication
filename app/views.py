@@ -8,6 +8,9 @@ from flask_talisman import Talisman
 from app.Forms.LoginForm import LoginForm
 from app.Forms.RegisterForm import RegisterForm
 from app.Forms.PartsForm import PartsForm
+from app.Forms.UpdateVanForm import UpdateVanForm
+from app.Forms.VanForm import VanForm
+from app.Forms.UpdatePartsForm import UpdatePartsForm
 from app.csp import csp
 
 from app.Database.DatabaseConnector import DatabaseConnector
@@ -149,6 +152,7 @@ def parts():
         webui_host = dbc.get_webui_host()
         van_nums = dbm.get_van_nums()
         form = PartsForm()
+        update_form = UpdatePartsForm()
         if request.method == 'POST':
             # Sanitizes the input using bleach
             part_name = clean(form.partName.data)
@@ -158,7 +162,8 @@ def parts():
             # Insert into the database
             dbm.insert(part_name=part_name, part_amount=part_amount, part_number=part_number, van_number=van_number)
         try:
-            return render_template('parts.html', results=results, webui_host=webui_host, van_nums=van_nums, form=form)
+            return render_template('parts.html', results=results, webui_host=webui_host, van_nums=van_nums, form=form,
+                                   update_form=update_form)
         except IndexError:
             abort(404), 404
         except HTTPException:
@@ -170,18 +175,25 @@ def parts():
 def table(table_name, van_number):
     # Requirements to return the results for a van by its number
     if table_name == 'vans' and van_number != 'all':
+        form = PartsForm()
+        update_form = UpdatePartsForm()
         results = dbm.get_vans(van_number)
         check_exist = dbm.check_if_exists(van_number)
-        return render_template('load/van_table.html', results=results, check_exist=check_exist)
+        return render_template('load/van_table.html', results=results, check_exist=check_exist, form=form,
+                               update_form=update_form)
     # Requirements to return the master list of parts
     elif table_name == 'main' and van_number == 'all':
+        form = PartsForm()
+        update_form = UpdatePartsForm()
         results = dbm.fetchall()
         van_nums = dbm.get_van_nums()
-        return render_template('load/parts_table.html', results=results, van_nums=van_nums)
+        return render_template('load/parts_table.html', results=results, van_nums=van_nums, form=form,
+                               update_form=update_form)
     # if table_name is vans_list, and van_number is all, return the following
     elif table_name == 'vans_list' and van_number == 'all':
+        update_form = UpdateVanForm()
         van_nums = dbm.get_van_nums()
-        return render_template('load/vans_list.html', van_numbers=van_nums)
+        return render_template('load/vans_list.html', van_numbers=van_nums, update_form=update_form)
     # If the url is attempted to be accessed, redirect to index
     else:
         return redirect(url_for('index'))
@@ -207,17 +219,19 @@ def delete(id_type):
 def update(id_type):
     try:
         if request.method == 'POST' and id_type == 'part':
-            part_id = clean(request.form.get('id'))
-            part_name = clean(request.form.get('part_name'))
-            part_amount = clean(request.form.get('part_amount'))
-            part_number = clean(request.form.get('part_number'))
-            van_number = clean(request.form.get('van_number'))
+            form = UpdatePartsForm()
+            part_id = clean(form.id.data)
+            part_name = clean(form.partName.data)
+            part_amount = clean(str(form.newPartAmount.data))
+            part_number = clean(form.partNumber.data)
+            van_number = clean(form.newVan.data)
             if check_input(part_id) and check_input(part_name) and check_input(part_amount) \
                     and check_input(part_number) and check_input(van_number):
                 dbm.update(part_id, part_name, part_amount, part_number, van_number)
         elif request.method == 'POST' and id_type == 'van':
-            van_id = request.form.get('id')
-            van_number = request.form.get('van_number')
+            form = UpdateVanForm()
+            van_id = clean(form.id.data)
+            van_number = clean(form.vanNumber.data)
             if check_input(van_id) and check_input(van_number):
                 dbm.update_van(van_id, van_number)
         # If the /update route is accessed, re-route to index
@@ -232,12 +246,14 @@ def vans():
     if 'logged_in' not in session:
         return redirect(url_for('login'))
     else:
+        form = VanForm()
+        update_form = UpdateVanForm()
         van_numbers = dbm.get_van_nums()
         if request.method == 'POST':
-            van_number = request.form.get('van_number')
+            van_number = clean(form.van_number.data)
             dbm.insert_van(van_number)
         try:
-            return render_template('vans.html', van_numbers=van_numbers)
+            return render_template('vans.html', van_numbers=van_numbers, form=form, update_form=update_form)
         except IndexError:
             abort(404), 404
         except HTTPException:
@@ -248,6 +264,7 @@ def vans():
 @app.route('/vans/<van_id>', strict_slashes=False)
 def van_num(van_id=0):
     form = PartsForm()
+    update_form = UpdatePartsForm()
     if 'logged_in' not in session:
         return redirect(url_for('login'))
     else:
@@ -255,10 +272,11 @@ def van_num(van_id=0):
         check_exist = dbm.check_if_exists(van_id)
         # If there are no results in the van database, but it exists, execute the following
         if results is None and check_exist:
-            return render_template('display_van.html', results=None, check_exist=check_exist, form=form)
+            return render_template('display_van.html', results=None, check_exist=check_exist, form=form,
+                                   update_form=update_form)
         # If the results are not None, return the following
         elif results is not None:
-            return render_template('display_van.html', results=results, form=form)
+            return render_template('display_van.html', results=results, form=form, update_form=update_form)
         # Otherwise, redirect to the main /vans page
         else:
             return redirect(url_for('vans'))
