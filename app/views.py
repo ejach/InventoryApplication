@@ -218,6 +218,7 @@ def delete(id_type):
 @app.route('/update/<id_type>', strict_slashes=False, methods=['POST', 'GET'])
 def update(id_type):
     try:
+        # Route to update a part by the ID
         if request.method == 'POST' and id_type == 'part':
             form = UpdatePartsForm()
             part_id = clean(form.id.data)
@@ -228,6 +229,7 @@ def update(id_type):
             if check_input(part_id) and check_input(part_name) and check_input(part_amount) \
                     and check_input(part_number) and check_input(van_number):
                 dbm.update(part_id, part_name, part_amount, part_number, van_number)
+        # Route to update a van by the ID
         elif request.method == 'POST' and id_type == 'van':
             form = UpdateVanForm()
             van_id = clean(form.id.data)
