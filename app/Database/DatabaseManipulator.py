@@ -253,6 +253,16 @@ class DatabaseManipulator:
         except Error as e:
             print(str(e) + '\n' + 'Lost connection to the MySQL server.')
 
+    # Confirm account by ID
+    def confirm_account(self, user_id):
+        try:
+            self.conn.ping()
+            stmt = self.stmt.confirm_account
+            self.cursor.execute(stmt, user_id)
+            self.conn.close()
+        except Error as e:
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+
     # Login by username and password
     def login(self, username, password):
         try:

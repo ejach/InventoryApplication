@@ -143,7 +143,7 @@ a {
 }
 
 
-.confirmMe {
+.confirmMe, .confirmYesBtn, .denyNoBtn, .confirmText {
     display: none;
 }
 .yesBtn {

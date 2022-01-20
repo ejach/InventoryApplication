@@ -215,6 +215,79 @@
         });
       });
     },
+    confirmAccount : function ($getPath) {
+      $(document).off().on('click', '.confirmBtn', function(){
+        let id = this.dataset.value;
+        let confirmBtn = $('#confirmBtn' + id);
+        let confirmText = $('#confirmText' + id);
+        let confirmYesBtn = $('#confirmYesBtn' + id);
+        let denyNoBtn = $('#denyNoBtn' + id);
+        toggleProps('.confirmBtn');
+        toggleMe(confirmBtn, confirmText, confirmYesBtn, denyNoBtn);
+        // Un-attach and re-attach the event listener
+        $(confirmYesBtn).off().click(function () {
+          // Parameters to be sent in the request
+          let url = '/confirm';
+          let data = 'user_id=' + id;
+          $.ajax({
+            type: 'POST',
+            url: url,
+            data: data,
+            timeout: 800000,
+            // On success, load the span from the getPath and re-enable the submit button
+            success: function () {
+              $('#table').load($getPath);
+              toggleProps('.confirmBtn');
+            },
+            // On failure, print errors and re-enable the submit button
+            error: function (e) {
+              console.log('ERROR : ', e);
+              toggleProps('.confirmBtn');
+            }
+          });
+        });
+        $('.table').off().on('click', '#denyNoBtn' + id, function () {
+          toggleProps('.confirmBtn');
+          toggleMe(confirmBtn, confirmText, confirmYesBtn, denyNoBtn);
+        });
+      });
+    },
+    //   $(document).off().on('click','.confirmBtn', function () {
+    //     let id = this.dataset.value;
+    //     toggleProps('.confirmBtn');
+    //     let confirmBtn = $('#confirmBtn' + id);
+    //     let confirmText = $('#confirmText' + id);
+    //     let confirmYesBtn = $('#confirmYesBtn' + id);
+    //     let denyNoBtn = $('#denyNoBtn' + id);
+    //     let table = $('.table');
+    //     toggleMe(confirmBtn, confirmText, confirmYesBtn, denyNoBtn);
+    //       $(confirmBtn).off().on('click', confirmYesBtn, function () {
+    //         let url = '/confirm';
+    //         let data = 'user_id=' + id;
+    //         $.ajax({
+    //           type: 'POST',
+    //           url: url,
+    //           data: data,
+    //           timeout: 800000,
+    //           // On success, load the span from the getPath and re-enable the submit button
+    //           success: function () {
+    //             $('#table').load($getPath);
+    //             toggleProps('.confirmBtn');
+    //           },
+    //           // On failure, print errors and re-enable the submit button
+    //           error: function (e) {
+    //             console.log('ERROR : ', e);
+    //             toggleProps('.confirmBtn');
+    //           }
+    //         });
+    //       });
+    //       // If cancelled, reset button and toggle props
+    //       $(table).off().on('click', denyNoBtn, function () {
+    //         toggleMe(confirmBtn, confirmText, confirmYesBtn, denyNoBtn);
+    //         toggleProps('.confirmBtn');
+    //       });
+    //   });
+    // },
     loginUser : function () {
       let username = $('#username');
     let password = $('#password');

@@ -183,6 +183,10 @@ def table(table_name, van_number):
         check_exist = dbm.check_if_exists(van_number)
         return render_template('load/van_table.html', results=results, check_exist=check_exist, form=form,
                                update_form=update_form)
+    # Requirements to return the list of accounts
+    if table_name == 'users' and van_number != 'all':
+        results = dbm.get_users(username=session['username'])
+        return render_template('load/accounts_table.html', users=results)
     # Requirements to return the master list of parts
     elif table_name == 'main' and van_number == 'all':
         form = PartsForm()
@@ -244,6 +248,19 @@ def update(id_type):
         print(str(e) + '\n' + 'Blank input detected, database not manipulated.')
 
 
+# Route for /confirm
+@app.route('/confirm', methods=['POST'])
+def confirm():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+    else:
+        if request.method == 'POST':
+            user_id = clean(request.form.get('user_id'))
+            dbm.confirm_account(user_id)
+    # If the /confirm route is accessed, re-route to index
+    return redirect(url_for('index'))
+
+
 # Route for /vans
 @app.route('/vans', strict_slashes=False, methods=['GET', 'POST'])
 def vans():
@@ -287,7 +304,7 @@ def van_num(van_id=0):
 
 
 # Allows admins to manage the users that have access to the system
-@app.route('/users', strict_slashes=False)
+@app.route('/users', strict_slashes=False, methods=['GET'])
 def users():
     username = session['username']
     get_users = dbm.get_users(username)

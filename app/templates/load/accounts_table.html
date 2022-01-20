@@ -1,13 +1,4 @@
-{% extends "base.html" %}
-{% block scripts %}
-<script src= "{{ url_for('static', filename='js/accounts/confirm-account.js') }}"></script>
-<script src= "{{ url_for('static', filename='js/ns/namespace.js') }}"></script>
-{% endblock %}
-{% block content %}
-    {% if not users %}
-  <p style="color:red;">The database is empty, consider adding a user.</p>
-    {% else %}
-        <table id="table" class="table">
+<table id="table" class="table">
             <th>Username</th><th>Admin</th><th>Confirmed</th>
         {% for row in users %}
             <tr>
@@ -31,5 +22,3 @@
             </tr>
         {% endfor %}
         </table>
-    {% endif %}
-{% endblock %}
