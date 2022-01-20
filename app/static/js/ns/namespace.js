@@ -227,7 +227,7 @@
         // Un-attach and re-attach the event listener
         $(confirmYesBtn).off().click(function () {
           // Parameters to be sent in the request
-          let url = '/confirm';
+          let url = '/users';
           let data = 'user_id=' + id;
           $.ajax({
             type: 'POST',

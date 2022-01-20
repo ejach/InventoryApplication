@@ -248,19 +248,6 @@ def update(id_type):
         print(str(e) + '\n' + 'Blank input detected, database not manipulated.')
 
 
-# Route for /confirm
-@app.route('/confirm', methods=['POST'])
-def confirm():
-    if 'logged_in' not in session:
-        return redirect(url_for('login'))
-    else:
-        if request.method == 'POST':
-            user_id = clean(request.form.get('user_id'))
-            dbm.confirm_account(user_id)
-    # If the /confirm route is accessed, re-route to index
-    return redirect(url_for('index'))
-
-
 # Route for /vans
 @app.route('/vans', strict_slashes=False, methods=['GET', 'POST'])
 def vans():
@@ -304,7 +291,7 @@ def van_num(van_id=0):
 
 
 # Allows admins to manage the users that have access to the system
-@app.route('/users', strict_slashes=False, methods=['GET'])
+@app.route('/users', strict_slashes=False, methods=['GET', 'POST'])
 def users():
     username = session['username']
     get_users = dbm.get_users(username)
@@ -312,5 +299,10 @@ def users():
         return redirect(url_for('login'))
     elif dbm.check_admin(username) == 0:
         return redirect(url_for('index'))
+    elif request.method == 'POST':
+        user_id = clean(request.form.get('user_id'))
+        dbm.confirm_account(user_id)
     else:
         return render_template('users.html', users=get_users)
+    # If the /confirm route is accessed, re-route to index
+    return redirect(url_for('index'))
