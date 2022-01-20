@@ -263,6 +263,16 @@ class DatabaseManipulator:
         except Error as e:
             print(str(e) + '\n' + 'Lost connection to the MySQL server.')
 
+    # Delete account by ID
+    def delete_account(self, user_id):
+        try:
+            self.conn.ping()
+            stmt = self.stmt.delete_account
+            self.cursor.execute(stmt, user_id)
+            self.conn.close()
+        except Error as e:
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+
     # Login by username and password
     def login(self, username, password):
         try:

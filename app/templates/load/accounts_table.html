@@ -13,6 +13,7 @@
                     {% else %}
 
                         <td><input type="button" value="Confirm" class="confirmBtn" id="confirmBtn{{ row[0] }}" data-value="{{ row[0] }}" />
+                            <input type="button" value="Deny" class="denyBtn" id="denyBtn{{ row[0] }}" data-value="{{ row[0] }}" />
                             <p class="confirmText" id="confirmText{{ row[0] }}">Are you sure?</p>
                             <input type="button" class="confirmYesBtn" id="confirmYesBtn{{ row[0] }}" value="Yes" name="yesBtn"
                             data-value="{{ row[0] }}" />

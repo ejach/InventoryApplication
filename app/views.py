@@ -216,6 +216,10 @@ def delete(id_type):
     elif request.method == 'POST' and id_type == 'van':
         van_id = request.form.get('Delete')
         dbm.delete_van(van_id)
+    # If the id_type is a user, delete the user
+    elif request.method == 'POST' and id_type == 'user':
+        user_id = request.form.get('user_id')
+        dbm.delete_account(user_id)
     # If the /delete route is accessed, re-route to index
     return redirect(url_for('index'))
 
