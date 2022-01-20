@@ -78,6 +78,7 @@ def index():
     else:
         try:
             username = session['username']
+            session['is_admin'] = dbm.check_admin(username)
             return render_template('index.html', username=username)
         except IndexError:
             abort(404), 404
@@ -139,6 +140,7 @@ def register():
 def logout():
     session.pop('logged_in', default=None)
     session.pop('username', default=None)
+    session.pop('is_admin', default=None)
     return redirect(url_for('index'))
 
 
@@ -282,3 +284,16 @@ def van_num(van_id=0):
         # Otherwise, redirect to the main /vans page
         else:
             return redirect(url_for('vans'))
+
+
+# Allows admins to manage the users that have access to the system
+@app.route('/users', strict_slashes=False)
+def users():
+    username = session['username']
+    get_users = dbm.get_users(username)
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+    elif dbm.check_admin(username) == 0:
+        return redirect(url_for('index'))
+    else:
+        return render_template('users.html', users=get_users)

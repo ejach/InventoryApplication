@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if not users %}
+  <p style="color:red;">The database is empty, consider adding a part.</p>
+    {% else %}
+        <table id="table" class="table">
+            <th>Username</th><th>Admin</th><th>Confirmed</th>
+        {% for row in users %}
+            <tr>
+                <td>{{ row[1] }}</td>
+                {% if row[2] == 1 %}
+                    <td>Yes</td>
+                {% else %}
+                    <td>No</td>
+                {% endif %}
+                {% if row[3] == 1 %}
+                    <td>Yes</td>
+                    {% else %}
+                        <td>Confirm? <input type="button" class="yesBtn" id="yesBtn{{ row[0] }}" value="Yes" name="yesBtn"
+                            data-value="{{ row[0] }}" />
+                            <input type="button" class="noBtn" id="noBtn{{ row[0] }}" value="No" name="noBtn"
+                            data-value="{{ row[0] }}" /></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

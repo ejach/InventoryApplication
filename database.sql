@@ -22,9 +22,11 @@ create table vans
 # Table for accounts
 create table accounts
 (
-	id int auto_increment,
-	username text null,
-	password text null,
-	constraint accounts_pk
-		primary key (id)
+    id           int auto_increment
+        primary key,
+    username     text          null,
+    password     text          null,
+    is_admin     int default 0 null,
+    is_confirmed int default 0 null
 );
+

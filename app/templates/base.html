@@ -28,6 +28,9 @@
     <a href="/">Home</a>
     <a href="/parts">Parts</a>
     <a href="/vans">Vans</a>
+    {% if session['is_admin'] == 1 %}
+    <a href="/users">Users</a>
+    {% endif %}
     <a href="/logout">Logout</a>
   </div>
   {% endif %}
