@@ -237,12 +237,48 @@ class DatabaseManipulator:
         except Error as e:
             print(str(e) + '\n' + 'Lost connection to the MySQL server.')
 
+    # Check if account is confirmed
+    def check_if_confirmed(self, username):
+        try:
+            self.conn.ping()
+            stmt = self.stmt.check_confirmed
+            self.cursor.execute(stmt, username)
+            results = self.cursor.fetchone()
+            res = int(''.join(map(str, results)))
+            self.conn.close()
+            if res == 1:
+                return True
+            else:
+                return False
+        except Error as e:
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+
+    # Confirm account by ID
+    def confirm_account(self, user_id):
+        try:
+            self.conn.ping()
+            stmt = self.stmt.confirm_account
+            self.cursor.execute(stmt, user_id)
+            self.conn.close()
+        except Error as e:
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+
+    # Delete account by ID
+    def delete_account(self, user_id):
+        try:
+            self.conn.ping()
+            stmt = self.stmt.delete_account
+            self.cursor.execute(stmt, user_id)
+            self.conn.close()
+        except Error as e:
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+
     # Login by username and password
     def login(self, username, password):
         try:
             hash_pw = self.get_password_by_username(username)
             if hash_pw and check_password_hash(password.encode('utf8'), hash_pw[0].encode('utf8')) \
-                    and self.check_if_account_exists(username):
+                    and self.check_if_account_exists(username) and self.check_if_confirmed(username):
                 return True
             else:
                 return False
@@ -264,5 +300,31 @@ class DatabaseManipulator:
                 return True
             else:
                 return False
+        except Error as e:
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+        # Check if user is an admin by username
+
+    def check_admin(self, username):
+        try:
+            self.conn.ping()
+            stmt = self.stmt.check_admin
+            self.cursor.execute(stmt, username)
+            results = self.cursor.fetchall()
+            res = int(''.join(map(str, results[0])))
+            self.conn.close()
+            return res
+        except Error as e:
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+
+        # Get users that exist in the DB excluding the current user's username
+
+    def get_users(self, username):
+        try:
+            self.conn.ping()
+            stmt = self.stmt.get_users
+            self.cursor.execute(stmt, username)
+            results = self.cursor.fetchall()
+            self.conn.close()
+            return results
         except Error as e:
             print(str(e) + '\n' + 'Lost connection to the MySQL server.')
