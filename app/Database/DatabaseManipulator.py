@@ -302,8 +302,8 @@ class DatabaseManipulator:
                 return False
         except Error as e:
             print(str(e) + '\n' + 'Lost connection to the MySQL server.')
-        # Check if user is an admin by username
 
+    # Check if user is an admin by username
     def check_admin(self, username):
         try:
             self.conn.ping()
@@ -316,8 +316,7 @@ class DatabaseManipulator:
         except Error as e:
             print(str(e) + '\n' + 'Lost connection to the MySQL server.')
 
-        # Get users that exist in the DB excluding the current user's username
-
+    # Get users that exist in the DB excluding the current user's username
     def get_users(self, username):
         try:
             self.conn.ping()
