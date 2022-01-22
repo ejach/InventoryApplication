@@ -47,6 +47,8 @@ def check_if_part_exist(part_name, part_amount, part_number, van_number):
 
 
 class DBMUnitTest(TestCase):
+
+    # Make sure the database connection is pinged and closed after each test
     def setUp(self) -> None:
         print('***SETUP***')
         dbc.conn.ping()
@@ -57,6 +59,7 @@ class DBMUnitTest(TestCase):
 
     # Checks the different functions that interact with the parts database
     def test_parts(self):
+        print('test_parts() TEST')
         part_name = random_string + random_time_string
         part_number = random_numbers + random_time_string
         van_number = random_string + random_time_string
@@ -98,6 +101,7 @@ class DBMUnitTest(TestCase):
 
     # Tests the check_input function
     def test_check_input(self):
+        print('test_check_input() TEST')
         # Assert that normal input will be entered into the database
         self.assertTrue(check_input(random_string))
         self.assertTrue(check_input(random_digit))
@@ -111,6 +115,7 @@ class DBMUnitTest(TestCase):
 
     # Tests the add_van function
     def test_add_van(self):
+        print('test_add_van() TEST')
         # Create a test_van with a random string of numbers
         van_name = 'test_van' + random_string
         # Insert it into the database
@@ -127,6 +132,7 @@ class DBMUnitTest(TestCase):
 
     # Tests the delete_van function
     def test_delete_van(self):
+        print('test_delete_van() TEST')
         # Create a test_van with a random digit
         van_name = 'test_van' + random_digit
         # Insert it into the database
@@ -141,6 +147,7 @@ class DBMUnitTest(TestCase):
 
     # Tests the update_van function
     def test_update_van(self):
+        print('test_update_van() TEST')
         # Create a van with a random string
         van_name = 'test_van' + random_string
         # Van name to be updated to
@@ -165,6 +172,7 @@ class DBMUnitTest(TestCase):
 
     # Tests the check_duplicates function
     def test_check_duplicates(self):
+        print('test_check_duplicates() TEST')
         # Create a van name with a string of random numbers
         van_name = 'test_van' + random_numbers
         # Insert it into the database
@@ -181,6 +189,7 @@ class DBMUnitTest(TestCase):
 
     # Test the check_password function
     def test_check_password(self):
+        print('test_check_password() TEST')
         # Create random password
         this_pass = 'password' + random_string
         # Hash this password
@@ -192,7 +201,9 @@ class DBMUnitTest(TestCase):
         self.assertTrue(check_password_hash(this_pass.encode('utf8'), pw_hash))
         print('check_password_hash() False input test -> PASSED')
 
+    # Test the confirmation database attribute of the account functionality
     def test_login_confirmation(self):
+        print('test_login_confirmation() TEST')
         # Register new account
         dbm.register(username=username, password=password, conf_password=password)
         last_id = dbm.cursor.lastrowid
@@ -212,36 +223,75 @@ class DBMUnitTest(TestCase):
         self.assertFalse(dbm.check_if_account_exists(username))
         print('DELETE ACCOUNT TEST -> PASSED')
 
+    # Test that the deny/delete functionality works
+    def test_login_deny(self):
+        print('test_login_deny() TEST')
+        # Create an account
+        dbm.register(username, password, password)
+        # Get account id
+        acc_id = dbm.cursor.lastrowid
+        # Make sure account exists
+        self.assertTrue(dbm.check_if_account_exists(username))
+        print('CREATE DENIED ACCOUNT TEST -> PASSED')
+        # Deny the account
+        dbm.delete_account(acc_id)
+        # Make sure the account doesn't exist anymore
+        self.assertFalse(dbm.check_if_account_exists(username))
+        print('DELETE DENIED ACCOUNT TEST -> PASSED')
+        # Make sure you cannot login anymore with this account
+        self.assertFalse(dbm.login(username, password))
+        print('FAIL LOGIN ACCOUNT TEST -> PASSED')
+
+    # Test the adding of part amounts attribute into the database
     def test_add_part_amount(self):
+        print('test_add_part_amount() TEST')
+        # Insert a random part into the database with random values
         dbm.insert(random_string, random_digit, random_digit, random_digit)
+        # Get the last inserted part ID
         this_part = dbm.cursor.lastrowid
+        # Make sure it was inserted into the database
         self.assertTrue(check_if_part_exist(random_string, random_digit, random_digit, random_digit))
         print('insert() part amount TRUE test -> PASSED')
+        # Delete the part when finished
         dbm.delete(this_part)
+        # Make sure it was deleted
         self.assertFalse(check_if_part_exist(part_name=random_string, part_amount=random_numbers,
                                              part_number=random_digit, van_number=random_digit))
         print('insert() part amount FALSE test -> PASSED')
 
+    # Test invalid input in the part amount attribute column
     def test_false_part_amount(self):
+        print('test_false_part_amount() TEST')
+        # Insert a part into the database with invalid part values (string where it is expecting an int)
         dbm.insert(part_name=random_string, part_amount=random_string, part_number=random_digit,
                    van_number=random_digit)
+        # Make sure it was rejected from the database
         self.assertFalse(check_if_part_exist(part_name=random_string, part_amount=random_numbers,
                                              part_number=random_digit, van_number=random_digit))
         print('insert() part amount invalid input test -> PASSED')
 
+    # Test updating the part amount into the database
     def test_update_part_amount(self):
+        print('test_update_part_amount() TEST')
+        # Insert a random part into the database
         dbm.insert(part_name=random_string, part_amount=random_digit + random_digit, part_number=random_digit,
                    van_number=random_time_string)
+        # Get the ID of the last inserted part
         this_id = dbm.cursor.lastrowid
+        # Make sure it exists
         self.assertTrue(check_if_part_exist(part_name=random_string, part_amount=random_digit + random_digit,
                                             part_number=random_digit, van_number=random_time_string))
         print('insert() part amount update insert test -> PASSED')
+        # Update the part with random values
         dbm.update(this_id, part_name=random_string, part_amount=random_time_string, part_number=random_digit,
                    van_number=random_digit)
+        # Make sure the part exists based on these random values
         self.assertTrue(check_if_part_exist(part_name=random_string, part_amount=random_time_string,
                                             part_number=random_digit, van_number=random_digit))
         print('insert() part amount update test -> PASSED')
+        # Delete the part when finished
         dbm.delete(this_id)
+        # Make sure it was actually deleted
         self.assertFalse(check_if_part_exist(part_name=random_string, part_amount=random_time_string,
                                              part_number=random_digit, van_number=random_digit))
 
