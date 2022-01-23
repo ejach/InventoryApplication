@@ -1,5 +1,5 @@
 ### Expected Output
-```python
+```
 ***SETUP***
 test_add_part_amount() TEST
 insert() part amount TRUE test -> PASSED
