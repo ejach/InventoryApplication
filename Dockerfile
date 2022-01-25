@@ -14,9 +14,10 @@ RUN pip3 install -r requirements.txt
 # Set the env variables
 ENV HOST=0.0.0.0
 ENV PORT=8000
+ENV DOCKER_DEFAULT_PLATFORM=linux/amd64
 
 # Expose the following port for the container
 EXPOSE $PORT
 
 # Run the gunicorn wsgi server, bind the following address
-CMD gunicorn wsgi:app --bind=$HOST
+CMD gunicorn wsgi:app

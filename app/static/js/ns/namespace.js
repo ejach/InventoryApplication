@@ -216,7 +216,7 @@
       });
     },
     confirmAccount : function ($getPath) {
-      $(document.body).off('click').on('click', '.confirmBtn', function(){
+      $('table').off().on('click', '.confirmBtn', function(){
         let id = this.dataset.value;
         let confirmBtn = $('#confirmBtn' + id);
         let confirmText = $('#confirmText' + id);
@@ -224,8 +224,9 @@
         let denyNoBtn = $('#denyNoBtn' + id);
         let denyBtn = $('#denyBtn' + id);
         let denyBtnCls = $('.denyBtn');
+        let deleteBtnCls = $('.deleteBtn');
         let confirmBtnCls = $('.confirmBtn');
-        toggleProps('.confirmBtn', denyBtnCls);
+        toggleProps('.confirmBtn', denyBtnCls, deleteBtnCls);
         toggleMe(confirmBtn, confirmText, confirmYesBtn, denyNoBtn, denyBtn);
         // Un-attach and re-attach the event listener
         $(confirmYesBtn).off('click').click(function () {
@@ -240,17 +241,17 @@
             // On success, load the span from the getPath and re-enable the submit button
             success: function () {
               $('#table').load($getPath);
-              toggleProps(confirmBtnCls, denyBtnCls);
+              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls);
             },
             // On failure, print errors and re-enable the submit button
             error: function (e) {
               console.log('ERROR : ', e);
-              toggleProps(confirmBtnCls, denyBtnCls);
+              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls);
             }
           });
         });
-        $('.table').off().on('click', '#denyNoBtn' + id, function () {
-          toggleProps(confirmBtnCls, denyBtnCls);
+        $('table').off().on('click', '#denyNoBtn' + id, function () {
+          toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls);
           toggleMe(confirmBtn, confirmText, confirmYesBtn, denyNoBtn, denyBtn);
         });
       });
@@ -265,7 +266,8 @@
         let denyBtn = $('#denyBtn' + id);
         let denyBtnCls = $('.denyBtn');
         let confirmBtnCls = $('.confirmBtn');
-        toggleProps(confirmBtnCls, denyBtnCls);
+        let deleteBtnCls = $('.deleteBtn');
+        toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls);
         toggleMe(confirmBtn, confirmText, confirmYesBtn, denyNoBtn, denyBtn);
         // Un-attach and re-attach the event listener
         $(confirmYesBtn).off('click').click(function () {
@@ -280,18 +282,57 @@
             // On success, load the span from the getPath and re-enable the submit button
             success: function () {
               $('#table').load($getPath);
-              toggleProps(confirmBtnCls, denyBtnCls);
+              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls);
             },
             // On failure, print errors and re-enable the submit button
             error: function (e) {
               console.log('ERROR : ', e);
-              toggleProps(confirmBtnCls, denyBtnCls);
+              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls);
             }
           });
         });
         $('.table').off().on('click', '#denyNoBtn' + id, function () {
-          toggleProps(confirmBtnCls, denyBtnCls);
+          toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls);
           toggleMe(confirmBtn, confirmText, confirmYesBtn, denyNoBtn, denyBtn);
+        });
+      });
+    },
+    deleteAccount : function ($getPath) {
+      $(document.body).off('click').on('click', '.deleteBtn', function(){
+        let id = this.dataset.value;
+        let confirmText = $('#confirmNote' + id);
+        let yesBtn = $('#thisYesBtn' + id);
+        let noBtn = $('#thisNoBtn' + id);
+        let deleteBtn = $('#deleteBtn' + id);
+        toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn');
+        toggleMe(deleteBtn, confirmText, yesBtn, noBtn);
+        // Un-attach and re-attach the event listener
+        $(yesBtn).off('click').click(function () {
+          // Parameters to be sent in the request
+          let url = '/delete/user';
+          let data = 'user_id=' + id;
+          $.ajax({
+            type: 'POST',
+            url: url,
+            data: data,
+            timeout: 800000,
+            // On success, load the span from the getPath and re-enable the submit button
+            success: function () {
+              $('#table').load($getPath);
+              toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn');
+
+            },
+            // On failure, print errors and re-enable the submit button
+            error: function (e) {
+              console.log('ERROR : ', e);
+              toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn');
+
+            }
+          });
+        });
+        $('.thisNoBtn').off('click').on('click', noBtn, function () {
+          toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn');
+          toggleMe(deleteBtn, confirmText, yesBtn, noBtn);
         });
       });
     },
