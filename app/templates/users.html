@@ -18,7 +18,7 @@
                     <td>No</td>
                 {% endif %}
                 {% if row[3] == 1 %}
-                    <td id="yesRow{{ row[0] }}">Yes</td>
+                    <td>Yes</td>
                     <td id="delRow{{ row[0] }}"><input type="button" value="Delete" class="deleteBtn" id="deleteBtn{{ row[0] }}" data-value="{{ row[0] }}" />
                     <p class="confirmNote" id="confirmNote{{ row[0] }}">Are you sure?</p>
                                 <input type="button" class="thisYesBtn" id="thisYesBtn{{ row[0] }}" value="Yes" name="yesBtn"
@@ -26,7 +26,7 @@
                                 <input type="button" class="thisNoBtn" id="thisNoBtn{{ row[0] }}" value="No" name="noBtn"
                                 data-value="{{ row[0] }}" /></td>
                 {% else %}
-                        <td id="yesRow{{ row[0] }}"><input type="button" value="Confirm" class="confirmBtn" id="confirmBtn{{ row[0] }}" data-value="{{ row[0] }}" />
+                        <td><input type="button" value="Confirm" class="confirmBtn" id="confirmBtn{{ row[0] }}" data-value="{{ row[0] }}" />
                             <input type="button" value="Deny" class="denyBtn" id="denyBtn{{ row[0] }}" data-value="{{ row[0] }}" />
                             <p class="confirmText" id="confirmText{{ row[0] }}">Are you sure?</p>
                             <input type="button" class="confirmYesBtn" id="confirmYesBtn{{ row[0] }}" value="Yes" name="yesBtn"
