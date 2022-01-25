@@ -216,7 +216,7 @@
       });
     },
     confirmAccount : function ($getPath) {
-      $('table').off().on('click', '.confirmBtn', function(){
+      $('table td').off().on('click', '.confirmBtn', function(){
         let id = this.dataset.value;
         let confirmBtn = $('#confirmBtn' + id);
         let confirmText = $('#confirmText' + id);
