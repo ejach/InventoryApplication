@@ -3,4 +3,5 @@ $(function () {
     ns.confirmAccount(getPath);
     ns.denyAccount(getPath);
     ns.deleteAccount(getPath);
-})
+    ns.makeUserAdmin(getPath);
+});

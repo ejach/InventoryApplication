@@ -316,6 +316,17 @@ class DatabaseManipulator:
         except Error as e:
             print(str(e) + '\n' + 'Lost connection to the MySQL server.')
 
+    # Make / remove user from admin
+    def modify_admin(self, user_id, value):
+        try:
+            self.conn.ping()
+            stmt = self.stmt.get_modify_admin()
+            values = (value, user_id)
+            self.cursor.execute(stmt, values)
+            self.conn.close()
+        except Error as e:
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+
     # Get users that exist in the DB excluding the current user's username
     def get_users(self, username):
         try:

@@ -246,6 +246,11 @@ def update(id_type):
             van_number = clean(form.vanNumber.data)
             if check_input(van_id) and check_input(van_number):
                 dbm.update_van(van_id, van_number)
+        # Route to update an account by the ID to grant admin attribute
+        elif request.method == 'POST' and id_type == 'user':
+            user_id = request.form.get('user_id')
+            value = request.form.get('value')
+            dbm.modify_admin(user_id, value)
         # If the /update route is accessed, re-route to index
         return redirect(url_for('index'))
     except TypeError as e:
@@ -308,5 +313,5 @@ def users():
         dbm.confirm_account(user_id)
     else:
         return render_template('users.html', users=get_users)
-    # If the /confirm route is accessed, re-route to index
+    # If the route is accessed, re-route to index
     return redirect(url_for('index'))
