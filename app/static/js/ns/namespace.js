@@ -216,7 +216,7 @@
       });
     },
     confirmAccount : function ($getPath) {
-      $('.main').off('click').on('click', '.confirmBtn', function(){
+      $('.main').off('click').on('click', '.confirmBtn', function() {
         let id = this.dataset.value;
         let confirmBtn = $('#confirmBtn' + id);
         let confirmText = $('#confirmText' + id);
@@ -226,7 +226,8 @@
         let denyBtnCls = $('.denyBtn');
         let deleteBtnCls = $('.deleteBtn');
         let confirmBtnCls = $('.confirmBtn');
-        toggleProps('.confirmBtn', denyBtnCls, deleteBtnCls);
+        let makeAdminBtn = $('.makeAdminBtn');
+        toggleProps('.confirmBtn', denyBtnCls, deleteBtnCls, makeAdminBtn);
         toggleMe(confirmBtn, confirmText, confirmYesBtn, denyNoBtn, denyBtn);
         // Un-attach and re-attach the event listener
         $(confirmYesBtn).off('click').click(function () {
@@ -241,23 +242,23 @@
             // On success, load the span from the getPath and re-enable the submit button
             success: function () {
               $('#table').load($getPath);
-              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls);
+              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, makeAdminBtn);
             },
             // On failure, print errors and re-enable the submit button
             error: function (e) {
               console.log('ERROR : ', e);
-              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls);
+              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, makeAdminBtn);
             }
           });
         });
-        $('table').off().on('click', '#denyNoBtn' + id, function () {
-          toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls);
+        $(denyNoBtn).off('click').click(function () {
+          toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, makeAdminBtn);
           toggleMe(confirmBtn, confirmText, confirmYesBtn, denyNoBtn, denyBtn);
         });
       });
     },
     denyAccount : function ($getPath) {
-      $(document).off().on('click', '.denyBtn', function(){
+      $('table').off().on('click', '.denyBtn', function(){
         let id = this.dataset.value;
         let confirmBtn = $('#confirmBtn' + id);
         let confirmText = $('#confirmText' + id);
@@ -267,7 +268,8 @@
         let denyBtnCls = $('.denyBtn');
         let confirmBtnCls = $('.confirmBtn');
         let deleteBtnCls = $('.deleteBtn');
-        toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls);
+        let makeAdminBtn = $('.makeAdminBtn');
+        toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, makeAdminBtn);
         toggleMe(confirmBtn, confirmText, confirmYesBtn, denyNoBtn, denyBtn);
         // Un-attach and re-attach the event listener
         $(confirmYesBtn).off('click').click(function () {
@@ -282,17 +284,17 @@
             // On success, load the span from the getPath and re-enable the submit button
             success: function () {
               $('#table').load($getPath);
-              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls);
+              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, makeAdminBtn);
             },
             // On failure, print errors and re-enable the submit button
             error: function (e) {
               console.log('ERROR : ', e);
-              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls);
+              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, makeAdminBtn);
             }
           });
         });
-        $('.table').off().on('click', '#denyNoBtn' + id, function () {
-          toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls);
+        $('.denyNoBtn').off('click').on('click', denyNoBtn, function () {
+          toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, makeAdminBtn);
           toggleMe(confirmBtn, confirmText, confirmYesBtn, denyNoBtn, denyBtn);
         });
       });
@@ -300,14 +302,16 @@
     deleteAccount : function ($getPath) {
       $(document.body).off('click').on('click', '.deleteBtn', function(){
         let id = this.dataset.value;
+        let makeAdminBtn = $('#makeAdminBtn' + id);
+        let adminBtnCls = $('.makeAdminBtn');
         let confirmText = $('#confirmNote' + id);
         let yesBtn = $('#thisYesBtn' + id);
         let noBtn = $('#thisNoBtn' + id);
         let deleteBtn = $('#deleteBtn' + id);
-        toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn');
-        toggleMe(deleteBtn, confirmText, yesBtn, noBtn);
+        toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn', adminBtnCls);
+        toggleMe(deleteBtn, confirmText, yesBtn, noBtn, makeAdminBtn);
         // Un-attach and re-attach the event listener
-        $(yesBtn).off('click').click(function () {
+        $(yesBtn).off().click(function () {
           // Parameters to be sent in the request
           let url = '/delete/user';
           let data = 'user_id=' + id;
@@ -319,20 +323,75 @@
             // On success, load the span from the getPath and re-enable the submit button
             success: function () {
               $('#table').load($getPath);
-              toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn');
-
+                toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn', adminBtnCls);
             },
             // On failure, print errors and re-enable the submit button
             error: function (e) {
               console.log('ERROR : ', e);
-              toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn');
-
+                toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn', adminBtnCls);
             }
           });
         });
-        $('.thisNoBtn').off('click').on('click', noBtn, function () {
-          toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn');
-          toggleMe(deleteBtn, confirmText, yesBtn, noBtn);
+        $(noBtn).off('click').click(function () {
+            toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn', adminBtnCls);
+            toggleMe(deleteBtn, confirmText, yesBtn, noBtn, makeAdminBtn);
+        });
+      });
+    },
+    makeUserAdmin : function ($getPath) {
+      $(document).off('click').on('click', '.makeAdminBtn', function(){
+        let id = this.dataset.value;
+        let makeAdminBtn = $('#makeAdminBtn' + id);
+        let adminBtnCls = $('.makeAdminBtn');
+        let confirmBtn = $('#confirmBtn' + id);
+        let confirmText = $('#confirmNote' + id);
+        let confirmYesBtn = $('#thisYesBtn' + id);
+        let denyBtn = $('#thisNoBtn' + id);
+        let deleteBtn = $('#deleteBtn' + id);
+        let denyBtnCls = $('.denyBtn');
+        let confirmBtnCls = $('.confirmBtn');
+        let deleteBtnCls = $('.deleteBtn');
+        toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, adminBtnCls);
+        toggleMe(confirmBtn, confirmText, confirmYesBtn, denyBtn, deleteBtn, makeAdminBtn);
+        let is_admin = function() {
+            let val;
+            let returnVal;
+            // Get if the user is admin or not, return opposite value
+            $('#table #adminRow' + id).each(function() {
+              val = $(this).html();
+            });
+            if (val === 'Yes') {
+              returnVal = 0;
+            } else {
+              returnVal = 1;
+            }
+            return returnVal;
+          }();
+        // Un-attach and re-attach the event listener
+        $(confirmYesBtn).off('click').click(function () {
+          // Parameters to be sent in the request
+          let url = '/update/user';
+          let data = 'user_id=' + id + '&value=' + is_admin;
+          $.ajax({
+            type: 'POST',
+            url: url,
+            data: data,
+            timeout: 800000,
+            // On success, load the span from the getPath and re-enable the submit button
+            success: function () {
+              $('#table').load($getPath);
+              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, adminBtnCls);
+            },
+            // On failure, print errors and re-enable the submit button
+            error: function (e) {
+              console.log('ERROR : ', e);
+              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, adminBtnCls);
+            }
+          });
+        });
+        $(denyBtn).off('click').click(function () {
+          toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, adminBtnCls);
+          toggleMe(confirmBtn, confirmText, confirmYesBtn, denyBtn, deleteBtn, makeAdminBtn);
         });
       });
     },

@@ -295,6 +295,26 @@ class DBMUnitTest(TestCase):
         self.assertFalse(check_if_part_exist(part_name=random_string, part_amount=random_time_string,
                                              part_number=random_digit, van_number=random_digit))
 
+    # Test the toggling of accounts to have admin privileges in the is_admin attribute
+    def test_toggle_admin(self):
+        print('test_toggle_admin() TEST')
+        # Register a random user account
+        dbm.register(username=username, password=password, conf_password=password)
+        this_id = dbm.cursor.lastrowid
+        self.assertTrue(dbm.check_if_account_exists(username))
+        # Make the specified account an admin
+        dbm.modify_admin(this_id, 1)
+        self.assertEqual(dbm.check_admin(username), 1)
+        print('MAKE ADMIN TEST -> PASSED')
+        # Remove admin privileges from the account
+        dbm.modify_admin(this_id, 0)
+        self.assertEqual(dbm.check_admin(username), 0)
+        print('REMOVE ADMIN TEST -> PASSED')
+        # Delete the account when finished
+        dbm.delete_account(this_id)
+        self.assertFalse(dbm.check_if_account_exists(username))
+        print('REMOVE ACCOUNT TEST -> PASSED')
+
 
 if __name__ == '__main__':
     main()

@@ -18,6 +18,7 @@ class DatabaseStatements:
         self.check_admin = f'SELECT is_admin FROM {self.db}.accounts WHERE `username` = %s'
         self.check_confirmed = f'SELECT is_confirmed FROM {self.db}.accounts WHERE `username` = %s'
         self.confirm_account = f'UPDATE {self.db}.accounts SET `is_confirmed` = 1 WHERE `id` = %s'
+        self.modify_admin = f'UPDATE {self.db}.accounts SET `is_admin` = %s WHERE `id` = %s'
         self.delete_account = f'DELETE FROM {self.db}.accounts WHERE `id` = %s'
         self.get_users = f'SELECT id, username, is_admin, is_confirmed FROM {self.db}.accounts WHERE username != %s'
         self.check_if_username_exists = f'SELECT * FROM {self.db}.accounts WHERE `username` = %s'
@@ -71,3 +72,6 @@ class DatabaseStatements:
 
     def get_password_by_username(self):
         return self.get_password_by_username
+
+    def get_modify_admin(self):
+        return self.modify_admin

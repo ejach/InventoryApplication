@@ -54,6 +54,12 @@ delete() test -> PASSED
 update() test -> PASSED
 ***TEARDOWN***
 ***SETUP***
+test_toggle_admin() TEST
+MAKE ADMIN TEST -> PASSED
+REMOVE ADMIN TEST -> PASSED
+REMOVE ACCOUNT TEST -> PASSED
+***TEARDOWN***
+***SETUP***
 test_update_part_amount() TEST
 insert() part amount update insert test -> PASSED
 insert() part amount update test -> PASSED
