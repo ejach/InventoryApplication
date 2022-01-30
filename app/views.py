@@ -73,7 +73,7 @@ def internal_error(e):
 # Main index.html route
 @app.route('/', strict_slashes=False, methods=['GET', 'POST'])
 def index():
-    if 'logged_in' not in session:
+    if not session:
         return redirect(url_for('login'))
     else:
         try:
@@ -125,7 +125,7 @@ def register():
                 return redirect(url_for('login'))
             else:
                 return render_template('register.html', form=form), 409
-        elif 'logged_in' not in session:
+        elif not session:
             return render_template('register.html', form=form)
         else:
             return redirect(url_for('index'))
@@ -147,7 +147,7 @@ def logout():
 # parts.html route
 @app.route('/parts', strict_slashes=False, methods=['GET', 'POST'])
 def parts():
-    if 'logged_in' not in session:
+    if not session:
         return redirect(url_for('login'))
     else:
         results = dbm.fetchall()
@@ -260,7 +260,7 @@ def update(id_type):
 # Route for /vans
 @app.route('/vans', strict_slashes=False, methods=['GET', 'POST'])
 def vans():
-    if 'logged_in' not in session:
+    if not session:
         return redirect(url_for('login'))
     else:
         form = VanForm()
@@ -282,7 +282,7 @@ def vans():
 def van_num(van_id=0):
     form = PartsForm()
     update_form = UpdatePartsForm()
-    if 'logged_in' not in session:
+    if not session:
         return redirect(url_for('login'))
     else:
         results = dbm.get_vans(van_id)
