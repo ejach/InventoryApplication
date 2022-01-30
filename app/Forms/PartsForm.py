@@ -1,13 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, IntegerField, SelectField
 from wtforms.validators import DataRequired
-from app.Database.DatabaseManipulator import DatabaseManipulator
-
-
-def get_selections():
-    dbm = DatabaseManipulator()
-    results = dbm.get_van_nums()
-    return results
 
 
 class PartsForm(FlaskForm):
@@ -25,7 +18,6 @@ class PartsForm(FlaskForm):
     )
     van = SelectField(
         'Select Van',
-        validators=[DataRequired()],
-        choices=[(g[1], g[1]) for g in get_selections()]
+        validators=[DataRequired()]
     )
     submit = SubmitField('Submit', id='submit')

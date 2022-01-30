@@ -315,6 +315,20 @@ class DBMUnitTest(TestCase):
         self.assertFalse(dbm.check_if_account_exists(username))
         print('REMOVE ACCOUNT TEST -> PASSED')
 
+    # Test the get_selections() method
+    def test_get_selections(self):
+        print('test_get_selections() TEST')
+        # Create random string
+        this_string = random_digit + random_digit + random_time_string
+        # Insert random van into database
+        dbm.insert_van(this_string)
+        this_id = dbm.cursor.lastrowid
+        # Make sure the method returns the string that was inserted
+        self.assertIn(member=(this_string, this_string), container=dbm.get_selections())
+        print('get_selections TEST -> PASSED')
+        # Delete when finished
+        dbm.delete_van(this_id)
+
 
 if __name__ == '__main__':
     main()

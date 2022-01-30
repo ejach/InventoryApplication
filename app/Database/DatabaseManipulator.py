@@ -172,6 +172,12 @@ class DatabaseManipulator:
         except Error as e:
             print(str(e) + '\n' + 'Lost connection to the MySQL server.')
 
+    # Get the selections from the Vans that currently exist in the database
+    def get_selections(self):
+        results = self.get_van_nums()
+        re = [(g[1], g[1]) for g in results]
+        return re
+
     # Insert entries into database
     def insert(self, part_name, part_amount, part_number, van_number):
         try:
