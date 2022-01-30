@@ -35,6 +35,10 @@ test_false_part_amount() TEST
 insert() part amount invalid input test -> PASSED
 ***TEARDOWN***
 ***SETUP***
+test_get_selections() TEST
+get_selections TEST -> PASSED
+***TEARDOWN***
+***SETUP***
 test_login_confirmation() TEST
 CREATE ACCOUNT TEST -> PASSED
 LOGIN ACCOUNT UNCONFIRMED TEST -> PASSED

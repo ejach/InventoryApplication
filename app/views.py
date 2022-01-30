@@ -37,7 +37,7 @@ dbc = DatabaseConnector()
 # Handle the 401 error
 @app.errorhandler(401)
 def custom_401(e):
-    if 'logged_in' not in session:
+    if not session:
         return redirect(url_for('login'))
     else:
         return Response(e, 401, {'error': '401: Unauthorized'})
@@ -46,7 +46,7 @@ def custom_401(e):
 # Handle the 404 error
 @app.errorhandler(404)
 def not_found(e):
-    if 'logged_in' not in session:
+    if not session:
         return redirect(url_for('login'))
     else:
         return render_template('error.html', e=e)
@@ -55,7 +55,7 @@ def not_found(e):
 # Handle the 409 error
 @app.errorhandler(409)
 def custom_401(e):
-    if 'logged_in' not in session:
+    if not session:
         return redirect(url_for('login'))
     else:
         return Response(e, 409, {'error': '409: Conflict'})
@@ -64,7 +64,7 @@ def custom_401(e):
 # Handle the 500 error
 @app.errorhandler(500)
 def internal_error(e):
-    if 'logged_in' not in session:
+    if not session:
         return redirect(url_for('login'))
     else:
         return render_template('error.html', e=e)
@@ -164,6 +164,9 @@ def parts():
             # Insert into the database
             dbm.insert(part_name=part_name, part_amount=part_amount, part_number=part_number, van_number=van_number)
         try:
+            # Populate the van choices for the insert/update part select statements
+            form.van.choices = dbm.get_selections()
+            update_form.newVan.choices = dbm.get_selections()
             return render_template('parts.html', results=results, webui_host=webui_host, van_nums=van_nums, form=form,
                                    update_form=update_form)
         except IndexError:
@@ -193,6 +196,8 @@ def table(table_name, van_number):
         update_form = UpdatePartsForm()
         results = dbm.fetchall()
         van_nums = dbm.get_van_nums()
+        # Set the choices for selecting a new van
+        update_form.newVan.choices = dbm.get_selections()
         return render_template('load/parts_table.html', results=results, van_nums=van_nums, form=form,
                                update_form=update_form)
     # if table_name is vans_list, and van_number is all, return the following
