@@ -23,6 +23,55 @@
     }
   }
 
+  // POST request function
+  let postRequest = function (url, data, toggles, enctype, getPath, extras, type, errorFunc) {
+    if (type !== 'insert') {
+      $.ajax({
+        type: 'POST',
+        enctype: enctype,
+        url: url,
+        data: data,
+        cache: false,
+        timeout: 800000,
+        // On success, load the span from the getPath
+        success: function () {
+          $('#table').load(getPath);
+          toggleProps(toggles);
+          return extras;
+        },
+        // On failure, print errors
+        error: function (e) {
+          console.log('ERROR : ', e);
+          toggleProps(toggles);
+          return errorFunc;
+        }
+      });
+    } else {
+      $.ajax({
+        type: 'POST',
+        enctype: enctype,
+        url: url,
+        data: data,
+        processData: false,
+        contentType: false,
+        cache: false,
+        timeout: 800000,
+        // On success, load the span from the getPath
+        success: function () {
+          $('#table').load(getPath);
+          toggleProps(toggles);
+          return extras;
+        },
+        // On failure, print errors
+        error: function (e) {
+          console.log('ERROR : ', e);
+          toggleProps(toggles);
+          return errorFunc;
+        }
+      });
+    }
+  }
+
   // Set CSRF token in the header for the namespace per the WTForms documentation
   let csrfToken = $('meta[name=csrf-token]').attr('content');
   $.ajaxSetup({
@@ -47,22 +96,8 @@
           let url = (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) ? '/delete/van/' : '/delete/part/';
           // Append csrf token to data string
           let data = 'Delete=' + id;
-          $.ajax({
-            type: 'POST',
-            url: url,
-            data: data,
-            timeout: 800000,
-            // On success, load the span from the getPath and re-enable the submit button
-            success: function () {
-              $(element).load($getPath);
-              toggleProps('.deleteBtn', '.updateBtn');
-            },
-            // On failure, print errors and re-enable the submit button
-            error: function (e) {
-              console.log('ERROR : ', e);
-              toggleProps('.deleteBtn', '.updateBtn');
-            }
-          });
+          let toggles = ['.deleteBtn', '.updateBtn'].toString();
+          postRequest(url, data, toggles, 'multipart/form-data', $getPath, null, null, null);
         });
         $('#noBtn' + id).off().click(function () {
           toggleMe('#deleteBtn' + id, '#updateBtn' + id, '#confirmMe' + id);
@@ -88,29 +123,9 @@
           data.append('van', vanNum);
         }
         if (!Number.isFinite(amount) && amount.val() && partName.val() && partNumber.val() && vanNum) {
-          $.ajax({
-            type: 'POST',
-            enctype: 'multipart/form-data',
-            url: '/parts',
-            data: data,
-            processData: false,
-            contentType: false,
-            cache: false,
-            timeout: 800000,
-            // On success, load the span from the getPath
-            success: function () {
-              $('#table').load($getPath);
-              toggleProps('#submit');
-              window.location.pathname.split('/')[2]
-                  ? $(instructions).html('Enter the Part Name, Part Number, and Part Amount: ').css('color', 'black')
-                  : $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Van Number: ').css('color', 'black');
-            },
-            // On failure, print errors
-            error: function (e) {
-              console.log('ERROR : ', e);
-              toggleProps('#submit');
-            }
-          });
+          postRequest('/parts', data, ('#submit'), 'multipart/form-data', $getPath,window.location.pathname.split('/')[2]
+          ? $(instructions).html('Enter the Part Name, Part Number, and Part Amount: ').css('color', 'black')
+          : $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Van Number: ').css('color', 'black'), 'insert', null);
           $(form).trigger('reset');
           // If amount is blank, or the amount is NaN notify the user
         } else if (Number.isNaN(amount) || !amount.val() || !partName.val() || !partNumber.val() || !vanNum) {
@@ -140,21 +155,6 @@
         return $(elem).attr('value');
       }
 
-      // Send POST request
-      let postReq = function (url, text, reloadElem, id) {
-        $.ajax({
-          url: url,
-          type: 'POST',
-          // Append the csrf token to the data string
-          data: text,
-          success: function() {
-            $(reloadElem).load($getPath);
-            toggleProps('.deleteBtn', '.updateBtn');
-            toggleElem(id);
-          }
-        });
-      }
-      // On click, execute the following
       $(document.body).off().on('click', '.updateBtn', function(){
         // ID to be updated
         let id = this.dataset.value;
@@ -176,7 +176,9 @@
             if (selectElem.val()) {
               url = '/update/van/';
               text = 'id=' + id + '&vanNumber=' + selectElem.val();
-              postReq(url, text, '#mySpan', id);
+              let toggles = ['.deleteBtn', '.updateBtn'].toString();
+              // Send our POST request
+              postRequest(url, text, toggles, null, $getPath, null, toggleElem.id, null, null);
               $(instructions).html('Select a van: ').css('color', 'black');
             } else {
               $(instructions).html('Blank input will not be accepted.').css('color', 'red');
@@ -191,11 +193,12 @@
               $(instructions).html('Blank input will not be accepted.').css('color', 'red');
             } else {
               text = 'id=' + id + '&partName=' + partNameHtml + '&newPartAmount=' + partAmountHtml + '&partNumber=' + partNumberHtml + '&newVan=' + vanNumHtml;
-              window.location.pathname.split('/')[2]
-                  ? $(instructions).html('Enter the Part Name, Part Number, and Part Amount: ').css('color', 'black')
-                  : $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Van Number: ').css('color', 'black');
               url = (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) ? '/update/van/' : '/update/part/';
-              postReq(url, text, '#table', id);
+              let toggles = ['.deleteBtn', '.updateBtn'].toString();
+              postRequest(url, text, toggles, null, $getPath, window.location.pathname.split('/')[2]
+              ? $(instructions).html('Enter the Part Name, Part Number, and Part Amount: ').css('color', 'black')
+              : $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Van Number: ').css('color', 'black'),
+              toggleElem.id, null, null);
             }
           }
         });
@@ -234,22 +237,8 @@
           // Parameters to be sent in the request
           let url = '/users';
           let data = 'user_id=' + id;
-          $.ajax({
-            type: 'POST',
-            url: url,
-            data: data,
-            timeout: 800000,
-            // On success, load the span from the getPath and re-enable the submit button
-            success: function () {
-              $('#table').load($getPath);
-              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, makeAdminBtn);
-            },
-            // On failure, print errors and re-enable the submit button
-            error: function (e) {
-              console.log('ERROR : ', e);
-              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, makeAdminBtn);
-            }
-          });
+          let toggles = ['.confirmBtn', '.deleteBtn', '.denyBtn', '.makeAdminBtn'].toString();
+          postRequest(url, data, toggles, null, $getPath, null, null, null);
         });
         $(denyNoBtn).off('click').click(function () {
           toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, makeAdminBtn);
@@ -276,22 +265,8 @@
           // Parameters to be sent in the request
           let url = '/delete/user';
           let data = 'user_id=' + id;
-          $.ajax({
-            type: 'POST',
-            url: url,
-            data: data,
-            timeout: 800000,
-            // On success, load the span from the getPath and re-enable the submit button
-            success: function () {
-              $('#table').load($getPath);
-              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, makeAdminBtn);
-            },
-            // On failure, print errors and re-enable the submit button
-            error: function (e) {
-              console.log('ERROR : ', e);
-              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, makeAdminBtn);
-            }
-          });
+          let toggles = ['.confirmBtn', '.denyBtn', '.deleteBtn', '.makeAdminBtn'].toString();
+          postRequest(url, data, toggles, null, $getPath, null, null, null);
         });
         $('.denyNoBtn').off('click').on('click', denyNoBtn, function () {
           toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, makeAdminBtn);
@@ -315,26 +290,12 @@
           // Parameters to be sent in the request
           let url = '/delete/user';
           let data = 'user_id=' + id;
-          $.ajax({
-            type: 'POST',
-            url: url,
-            data: data,
-            timeout: 800000,
-            // On success, load the span from the getPath and re-enable the submit button
-            success: function () {
-              $('#table').load($getPath);
-                toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn', adminBtnCls);
-            },
-            // On failure, print errors and re-enable the submit button
-            error: function (e) {
-              console.log('ERROR : ', e);
-                toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn', adminBtnCls);
-            }
-          });
+          let toggles = ['.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn', '.adminBtn'].toString();
+          postRequest(url, data, toggles, null, $getPath, null, null, null);
         });
         $(noBtn).off('click').click(function () {
-            toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn', adminBtnCls);
-            toggleMe(deleteBtn, confirmText, yesBtn, noBtn, makeAdminBtn);
+          toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn', adminBtnCls);
+          toggleMe(deleteBtn, confirmText, yesBtn, noBtn, makeAdminBtn);
         });
       });
     },
@@ -354,40 +315,23 @@
         toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, adminBtnCls);
         toggleMe(confirmBtn, confirmText, confirmYesBtn, denyBtn, deleteBtn, makeAdminBtn);
         let is_admin = function() {
-            let val;
-            let returnVal;
-            // Get if the user is admin or not, return opposite value
-            $('#table #adminRow' + id).each(function() {
-              val = $(this).html();
-            });
-            if (val === 'Yes') {
-              returnVal = 0;
-            } else {
-              returnVal = 1;
-            }
-            return returnVal;
-          }();
+          let val;
+          let returnVal;
+          // Get if the user is admin or not, return opposite value
+          $('#table #adminRow' + id).each(function() {
+            val = $(this).html();
+          });
+          // If the cell value is Yes, return the opposite; otherwise return the opposite value from No (1)
+          val === 'Yes' ? returnVal = 0 : returnVal = 1;
+          return returnVal;
+        }();
         // Un-attach and re-attach the event listener
         $(confirmYesBtn).off('click').click(function () {
-          // Parameters to be sent in the request
           let url = '/update/user';
           let data = 'user_id=' + id + '&value=' + is_admin;
-          $.ajax({
-            type: 'POST',
-            url: url,
-            data: data,
-            timeout: 800000,
-            // On success, load the span from the getPath and re-enable the submit button
-            success: function () {
-              $('#table').load($getPath);
-              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, adminBtnCls);
-            },
-            // On failure, print errors and re-enable the submit button
-            error: function (e) {
-              console.log('ERROR : ', e);
-              toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, adminBtnCls);
-            }
-          });
+          let toggles = ['.confirmBtn', '.denyBtn', '.deleteBtn', '.makeAdminBtn'].toString();
+          // Our POST request
+          postRequest(url, data, toggles, null, $getPath, null, null, null);
         });
         $(denyBtn).off('click').click(function () {
           toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, adminBtnCls);
@@ -397,97 +341,97 @@
     },
     loginUser : function () {
       let username = $('#username');
-    let password = $('#password');
-    let instructions = $('#instructions');
-    let btnLogin = $('#btnLogin');
-    // On submit, execute the following
-    $(btnLogin).click(function (event) {
+      let password = $('#password');
+      let instructions = $('#instructions');
+      let btnLogin = $('#btnLogin');
+      // On submit, execute the following
+      $(btnLogin).click(function (event) {
         if (!username.val() || !password.val()) {
-            $(instructions).html('Blank input will not be accepted.').css('color', 'red');
+          $(instructions).html('Blank input will not be accepted.').css('color', 'red');
         } else {
-            // Prevents form from submitting
-            event.preventDefault();
-            const form = $('#loginForm')[0];
-            const data = new FormData(form);
-            // Disable submit button until something happens
-            $(btnLogin).prop('disabled', true);
-            $.ajax({
-                type: 'POST',
-                enctype: 'multipart/form-data',
-                url: '/login',
-                data: data,
-                processData: false,
-                contentType: false,
-                cache: false,
-                timeout: 800000,
-                // On success, load the span from the getPath and re-enable the submit button
-                success: function () {
-                    $(btnLogin).prop('disabled', false);
-                    $(instructions).html('Login').css('color', 'black');
-                    location.reload();
-                },
-                // On failure, print errors and re-enable the submit button
-                error: function (e) {
-                    if (e.status === 401) {
-                        $(instructions).html('Incorrect login credentials').css('color', 'red');
-                    } else {
-                        console.log('ERROR : ', e);
-                    }
-                    $(btnLogin).prop('disabled', false);
-                }
-            });
-            $(form).trigger('reset');
+          // Prevents form from submitting
+          event.preventDefault();
+          const form = $('#loginForm')[0];
+          const data = new FormData(form);
+          // Disable submit button until something happens
+          $(btnLogin).prop('disabled', true);
+          $.ajax({
+            type: 'POST',
+            enctype: 'multipart/form-data',
+            url: '/login',
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 800000,
+            // On success, load the span from the getPath and re-enable the submit button
+            success: function () {
+              $(btnLogin).prop('disabled', false);
+              $(instructions).html('Login').css('color', 'black');
+              location.reload();
+            },
+            // On failure, print errors and re-enable the submit button
+            error: function (e) {
+              if (e.status === 401) {
+                $(instructions).html('Incorrect login credentials').css('color', 'red');
+              } else {
+                console.log('ERROR : ', e);
+              }
+              $(btnLogin).prop('disabled', false);
+            }
+          });
+          $(form).trigger('reset');
         }
       });
     },
-        registerUser : function () {
-          let registerBtn = $('#registerBtn');
-          // On submit, execute the following
-          $(registerBtn).click(function (event) {
-            let username = $('#username').val();
-            let password = $('#password').val();
-            let confPass = $('#confPass').val();
-            let instructions = $('#instructions');
-            event.preventDefault();
-            if (password === confPass && username && password && confPass) {
-              // Prevents form from submitting
-              const form = $('#registerForm')[0];
-              const data = new FormData(form);
-              // Disable submit button until something happens
-              $(registerBtn).prop('disabled', true);
-              $.ajax({
-                type: 'POST',
-                enctype: 'multipart/form-data',
-                url: '/register',
-                data: data,
-                processData: false,
-                contentType: false,
-                cache: false,
-                timeout: 800000,
-                // On success, redirect to /login
-                success: function () {
-                  $(registerBtn).prop('disabled', false);
-                  window.location.replace('/login');
-                },
-                // On failure, print errors and re-enable the submit button
-                error: function (e) {
-                  if (e.status === 409) {
-                    $(instructions).html('Username already exists, please try again').css('color', 'red');
-                    } else {
-                    console.log('ERROR : ', e);
-                  }
-                  $(registerBtn).prop('disabled', false);
-                }
-              });
-              $(form).trigger('reset');
-              } else if (password !== confPass || !password || !confPass || !username) {
-                $(instructions).html('Username, Password, and Confirm Password must not be empty and passwords must match')
-                    .css('color', 'red');
+    registerUser : function () {
+      let registerBtn = $('#registerBtn');
+      // On submit, execute the following
+      $(registerBtn).click(function (event) {
+        let username = $('#username').val();
+        let password = $('#password').val();
+        let confPass = $('#confPass').val();
+        let instructions = $('#instructions');
+        event.preventDefault();
+        if (password === confPass && username && password && confPass) {
+          // Prevents form from submitting
+          const form = $('#registerForm')[0];
+          const data = new FormData(form);
+          // Disable submit button until something happens
+          $(registerBtn).prop('disabled', true);
+          $.ajax({
+            type: 'POST',
+            enctype: 'multipart/form-data',
+            url: '/register',
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 800000,
+            // On success, redirect to /login
+            success: function () {
+              $(registerBtn).prop('disabled', false);
+              window.location.replace('/login');
+            },
+            // On failure, print errors and re-enable the submit button
+            error: function (e) {
+              if (e.status === 409) {
+                $(instructions).html('Username already exists, please try again').css('color', 'red');
               } else {
-                $(instructions).html('Register').css('color', 'black');
+                console.log('ERROR : ', e);
               }
+              $(registerBtn).prop('disabled', false);
+            }
           });
+          $(form).trigger('reset');
+        } else if (password !== confPass || !password || !confPass || !username) {
+          $(instructions).html('Username, Password, and Confirm Password must not be empty and passwords must match')
+          .css('color', 'red');
+        } else {
+          $(instructions).html('Register').css('color', 'black');
         }
+      });
+    }
   };
 
   // Let ns be called in the current window to access functions

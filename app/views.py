@@ -73,7 +73,7 @@ def internal_error(e):
 # Main index.html route
 @app.route('/', strict_slashes=False, methods=['GET', 'POST'])
 def index():
-    if not session:
+    if 'logged_in' not in session:
         return redirect(url_for('login'))
     else:
         try:
@@ -125,7 +125,7 @@ def register():
                 return redirect(url_for('login'))
             else:
                 return render_template('register.html', form=form), 409
-        elif not session:
+        elif 'logged_in' not in session:
             return render_template('register.html', form=form)
         else:
             return redirect(url_for('index'))
