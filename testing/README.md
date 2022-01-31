@@ -37,6 +37,7 @@ insert() part amount invalid input test -> PASSED
 ***SETUP***
 test_get_selections() TEST
 get_selections TEST -> PASSED
+check_if_van_exist() TEST -> PASSED
 ***TEARDOWN***
 ***SETUP***
 test_login_confirmation() TEST
