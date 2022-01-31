@@ -46,6 +46,19 @@ def check_if_part_exist(part_name, part_amount, part_number, van_number):
         return True
 
 
+# Check if van exists
+def check_if_van_exist(id):
+    dbm.conn.ping()
+    get_van = tdbs.get_check_van_existence()
+    dbm.cursor.execute(get_van, id)
+    results = dbm.cursor.fetchall()
+    dbm.conn.close()
+    if not results:
+        return False
+    else:
+        return True
+
+
 class DBMUnitTest(TestCase):
 
     # Make sure the database connection is pinged and closed after each test
@@ -328,6 +341,9 @@ class DBMUnitTest(TestCase):
         print('get_selections TEST -> PASSED')
         # Delete when finished
         dbm.delete_van(this_id)
+        # Make sure the van has been deleted
+        self.assertFalse(check_if_van_exist(this_id))
+        print('check_if_van_exist() TEST -> PASSED')
 
 
 if __name__ == '__main__':
