@@ -5,7 +5,7 @@ from app.Database.DatabaseConnector import DatabaseConnector
 from app.Database.DatabaseStatements import DatabaseStatements
 
 
-# Prevents inputs that only contain spaces from being entered into the database
+# Prevent inputs that only contain spaces from being entered into the database
 def check_input(test_input):
     if not test_input or test_input.isspace():
         return False
