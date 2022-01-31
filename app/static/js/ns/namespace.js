@@ -37,7 +37,7 @@
     // On submit, execute the following
     deleteThis : function ($getPath) {
       let element = $('#table');
-      $(document).off().on('click', '.deleteBtn', function(){
+      $(document).off('click').on('click', '.deleteBtn', function(){
         let id = this.dataset.value;
         toggleProps('.deleteBtn', '.updateBtn');
         toggleMe('#deleteBtn' + id, '#updateBtn' + id, '#confirmMe' + id);
@@ -64,7 +64,7 @@
             }
           });
         });
-        $('.table').off().on('click', '#noBtn' + id, function () {
+        $('#noBtn' + id).off().click(function () {
           toggleMe('#deleteBtn' + id, '#updateBtn' + id, '#confirmMe' + id);
           toggleProps('.deleteBtn', '.updateBtn');
         });
@@ -200,7 +200,7 @@
           }
         });
         // Cancel button implementation
-        $('.table').off().on('click', '#cancelUpdateBtn'+id, function(){
+        $('.main').off().on('click', '#cancelUpdateBtn'+id, function(){
           toggleElem(id);
           // Reset to original values
           if (!window.location.pathname.split('/')[2] && window.location.pathname !== '/parts') {
