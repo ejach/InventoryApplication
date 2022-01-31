@@ -24,7 +24,7 @@
   }
 
   // POST request function
-  let postRequest = function (url, data, toggles, enctype, getPath, extras, type, errorFunc) {
+  let postRequest = function (url, data, toggles, enctype, getPath, extras, type) {
     if (type !== 'insert') {
       $.ajax({
         type: 'POST',
@@ -43,7 +43,6 @@
         error: function (e) {
           console.log('ERROR : ', e);
           toggleProps(toggles);
-          return errorFunc;
         }
       });
     } else {
@@ -97,7 +96,7 @@
           // Append csrf token to data string
           let data = 'Delete=' + id;
           let toggles = ['.deleteBtn', '.updateBtn'].toString();
-          postRequest(url, data, toggles, 'multipart/form-data', $getPath, null, null, null);
+          postRequest(url, data, toggles, 'multipart/form-data', $getPath, null, null);
         });
         $('#noBtn' + id).off().click(function () {
           toggleMe('#deleteBtn' + id, '#updateBtn' + id, '#confirmMe' + id);
@@ -125,7 +124,7 @@
         if (!Number.isFinite(amount) && amount.val() && partName.val() && partNumber.val() && vanNum) {
           postRequest('/parts', data, ('#submit'), 'multipart/form-data', $getPath,window.location.pathname.split('/')[2]
           ? $(instructions).html('Enter the Part Name, Part Number, and Part Amount: ').css('color', 'black')
-          : $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Van Number: ').css('color', 'black'), 'insert', null);
+          : $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Van Number: ').css('color', 'black'), 'insert');
           $(form).trigger('reset');
           // If amount is blank, or the amount is NaN notify the user
         } else if (Number.isNaN(amount) || !amount.val() || !partName.val() || !partNumber.val() || !vanNum) {
@@ -178,7 +177,7 @@
               text = 'id=' + id + '&vanNumber=' + selectElem.val();
               let toggles = ['.deleteBtn', '.updateBtn'].toString();
               // Send our POST request
-              postRequest(url, text, toggles, null, $getPath, null, toggleElem.id, null, null);
+              postRequest(url, text, toggles, null, $getPath, null, toggleElem.id, null);
               $(instructions).html('Select a van: ').css('color', 'black');
             } else {
               $(instructions).html('Blank input will not be accepted.').css('color', 'red');
@@ -198,7 +197,7 @@
               postRequest(url, text, toggles, null, $getPath, window.location.pathname.split('/')[2]
               ? $(instructions).html('Enter the Part Name, Part Number, and Part Amount: ').css('color', 'black')
               : $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Van Number: ').css('color', 'black'),
-              toggleElem.id, null, null);
+              toggleElem.id, null);
             }
           }
         });
@@ -238,7 +237,7 @@
           let url = '/users';
           let data = 'user_id=' + id;
           let toggles = ['.confirmBtn', '.deleteBtn', '.denyBtn', '.makeAdminBtn'].toString();
-          postRequest(url, data, toggles, null, $getPath, null, null, null);
+          postRequest(url, data, toggles, null, $getPath, null, null);
         });
         $(denyNoBtn).off('click').click(function () {
           toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, makeAdminBtn);
@@ -266,7 +265,7 @@
           let url = '/delete/user';
           let data = 'user_id=' + id;
           let toggles = ['.confirmBtn', '.denyBtn', '.deleteBtn', '.makeAdminBtn'].toString();
-          postRequest(url, data, toggles, null, $getPath, null, null, null);
+          postRequest(url, data, toggles, null, $getPath, null, null);
         });
         $('.denyNoBtn').off('click').on('click', denyNoBtn, function () {
           toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, makeAdminBtn);
@@ -291,7 +290,7 @@
           let url = '/delete/user';
           let data = 'user_id=' + id;
           let toggles = ['.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn', '.adminBtn'].toString();
-          postRequest(url, data, toggles, null, $getPath, null, null, null);
+          postRequest(url, data, toggles, null, $getPath, null, null);
         });
         $(noBtn).off('click').click(function () {
           toggleProps('.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn', adminBtnCls);
@@ -331,7 +330,7 @@
           let data = 'user_id=' + id + '&value=' + is_admin;
           let toggles = ['.confirmBtn', '.denyBtn', '.deleteBtn', '.makeAdminBtn'].toString();
           // Our POST request
-          postRequest(url, data, toggles, null, $getPath, null, null, null);
+          postRequest(url, data, toggles, null, $getPath, null, null);
         });
         $(denyBtn).off('click').click(function () {
           toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, adminBtnCls);
