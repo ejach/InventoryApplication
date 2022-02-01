@@ -7,9 +7,9 @@ create table parts
     amount      int          default 0   not null,
     part_number varchar(255) default '0' null,
     van_number  varchar(255)             null,
-    constraint parts_fk
+    constraint parts_vans_van_number_fk
         foreign key (van_number) references vans (van_number)
-            on delete cascade
+            on update cascade on delete cascade
 );
 
 create index van_number
