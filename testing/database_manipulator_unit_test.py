@@ -47,10 +47,10 @@ def check_if_part_exist(part_name, part_amount, part_number, van_number):
 
 
 # Check if van exists
-def check_if_van_exist(id):
+def check_if_van_exist(this_id):
     dbm.conn.ping()
     get_van = tdbs.get_check_van_existence()
-    dbm.cursor.execute(get_van, id)
+    dbm.cursor.execute(get_van, this_id)
     results = dbm.cursor.fetchall()
     dbm.conn.close()
     if not results:
@@ -59,8 +59,17 @@ def check_if_van_exist(id):
         return True
 
 
-class DBMUnitTest(TestCase):
+# Get a random existing van number
+def get_random_van():
+    dbm.conn.ping()
+    get_first_van = tdbs.get_get_random_van()
+    dbm.cursor.execute(get_first_van)
+    results = dbm.cursor.fetchone()
+    dbm.conn.close()
+    return results[0]
 
+
+class DBMUnitTest(TestCase):
     # Make sure the database connection is pinged and closed after each test
     def setUp(self) -> None:
         print('***SETUP***')
@@ -71,45 +80,58 @@ class DBMUnitTest(TestCase):
         dbc.conn.close()
 
     # Checks the different functions that interact with the parts database
-    def test_parts(self):
-        print('test_parts() TEST')
+    def test_parts_delete(self):
+        print('test_parts_delete() TEST')
         part_name = random_string + random_time_string
         part_number = random_numbers + random_time_string
         van_number = random_string + random_time_string
+        # Create a van in the database
+        dbm.insert_van(van_number)
+        van_id = dbm.cursor.lastrowid
+        # Make sure it exists
+        self.assertTrue(dbm.check_if_exists(van_number))
         # Add a part into the database
         dbm.insert(part_name=part_name, part_number=part_number, part_amount=random_digit, van_number=van_number)
-        # Get the last part inserted
-        last_part = dbm.cursor.lastrowid
         # Check if it exists
         self.assertTrue(check_if_part_exist(part_name=part_name, part_number=part_number, part_amount=random_digit,
                                             van_number=van_number))
         print('insert() TRUE test -> PASSED')
-        # Delete the newly added part
-        dbm.delete(last_part)
+        # Delete the newly added part by deleting the van
+        dbm.delete_van(van_id)
+        # Make sure the corresponding van and part do not exist
         self.assertFalse(check_if_part_exist(part_name=part_name, part_number=part_number,
                                              part_amount=random_digit, van_number=van_number))
+        self.assertFalse(check_if_van_exist(van_id))
         print('delete() test -> PASSED')
 
+    def test_parts_update(self):
+        print('test_parts_update() TEST')
+        # Create another van
+        dbm.insert_van(random_time_string)
+        van_id = dbm.cursor.lastrowid
         # Add another part into the database
-        dbm.insert(part_name=part_name, part_number=part_number, part_amount=random_digit, van_number=van_number)
+        dbm.insert(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
+                   van_number=random_time_string)
         # Get last part ID from the initial insert statement
         update_part_id = dbm.cursor.lastrowid
         # Check that it exists, again
-        self.assertTrue(check_if_part_exist(part_name=part_name, part_number=part_number, part_amount=random_digit,
-                                            van_number=van_number))
+        self.assertTrue(
+            check_if_part_exist(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
+                                van_number=random_time_string))
         # Update it
-        dbm.update(update_part_id, part_name=part_name + random_digit, part_number=part_number + random_digit,
-                   van_number=van_number + random_digit, part_amount=random_digit + random_digit)
+        dbm.update(update_part_id, part_name=random_string + random_string, part_number=random_numbers + random_numbers,
+                   van_number=random_time_string, part_amount=random_digit + random_digit)
         # Check that it exists
-        self.assertTrue(check_if_part_exist(part_name=part_name + random_digit, part_number=part_number + random_digit,
-                                            van_number=van_number + random_digit,
-                                            part_amount=random_digit + random_digit))
+        self.assertTrue(
+            check_if_part_exist(part_name=random_string + random_string, part_number=random_numbers + random_numbers,
+                                van_number=random_time_string, part_amount=random_digit + random_digit))
         # Delete it
-        dbm.delete(update_part_id)
+        dbm.delete_van(van_id)
         # Check existence
-        self.assertFalse(check_if_part_exist(part_name=part_name + random_digit, part_number=part_number + random_digit,
-                                             van_number=van_number + random_digit,
-                                             part_amount=random_digit + random_digit))
+        self.assertFalse(
+            check_if_part_exist(part_name=random_string + random_digit, part_number=random_numbers + random_digit,
+                                van_number=random_time_string + random_digit, part_amount=random_digit + random_digit))
+        self.assertFalse(check_if_van_exist(van_id))
         print('update() test -> PASSED')
 
     # Tests the check_input function
@@ -258,18 +280,23 @@ class DBMUnitTest(TestCase):
     # Test the adding of part amounts attribute into the database
     def test_add_part_amount(self):
         print('test_add_part_amount() TEST')
+        # Create test van
+        dbm.insert_van(random_time_string)
+        # Get the van ID
+        van_id = dbm.cursor.lastrowid
+        # Make sure it exists
+        self.assertTrue(check_if_van_exist(van_id))
         # Insert a random part into the database with random values
-        dbm.insert(random_string, random_digit, random_digit, random_digit)
-        # Get the last inserted part ID
-        this_part = dbm.cursor.lastrowid
+        dbm.insert(random_string, random_digit, random_digit, random_time_string)
         # Make sure it was inserted into the database
-        self.assertTrue(check_if_part_exist(random_string, random_digit, random_digit, random_digit))
+        self.assertTrue(check_if_part_exist(random_string, random_digit, random_digit, random_time_string))
         print('insert() part amount TRUE test -> PASSED')
-        # Delete the part when finished
-        dbm.delete(this_part)
+        # Delete the van and the part that it contains when finished
+        dbm.delete_van(van_id)
         # Make sure it was deleted
         self.assertFalse(check_if_part_exist(part_name=random_string, part_amount=random_numbers,
-                                             part_number=random_digit, van_number=random_digit))
+                                             part_number=random_digit, van_number=random_time_string))
+        self.assertFalse(check_if_van_exist(van_id))
         print('insert() part amount FALSE test -> PASSED')
 
     # Test invalid input in the part amount attribute column
@@ -286,27 +313,34 @@ class DBMUnitTest(TestCase):
     # Test updating the part amount into the database
     def test_update_part_amount(self):
         print('test_update_part_amount() TEST')
+        # Insert van number into database
+        dbm.insert_van(random_time_string)
+        # Get van ID
+        van_id = dbm.cursor.lastrowid
+        # Check if it exists
+        self.assertTrue(dbm.check_if_exists(random_time_string))
         # Insert a random part into the database
         dbm.insert(part_name=random_string, part_amount=random_digit + random_digit, part_number=random_digit,
                    van_number=random_time_string)
         # Get the ID of the last inserted part
-        this_id = dbm.cursor.lastrowid
+        part_id = dbm.cursor.lastrowid
         # Make sure it exists
         self.assertTrue(check_if_part_exist(part_name=random_string, part_amount=random_digit + random_digit,
                                             part_number=random_digit, van_number=random_time_string))
         print('insert() part amount update insert test -> PASSED')
         # Update the part with random values
-        dbm.update(this_id, part_name=random_string, part_amount=random_time_string, part_number=random_digit,
-                   van_number=random_digit)
+        dbm.update(part_id, part_name=random_string, part_amount=random_time_string, part_number=random_digit,
+                   van_number=random_time_string)
         # Make sure the part exists based on these random values
         self.assertTrue(check_if_part_exist(part_name=random_string, part_amount=random_time_string,
-                                            part_number=random_digit, van_number=random_digit))
+                                            part_number=random_digit, van_number=random_time_string))
         print('insert() part amount update test -> PASSED')
-        # Delete the part when finished
-        dbm.delete(this_id)
-        # Make sure it was actually deleted
+        # Delete the van and the part that it contains when finished
+        dbm.delete_van(van_id)
+        # Make sure the part and van was actually deleted
         self.assertFalse(check_if_part_exist(part_name=random_string, part_amount=random_time_string,
-                                             part_number=random_digit, van_number=random_digit))
+                                             part_number=random_digit, van_number=random_time_string))
+        self.assertFalse(check_if_van_exist(van_id))
 
     # Test the toggling of accounts to have admin privileges in the is_admin attribute
     def test_toggle_admin(self):
@@ -344,6 +378,48 @@ class DBMUnitTest(TestCase):
         # Make sure the van has been deleted
         self.assertFalse(check_if_van_exist(this_id))
         print('check_if_van_exist() TEST -> PASSED')
+
+    # Check the updating of the van on a part in the update function
+    def test_update_parts_van(self):
+        print('test_update_parts() TEST')
+        # Create a new van
+        dbm.insert_van(random_time_string)
+        van_id = dbm.cursor.lastrowid
+        # Get random van from existing vans
+        random_van = get_random_van()
+        # Get the first van
+        self.assertTrue(dbm.check_if_exists(random_time_string))
+        print('insert_van TEST -> PASSED')
+        # Add part to new van
+        dbm.insert(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
+                   van_number=random_time_string)
+        part_id = dbm.cursor.lastrowid
+        self.assertTrue(
+            check_if_part_exist(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
+                                van_number=random_time_string))
+        # Update the part with a random van that already exists
+        dbm.update(part_id, part_name=random_string, part_number=random_numbers, part_amount=random_digit,
+                   van_number=random_van)
+        # Check if the part exists with the existing van
+        self.assertTrue(
+            check_if_part_exist(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
+                                van_number=random_van))
+        # Update the part to be back in its original van
+        dbm.update(part_id, part_name=random_string, part_number=random_numbers, part_amount=random_digit,
+                   van_number=random_time_string)
+        # Make sure it exists
+        self.assertTrue(
+            check_if_part_exist(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
+                                van_number=random_time_string))
+        print('update TEST -> PASSED')
+        # Delete the van and it's containing part
+        dbm.delete_van(van_id)
+        # Make sure neither exist
+        self.assertFalse(
+            check_if_part_exist(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
+                                van_number=random_time_string))
+        self.assertFalse(check_if_van_exist(van_id))
+        print('test_update_parts() TEST -> PASSED')
 
 
 if __name__ == '__main__':
