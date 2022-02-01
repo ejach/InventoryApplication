@@ -9,6 +9,7 @@ create table parts
     van_number  varchar(255)             null,
     constraint parts_fk
         foreign key (van_number) references vans (van_number)
+            on delete cascade
 );
 
 create index van_number
@@ -28,7 +29,7 @@ create index van_number
     on vans (van_number);
 
 
-# Table for accounts
+-- Table for accounts
 create table accounts
 (
     id           int auto_increment
