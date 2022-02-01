@@ -10,6 +10,7 @@ class TestDatabaseStatements:
         self.get_last_id = 'SELECT MAX( id ) FROM parts'
         self.check_part_existence = f'SELECT * FROM {self.db}.parts WHERE name = %s AND amount = %s AND part_number = %s AND van_number = %s'
         self.check_van_existence = f'SELECT * FROM {self.db}.vans WHERE id = %s'
+        self.get_random_van = f'SELECT `van_number` FROM {self.db}.vans ORDER BY RAND() LIMIT 1;'
 
     def get_delete_account_by_id(self):
         return self.delete_account_by_id
@@ -22,3 +23,6 @@ class TestDatabaseStatements:
 
     def get_check_van_existence(self):
         return self.check_van_existence
+
+    def get_get_random_van(self):
+        return self.get_random_van

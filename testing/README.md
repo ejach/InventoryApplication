@@ -53,9 +53,12 @@ DELETE DENIED ACCOUNT TEST -> PASSED
 FAIL LOGIN ACCOUNT TEST -> PASSED
 ***TEARDOWN***
 ***SETUP***
-test_parts() TEST
+test_parts_delete() TEST
 insert() TRUE test -> PASSED
 delete() test -> PASSED
+***TEARDOWN***
+***SETUP***
+test_parts_update() TEST
 update() test -> PASSED
 ***TEARDOWN***
 ***SETUP***
@@ -68,6 +71,12 @@ REMOVE ACCOUNT TEST -> PASSED
 test_update_part_amount() TEST
 insert() part amount update insert test -> PASSED
 insert() part amount update test -> PASSED
+***TEARDOWN***
+***SETUP***
+test_update_parts() TEST
+insert_van TEST -> PASSED
+update TEST -> PASSED
+test_update_parts() TEST -> PASSED
 ***TEARDOWN***
 ***SETUP***
 test_update_van() TEST
