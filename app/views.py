@@ -326,8 +326,14 @@ def users():
     return redirect(url_for('index'))
 
 
-# Route for the jobs tab
-@app.route('/jobs/<van_id>', strict_slashes=False, methods=['GET', 'POST'])
+# Redirect to index if /jobs is accessed
+@app.route('/jobs/', methods=['GET'])
+def _jobs():
+    return redirect(url_for('index'))
+
+
+# Route for jobs
+@app.route('/jobs/<van_id>', methods=['GET', 'POST'])
 def jobs(van_id):
     if not session:
         redirect(url_for('index'))
@@ -339,6 +345,7 @@ def jobs(van_id):
             return redirect(url_for('index'))
         elif request.method == 'POST' and request.is_json:
             content = request.get_json()
+            # The list of values to be added
             lst = []
             for i in content:
                 for key, val in i.items():
