@@ -135,7 +135,7 @@ def register():
         abort(500)
 
 
-# app route for /logout
+# App route for /logout
 @app.route('/logout', strict_slashes=False, methods=['GET', 'POST'])
 def logout():
     session.pop('logged_in', default=None)
@@ -144,7 +144,7 @@ def logout():
     return redirect(url_for('index'))
 
 
-# parts.html route
+# Parts.html route
 @app.route('/parts', strict_slashes=False, methods=['GET', 'POST'])
 def parts():
     if not session:
@@ -187,9 +187,13 @@ def table(table_name, van_number):
         return render_template('load/van_table.html', results=results, check_exist=check_exist, form=form,
                                update_form=update_form)
     # Requirements to return the list of accounts
-    if table_name == 'users' and van_number != 'all':
+    elif table_name == 'users' and van_number != 'all':
         results = dbm.get_users(username=session['username'])
         return render_template('load/accounts_table.html', users=results)
+    # Requirements to return the job list of parts
+    elif table_name == 'jobs' and van_number != 'all':
+        select_parts = dbm.get_parts_by_van(van_number)
+        return render_template('load/jobs_table.html', van_parts=select_parts)
     # Requirements to return the master list of parts
     elif table_name == 'main' and van_number == 'all':
         form = PartsForm()
@@ -320,3 +324,26 @@ def users():
         return render_template('users.html', users=get_users)
     # If the route is accessed, re-route to index
     return redirect(url_for('index'))
+
+
+# Route for the jobs tab
+@app.route('/jobs/<van_id>', strict_slashes=False, methods=['GET', 'POST'])
+def jobs(van_id):
+    if not session:
+        redirect(url_for('index'))
+    else:
+        select_parts = dbm.get_parts_by_van(van_id)
+        check_exist = dbm.check_if_exists(van_id)
+        # If the van does not exist, redirect to index
+        if not check_exist:
+            return redirect(url_for('index'))
+        elif request.method == 'POST' and request.is_json:
+            content = request.get_json()
+            lst = []
+            for i in content:
+                for key, val in i.items():
+                    lst.append(val)
+            # Zip values into the format [(value, value), (value, value), ...]
+            values = [*zip(lst[::2], lst[1::2])]
+            dbm.update_multiple_parts_by_van(values)
+        return render_template('jobs.html', van_parts=select_parts)

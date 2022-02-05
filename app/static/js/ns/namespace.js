@@ -337,6 +337,50 @@
         });
       });
     },
+    createJob : function (getPath) {
+      let submitBtn = $('.submitJob');
+      let resetBtn = $('.resetValBtn');
+      let toggles = ['.submitJob', '.resetValBtn'].toString()
+      $(submitBtn).click(function () {
+        toggleProps(toggles);
+        let jsonData = function () {
+          let jsonObj = [];
+          $('input[class=changeAmount]').each(function() {
+            let id = $(this).attr('data-value');
+            let amount = $(this).val();
+            let item = {}
+            item ['amount'] = amount;
+            item ['part_id'] = id;
+            jsonObj.push(item);
+          });
+          return JSON.stringify(jsonObj);
+        }
+        let url = '/jobs/' + window.location.pathname.split('/jobs/')[1];
+        $.ajax({
+          type: 'POST',
+          url: url,
+          data: jsonData(),
+          contentType: 'application/json; charset=utf-8',
+          cache: false,
+          timeout: 800000,
+          // On success, load the span from the getPath
+          success: function () {
+            $('#table').load(getPath);
+            toggleProps(toggles);
+          },
+          // On failure, print errors
+          error: function (e) {
+            console.log('ERROR : ', e);
+            toggleProps(toggles);
+          }
+        });
+      });
+      // Reset to default value
+      $(resetBtn).click(function () {
+        let partAmt = this.id;
+        $('#changeAmount' + partAmt).prop('value', partAmt);
+      });
+    },
     loginUser : function () {
       let username = $('#username');
       let password = $('#password');
