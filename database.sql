@@ -40,3 +40,30 @@ create table accounts
     is_confirmed int default 0 null
 );
 
+-- Table for jobs
+create table jobs
+(
+    job_id      int auto_increment,
+    job_name    varchar(255) not null,
+    van_number  varchar(255) not null,
+    part_amount int          not null,
+    part_number varchar(255) not null,
+    part_name   varchar(255) not null,
+    primary key (job_id, van_number),
+    constraint jobs_job_id_uindex
+        unique (job_id),
+    constraint jobs_part_name_uindex
+        unique (part_name),
+    constraint jobs_part_number_uindex
+        unique (part_number),
+    constraint jobs_van_number_uindex
+        unique (van_number),
+    constraint jobs_parts_amount_fk
+        foreign key (part_amount) references parts (amount)
+            on update cascade,
+    constraint jobs_parts_number_fk
+        foreign key (part_number) references parts (part_number),
+    constraint jobs_vans_van_number_fk
+        foreign key (van_number) references vans (van_number)
+);
+

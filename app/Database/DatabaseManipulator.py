@@ -344,3 +344,25 @@ class DatabaseManipulator:
             return results
         except Error as e:
             print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+
+    # Get parts by van number
+    def get_parts_by_van(self, van_number):
+        try:
+            self.conn.ping()
+            stmt = self.stmt.get_select_parts_by_van()
+            self.cursor.execute(stmt, van_number)
+            results = self.cursor.fetchall()
+            self.conn.close()
+            return results
+        except Error as e:
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+
+    # Update multiple parts according to the van number
+    def update_multiple_parts_by_van(self, values):
+        try:
+            self.conn.ping()
+            stmt = self.stmt.get_update_part_amount_by_van()
+            self.cursor.executemany(stmt, values)
+            self.conn.close()
+        except Error as e:
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')

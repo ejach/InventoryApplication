@@ -4,8 +4,10 @@
 <script src= "{{ url_for('static', filename='js/van/van-parts-addPart.js') }}"></script>
 <script src= "{{ url_for('static', filename='js/van/van-parts-deletePart.js') }}"></script>
 <script src= "{{ url_for('static', filename='js/van/van-parts-updatePart.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/van/van-createJob.js') }}"></script>
 {% endblock %}
 {% block content %}
+<button value="Create Job" id="createJobBtn" class="createJobBtn">Create Job</button>
 <form id="myForm">
   <p id="instructions">Enter the Part Name,  Part Number, and Part Amount: </p>
     {{ form.partName(placeholder='Part Name', pattern='^\w+( +\w+)*$') }}

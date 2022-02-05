@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block scripts %}
+    <script src= "{{ url_for('static', filename='js/jobs.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ns/namespace.js') }}"></script>
+{% endblock %}
+{% block content %}
+    <button id="submitJob" class="submitJob">Submit Job</button>
+<div id="table">
+    <table class="table">
+    <th>Part Name</th><th>Amount</th><th>Action</th><br/>
+        {% for row in van_parts %}
+        <tr>
+            <td>{{ row[1] }}</td>
+            <td><input id="changeAmount{{ row[2] }}" class="changeAmount" type="number" value="{{ row[2] }}" data-value="{{ row[0] }}"></td>
+            <td><button id="{{ row[2] }}" class="resetValBtn">Reset</button></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
