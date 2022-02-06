@@ -339,9 +339,8 @@
     },
     createJob : function (getPath) {
       let submitBtn = $('.submitJob');
-      let resetBtn = $('.resetValBtn');
-      let toggles = ['.submitJob', '.resetValBtn'].toString()
-      $(submitBtn).click(function () {
+      let toggles = ['.submitJob', '.resetValBtn'].toString();
+      $(submitBtn).off().click(function () {
         toggleProps(toggles);
         let jsonData = function () {
           let jsonObj = [];
@@ -375,9 +374,9 @@
           }
         });
       });
-      // Reset to default value
-      $(resetBtn).click(function () {
-        let partAmt = this.id;
+      // Reset value to default
+      $(document).off('click').on('click', '.resetValBtn', function(){
+        let partAmt = this.dataset.value;
         $('#changeAmount' + partAmt).prop('value', partAmt);
       });
     },
