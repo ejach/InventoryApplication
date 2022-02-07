@@ -340,21 +340,31 @@
     createJob : function (getPath) {
       let submitBtn = $('.submitJob');
       let toggles = ['.submitJob', '.resetValBtn'].toString();
+      let instructions = $('#instructions');
       $(submitBtn).off().click(function () {
-        toggleProps(toggles);
         let jsonData = function () {
           let jsonObj = [];
           $('input[class=changeAmount]').each(function() {
             let id = $(this).attr('data-value');
             let amount = $(this).val();
+            let orig = $(this).attr('max');
             let item = {}
             item ['amount'] = amount;
             item ['part_id'] = id;
-            jsonObj.push(item);
+            // Make sure the values are not more than what exists in the database
+            if (amount > orig) {
+                $(instructions).html('Invalid input will not be accepted').css('color', 'red');
+                jsonObj.push(null);
+            } else {
+                jsonObj.push(item);
+            }
           });
           return JSON.stringify(jsonObj);
         }
-        let url = '/jobs/' + window.location.pathname.split('/jobs/')[1];
+        // If the values are correct, proceed
+        if (!jsonData().includes('null')) {
+          toggleProps(toggles);
+          let url = '/jobs/' + window.location.pathname.split('/jobs/')[1];
         $.ajax({
           type: 'POST',
           url: url,
@@ -364,6 +374,7 @@
           timeout: 800000,
           // On success, load the span from the getPath
           success: function () {
+            $(instructions).html('Record a job in the database: ').css('color', 'black');
             $('#table').load(getPath);
             toggleProps(toggles);
           },
@@ -373,11 +384,26 @@
             toggleProps(toggles);
           }
         });
+        }
       });
       // Reset value to default
       $(document).off('click').on('click', '.resetValBtn', function(){
         let partAmt = this.dataset.value;
         $('#changeAmount' + partAmt).prop('value', partAmt);
+      });
+    },
+    // Functionality for the refresh button on /jobs
+    refreshJobs : function (getPath) {
+      let table = $('#table');
+      let btn = $('.refreshJobs');
+      $(btn).click(function () {
+        $(table).load(getPath);
+          $(btn).attr('disabled', true);
+          $(btn).html('Please wait before refreshing again');
+          setTimeout(function () {
+            $(btn).attr('disabled', false);
+            $(btn).html('Refresh');
+          }, 5000);
       });
     },
     loginUser : function () {

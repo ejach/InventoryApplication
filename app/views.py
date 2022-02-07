@@ -1,3 +1,4 @@
+from datetime import datetime
 from os import environ
 from bleach import clean
 from flask import Flask, render_template, request, redirect, url_for, session, Response
@@ -14,7 +15,7 @@ from app.Forms.UpdatePartsForm import UpdatePartsForm
 from app.csp import csp
 
 from app.Database.DatabaseConnector import DatabaseConnector
-from app.Database.DatabaseManipulator import DatabaseManipulator, check_input
+from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, get_difference
 
 # Initialize the app
 app = Flask(__name__)
@@ -194,6 +195,10 @@ def table(table_name, van_number):
     elif table_name == 'jobs' and van_number != 'all':
         select_parts = dbm.get_parts_by_van(van_number)
         return render_template('load/jobs_table.html', van_parts=select_parts)
+    # Requirements to return the full job list of parts
+    elif table_name == 'jobs' and van_number == 'all':
+        job_parts = dbm.get_jobs()
+        return render_template('load/display_jobs_table.html', jobs=job_parts)
     # Requirements to return the master list of parts
     elif table_name == 'main' and van_number == 'all':
         form = PartsForm()
@@ -326,18 +331,23 @@ def users():
     return redirect(url_for('index'))
 
 
-# Redirect to index if /jobs is accessed
+# Route for jobs/
 @app.route('/jobs/', methods=['GET'])
 def _jobs():
-    return redirect(url_for('index'))
+    if not session or not session['is_admin']:
+        redirect(url_for('index'))
+    else:
+        all_jobs = dbm.get_jobs()
+        return render_template('display_jobs.html', jobs=all_jobs)
 
 
-# Route for jobs
+# Route for jobs/<van_id>
 @app.route('/jobs/<van_id>', methods=['GET', 'POST'])
 def jobs(van_id):
     if not session:
         redirect(url_for('index'))
     else:
+        van_amount = dbm.get_total_parts_by_van(van_id)
         select_parts = dbm.get_parts_by_van(van_id)
         check_exist = dbm.check_if_exists(van_id)
         # If the van does not exist, redirect to index
@@ -352,5 +362,12 @@ def jobs(van_id):
                     lst.append(val)
             # Zip values into the format [(value, value), (value, value), ...]
             values = [*zip(lst[::2], lst[1::2])]
+            # Values to get difference of
+            res = [int(i) for i in lst[::2]]
+            parts_used = sum(res)
+            # Get the difference of the two values
+            difference = get_difference(int(van_amount), int(parts_used))
             dbm.update_multiple_parts_by_van(values)
+            # Record job in the database
+            dbm.record_job(session['username'], str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')), van_id, difference)
         return render_template('jobs.html', van_parts=select_parts)
