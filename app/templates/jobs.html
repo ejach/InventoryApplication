@@ -4,6 +4,7 @@
     <script src="{{ url_for('static', filename='js/ns/namespace.js') }}"></script>
 {% endblock %}
 {% block content %}
+    <p id="instructions">Record a job in the database: </p>
     <button id="submitJob" class="submitJob">Submit Job</button>
 <div id="table">
     <table class="table">
@@ -11,7 +12,7 @@
         {% for row in van_parts %}
         <tr>
             <td>{{ row[1] }}</td>
-            <td><input id="changeAmount{{ row[2] }}" class="changeAmount" type="number" value="{{ row[2] }}" data-value="{{ row[0] }}"></td>
+            <td><input id="changeAmount{{ row[2] }}" class="changeAmount" min="0" max="{{ row[2] }}" type="number" value="{{ row[2] }}" data-value="{{ row[0] }}"></td>
             <td><button id="resetValBtn{{ row[2] }}" class="resetValBtn" data-value="{{ row[2] }}">Reset</button></td>
         </tr>
         {% endfor %}

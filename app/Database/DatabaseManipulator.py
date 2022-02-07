@@ -37,6 +37,14 @@ def check_password_hash(password, my_hash):
         return False
 
 
+# get difference of two values
+def get_difference(op1, op2):
+    if op1 >= op2:
+        return op1 - op2
+    elif op1 <= op2:
+        return op2 - op1
+
+
 class DatabaseManipulator:
     def __init__(self):
         self.db = DatabaseConnector()
@@ -364,5 +372,41 @@ class DatabaseManipulator:
             stmt = self.stmt.get_update_part_amount_by_van()
             self.cursor.executemany(stmt, values)
             self.conn.close()
+        except Error as e:
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+
+    # Record a new job in the database
+    def record_job(self, username, time, van_number, parts_used):
+        try:
+            self.conn.ping()
+            stmt = self.stmt.insert_job
+            vals = (username, time, van_number, parts_used)
+            self.cursor.execute(stmt, vals)
+            self.conn.close()
+        except Error as e:
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+
+    # Get all jobs from database
+    def get_jobs(self):
+        try:
+            self.conn.ping()
+            stmt = self.stmt.get_jobs
+            self.cursor.execute(stmt)
+            results = self.cursor.fetchall()
+            self.conn.close()
+            return results
+        except Error as e:
+            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+
+    # Get the total amount of parts by van
+    def get_total_parts_by_van(self, van):
+        try:
+            self.conn.ping()
+            stmt = self.stmt.select_total_amount_by_van
+            self.cursor.execute(stmt, van)
+            results = self.cursor.fetchall()
+            res = [i[0] for i in results]
+            self.conn.close()
+            return res[0]
         except Error as e:
             print(str(e) + '\n' + 'Lost connection to the MySQL server.')
