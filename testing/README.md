@@ -27,6 +27,12 @@ check_password() False input test -> PASSED
 check_password_hash() False input test -> PASSED
 ***TEARDOWN***
 ***SETUP***
+test_create_job() TEST
+create job FALSE TEST -> PASSED
+create job TRUE TEST -> PASSED
+test_create_job() TEST -> PASSED
+***TEARDOWN***
+***SETUP***
 test_delete_van() TEST
 delete_van() test -> PASSED
 ***TEARDOWN***
@@ -38,6 +44,12 @@ insert() part amount invalid input test -> PASSED
 test_get_selections() TEST
 get_selections TEST -> PASSED
 check_if_van_exist() TEST -> PASSED
+***TEARDOWN***
+***SETUP***
+test_job_part_difference() TEST
+record_job FALSE TEST -> PASSED
+record_job TRUE TEST -> PASSED
+test_job_part_difference() TEST -> PASSED
 ***TEARDOWN***
 ***SETUP***
 test_login_confirmation() TEST

@@ -353,7 +353,7 @@ def jobs(van_id):
         # If the van does not exist or does not contain at least one part, redirect to index
         if not check_exist or not select_parts:
             return redirect(url_for('index'))
-        elif request.method == 'POST' and request.is_json:
+        elif request.method == 'POST' and request.is_json and select_parts:
             content = request.get_json()
             # The list of values to be added
             lst = []
@@ -368,6 +368,8 @@ def jobs(van_id):
             # Get the difference of the two values
             difference = get_difference(int(van_amount), int(parts_used))
             dbm.update_multiple_parts_by_van(values)
-            # Record job in the database
-            dbm.record_job(session['username'], str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')), van_id, difference)
+            # Record job in the database if there is at least 1 part changed
+            if difference > 0:
+                dbm.record_job(session['username'], str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')), van_id,
+                               difference)
         return render_template('jobs.html', van_parts=select_parts)
