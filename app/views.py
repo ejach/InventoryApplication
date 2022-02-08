@@ -350,8 +350,8 @@ def jobs(van_id):
         van_amount = dbm.get_total_parts_by_van(van_id)
         select_parts = dbm.get_parts_by_van(van_id)
         check_exist = dbm.check_if_exists(van_id)
-        # If the van does not exist, redirect to index
-        if not check_exist:
+        # If the van does not exist or does not contain at least one part, redirect to index
+        if not check_exist or not select_parts:
             return redirect(url_for('index'))
         elif request.method == 'POST' and request.is_json:
             content = request.get_json()

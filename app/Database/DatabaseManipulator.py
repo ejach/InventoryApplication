@@ -39,10 +39,12 @@ def check_password_hash(password, my_hash):
 
 # get difference of two values
 def get_difference(op1, op2):
-    if op1 >= op2:
+    if op1 > op2:
         return op1 - op2
-    elif op1 <= op2:
+    elif op1 < op2:
         return op2 - op1
+    elif op1 == op2:
+        return op1 - op2
 
 
 class DatabaseManipulator:
