@@ -352,9 +352,9 @@
             item ['amount'] = amount;
             item ['part_id'] = id;
             // Make sure the values are not more than what exists in the database
-            if (amount > orig) {
-              $(instructions).html('Invalid input will not be accepted').css('color', 'red');
-              jsonObj.push(null);
+            if (parseInt(amount) > parseInt(orig)) {
+                $(instructions).html('Invalid input will not be accepted').css('color', 'red');
+                jsonObj.push(null);
             } else {
                 jsonObj.push(item);
             }
