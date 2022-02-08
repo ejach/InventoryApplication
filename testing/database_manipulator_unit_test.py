@@ -24,10 +24,18 @@ username = 'user' + random_time_string
 password = 'pass' + random_time_string
 
 
-# Delete account by ID using get_last_id()
+# Delete account by ID
 def delete_account(this_id):
     dbm.conn.ping()
     stmt = tdbs.get_delete_account_by_id()
+    dbm.cursor.execute(stmt, this_id)
+    dbm.conn.close()
+
+
+# Delete job by ID
+def delete_job(this_id):
+    dbm.conn.ping()
+    stmt = tdbs.get_delete_job_by_id()
     dbm.cursor.execute(stmt, this_id)
     dbm.conn.close()
 
@@ -38,6 +46,20 @@ def check_if_part_exist(part_name, part_amount, part_number, van_number):
     get_part = tdbs.get_check_part_existence()
     values = (part_name, part_amount, part_number, van_number,)
     dbm.cursor.execute(get_part, values)
+    results = dbm.cursor.fetchall()
+    dbm.conn.close()
+    if not results:
+        return False
+    else:
+        return True
+
+
+# Check if job exists
+def check_if_job_exists(_username, _time, van_number, parts_used):
+    dbm.conn.ping()
+    stmt = tdbs.get_check_job_existence()
+    values = (_username, _time, van_number, parts_used)
+    dbm.cursor.execute(stmt, values)
     results = dbm.cursor.fetchall()
     dbm.conn.close()
     if not results:
@@ -64,6 +86,16 @@ def get_random_van():
     dbm.conn.ping()
     get_first_van = tdbs.get_get_random_van()
     dbm.cursor.execute(get_first_van)
+    results = dbm.cursor.fetchone()
+    dbm.conn.close()
+    return results[0]
+
+
+# Get a random existing username
+def get_random_username():
+    dbm.conn.ping()
+    stmt = tdbs.get_get_random_username()
+    dbm.cursor.execute(stmt)
     results = dbm.cursor.fetchone()
     dbm.conn.close()
     return results[0]
@@ -420,6 +452,65 @@ class DBMUnitTest(TestCase):
                                 van_number=random_time_string))
         self.assertFalse(check_if_van_exist(van_id))
         print('test_update_parts() TEST -> PASSED')
+
+    def test_create_job(self):
+        print('test_create_job() TEST')
+        van_num = random_time_string
+        # Create a random van
+        dbm.insert_van(van_num)
+        van_id = dbm.cursor.lastrowid
+        # Make sure that you cannot create a job from a van with no parts
+        dbm.record_job(random_string, random_time_string + random_digit, van_num, random_numbers)
+        self.assertFalse(check_if_job_exists(random_string, random_time_string + random_digit,
+                                             van_num, random_numbers))
+        print('create job FALSE TEST -> PASSED')
+        # Insert part, check if it exists
+        dbm.insert(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
+                   van_number=van_num)
+        self.assertTrue(
+            check_if_part_exist(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
+                                van_number=random_time_string))
+        # Create job, make sure it exists
+        dbm.record_job(username=random_string, time=random_time_string, van_number=van_num, parts_used=random_digit)
+        self.assertTrue(check_if_job_exists(_username=random_string, _time=random_time_string,
+                                            van_number=van_num, parts_used=random_digit))
+        print('create job TRUE TEST -> PASSED')
+        # Delete the van when finished
+        dbm.delete_van(van_id)
+        self.assertFalse(check_if_job_exists(random_string, random_time_string + random_digit,
+                                             van_num, random_numbers))
+        self.assertFalse(check_if_van_exist(van_id))
+        print('test_create_job() TEST -> PASSED')
+
+    # Test if the part difference is zero to not let the job enter the database
+    def test_job_part_difference(self):
+        print('test_job_part_difference() TEST')
+        # Insert van into database
+        van_num = random_numbers
+        dbm.insert_van(van_num)
+        van_id = dbm.cursor.lastrowid
+        self.assertTrue(check_if_van_exist(van_id))
+        # Insert part into database
+        dbm.insert(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
+                   van_number=van_num)
+        self.assertTrue(
+            check_if_part_exist(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
+                                van_number=van_num))
+        # Make sure a job will not be recorded if the parts used is 0
+        dbm.record_job(random_string, random_time_string + random_digit, van_num, parts_used=0)
+        self.assertFalse(check_if_job_exists(_username=random_string, _time=random_time_string,
+                                             van_number=van_num, parts_used=0))
+        print('record_job FALSE TEST -> PASSED')
+        dbm.record_job(random_string, random_time_string + random_digit, van_num, parts_used=random_digit)
+        self.assertTrue(check_if_job_exists(_username=random_string, _time=random_time_string + random_digit,
+                                            van_number=van_num, parts_used=random_digit))
+        print('record_job TRUE TEST -> PASSED')
+        # Delete the van when finished
+        dbm.delete_van(van_id)
+        self.assertFalse(check_if_job_exists(_username=random_string, _time=random_time_string + random_digit,
+                                             van_number=van_num, parts_used=random_digit))
+        self.assertFalse(check_if_van_exist(van_id))
+        print('test_job_part_difference() TEST -> PASSED')
 
 
 if __name__ == '__main__':

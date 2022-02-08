@@ -48,6 +48,12 @@ create table jobs
     username   varchar(255) null,
     time       varchar(255) null,
     van_number varchar(255) null,
-    parts_used int          null
+    parts_used int          null,
+    constraint jobs_vans_van_number_fk
+        foreign key (van_number) references vans (van_number)
+            on update cascade on delete cascade
 );
+
+create index jobs_van_number_index
+    on jobs (van_number);
 
