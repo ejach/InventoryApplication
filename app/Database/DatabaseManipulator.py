@@ -193,7 +193,7 @@ class DatabaseManipulator:
         try:
             self.conn.ping()
             stmt = self.stmt.get_insert_statement()
-            values = (part_name, part_amount, part_number, van_number)
+            values = (part_name, part_amount, part_number, str(van_number).replace('%20', ' '))
             if check_input(part_name) and check_input(part_amount) and part_amount.isnumeric() \
                     and check_input(part_number) and check_input(van_number):
                 self.cursor.execute(stmt, values)
@@ -201,7 +201,7 @@ class DatabaseManipulator:
         except TypeError as e:
             print(str(e) + '\n' + 'Blank input detected, row not inserted')
         except Error as e:
-            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+            print(str(e))
 
     # Delete entries from database by ID
     def delete(self, row_id):
