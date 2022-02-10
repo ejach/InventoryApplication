@@ -122,14 +122,15 @@
           let vanNum = window.location.pathname.split('/')[2];
           data.append('van', vanNum);
         }
-        if (!Number.isFinite(amount) && amount.val() && partName.val() && partNumber.val() && vanNum) {
+        if (!Number.isFinite(amount) && amount.val() && partName.val() && partNumber.val() && vanNum &&
+        parseInt(amount.val()) !== amount.val() && parseInt(amount.val()) > 0) {
           postRequest('/parts', data, ('#submit'), 'multipart/form-data', $getPath,window.location.pathname.split('/')[2]
           ? $(instructions).html('Enter the Part Name, Part Number, and Part Amount: ').css('color', 'black')
           : $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Van Number: ').css('color', 'black'), 'insert');
           $(form).trigger('reset');
           // If amount is blank, or the amount is NaN notify the user
-        } else if (Number.isNaN(amount) || !amount.val() || !partName.val() || !partNumber.val() || !vanNum) {
-          $(instructions).html('Invalid or blank input').css('color', 'red');
+        } else {
+          $(instructions).html('Invalid or blank input will not be accepted').css('color', 'red');
           setTimeout(function () {
             toggleProps('#submit');
           }, 3000);
@@ -176,7 +177,7 @@
           let url;
           toggleElem(id);
           if (!window.location.pathname.split('/')[2] && window.location.pathname !== '/parts') {
-            if (selectElem.val() || parseInt(selectElem) === selectElem && parseInt(selectElem) > 0 ) {
+            if (selectElem.val()) {
               url = '/update/van/';
               text = 'id=' + id + '&vanNumber=' + selectElem.val();
               let toggles = ['.deleteBtn', '.updateBtn'].toString();
@@ -192,9 +193,10 @@
             let partAmountHtml = partAmount.val();
             // If the window location is not /parts, get it from the URL, else prompt the user for the vanNum
             let vanNumHtml = (window.location.pathname !== '/parts') ? window.location.pathname.split('/')[2] : $('#vanNumber'+id+' option:selected').text();
-            if (!partNameHtml || !partNumberHtml || !partAmountHtml || parseInt(selectElem) !== selectElem || parseInt(selectElem) < 0) {
+            if (!partNameHtml || !partNumberHtml || !partAmountHtml || parseInt(partAmountHtml) !== partAmountHtml || parseInt(partAmountHtml) < 0) {
               $(instructions).html('Blank or invalid input will not be accepted.').css('color', 'red');
               toggleProps('.deleteBtn', '.updateBtn');
+              origVal('#newPartAmount' + id);
             } else {
               text = 'id=' + id + '&partName=' + partNameHtml + '&newPartAmount=' + partAmountHtml + '&partNumber=' + partNumberHtml + '&newVan=' + vanNumHtml;
               url = (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) ? '/update/van/' : '/update/part/';
