@@ -193,7 +193,7 @@ class DatabaseManipulator:
         try:
             self.conn.ping()
             stmt = self.stmt.get_insert_statement()
-            values = (part_name, part_amount, part_number, str(van_number).replace('%20', ' '))
+            values = (part_name, part_amount, part_number, str(van_number))
             if check_input(part_name) and check_input(part_amount) and part_amount.isnumeric() \
                     and check_input(part_number) and check_input(van_number):
                 self.cursor.execute(stmt, values)
