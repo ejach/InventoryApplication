@@ -7,10 +7,10 @@ from app.Database.DatabaseStatements import DatabaseStatements
 
 # Prevent inputs that only contain spaces from being entered into the database
 def check_input(test_input):
-    if not test_input or test_input.isspace():
-        return False
-    else:
+    if test_input and not test_input.isspace() and '-' not in test_input:
         return True
+    else:
+        return False
 
 
 # Create MD5 hash of password to insert into database

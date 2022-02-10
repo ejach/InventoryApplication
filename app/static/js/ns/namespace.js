@@ -176,7 +176,7 @@
           let url;
           toggleElem(id);
           if (!window.location.pathname.split('/')[2] && window.location.pathname !== '/parts') {
-            if (selectElem.val()) {
+            if (selectElem.val() || parseInt(selectElem) === selectElem && parseInt(selectElem) > 0 ) {
               url = '/update/van/';
               text = 'id=' + id + '&vanNumber=' + selectElem.val();
               let toggles = ['.deleteBtn', '.updateBtn'].toString();
@@ -192,8 +192,9 @@
             let partAmountHtml = partAmount.val();
             // If the window location is not /parts, get it from the URL, else prompt the user for the vanNum
             let vanNumHtml = (window.location.pathname !== '/parts') ? window.location.pathname.split('/')[2] : $('#vanNumber'+id+' option:selected').text();
-            if (!partNameHtml || !partNumberHtml || !partAmountHtml) {
-              $(instructions).html('Blank input will not be accepted.').css('color', 'red');
+            if (!partNameHtml || !partNumberHtml || !partAmountHtml || parseInt(selectElem) !== selectElem || parseInt(selectElem) < 0) {
+              $(instructions).html('Blank or invalid input will not be accepted.').css('color', 'red');
+              toggleProps('.deleteBtn', '.updateBtn');
             } else {
               text = 'id=' + id + '&partName=' + partNameHtml + '&newPartAmount=' + partAmountHtml + '&partNumber=' + partNumberHtml + '&newVan=' + vanNumHtml;
               url = (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) ? '/update/van/' : '/update/part/';
