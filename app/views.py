@@ -1,21 +1,21 @@
 from datetime import datetime
 from os import environ
-from bleach import clean
+from urllib.parse import unquote
+
 from flask import Flask, render_template, request, redirect, url_for, session, Response
+from flask_talisman import Talisman
 from flask_wtf import CSRFProtect
 from werkzeug.exceptions import HTTPException, abort
-from flask_talisman import Talisman
-
-from app.Forms.LoginForm import LoginForm
-from app.Forms.RegisterForm import RegisterForm
-from app.Forms.PartsForm import PartsForm
-from app.Forms.UpdateVanForm import UpdateVanForm
-from app.Forms.VanForm import VanForm
-from app.Forms.UpdatePartsForm import UpdatePartsForm
-from app.csp import csp
 
 from app.Database.DatabaseConnector import DatabaseConnector
 from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, get_difference
+from app.Forms.LoginForm import LoginForm
+from app.Forms.PartsForm import PartsForm
+from app.Forms.RegisterForm import RegisterForm
+from app.Forms.UpdatePartsForm import UpdatePartsForm
+from app.Forms.UpdateVanForm import UpdateVanForm
+from app.Forms.VanForm import VanForm
+from app.csp import csp
 
 # Initialize the app
 app = Flask(__name__)
@@ -93,8 +93,8 @@ def login():
     try:
         form = LoginForm()
         if request.method == 'POST':
-            username = clean(form.username.data)
-            password = clean(form.password.data)
+            username = form.username.data
+            password = form.password.data
             my_login = dbm.login(username=username, password=password)
             if my_login:
                 session['logged_in'] = True
@@ -118,9 +118,9 @@ def register():
     try:
         form = RegisterForm()
         if request.method == 'POST':
-            username = clean(form.username.data)
-            password = clean(form.password.data)
-            conf_password = clean(form.confPass.data)
+            username = form.username.data
+            password = form.password.data
+            conf_password = form.confPass.data
             register_user = dbm.register(username, password, conf_password)
             if register_user:
                 return redirect(url_for('login'))
@@ -158,10 +158,10 @@ def parts():
         update_form = UpdatePartsForm()
         if request.method == 'POST':
             # Sanitizes the input using bleach
-            part_name = clean(form.partName.data)
-            part_amount = clean(str(form.partAmount.data))
-            part_number = clean(form.partNumber.data)
-            van_number = clean(form.van.data)
+            part_name = form.partName.data
+            part_amount = str(form.partAmount.data)
+            part_number = form.partNumber.data
+            van_number = unquote(form.van.data)
             # Insert into the database
             dbm.insert(part_name=part_name, part_amount=part_amount, part_number=part_number, van_number=van_number)
         try:
@@ -245,19 +245,19 @@ def update(id_type):
         # Route to update a part by the ID
         if request.method == 'POST' and id_type == 'part':
             form = UpdatePartsForm()
-            part_id = clean(form.id.data)
-            part_name = clean(form.partName.data)
-            part_amount = clean(str(form.newPartAmount.data))
-            part_number = clean(form.partNumber.data)
-            van_number = clean(form.newVan.data)
+            part_id = form.id.data
+            part_name = form.partName.data
+            part_amount = str(form.newPartAmount.data)
+            part_number = form.partNumber.data
+            van_number = unquote(form.newVan.data)
             if check_input(part_id) and check_input(part_name) and check_input(part_amount) \
                     and check_input(part_number) and check_input(van_number):
                 dbm.update(part_id, part_name, part_amount, part_number, van_number)
         # Route to update a van by the ID
         elif request.method == 'POST' and id_type == 'van':
             form = UpdateVanForm()
-            van_id = clean(form.id.data)
-            van_number = clean(form.vanNumber.data)
+            van_id = form.id.data
+            van_number = unquote(form.vanNumber.data)
             if check_input(van_id) and check_input(van_number):
                 dbm.update_van(van_id, van_number)
         # Route to update an account by the ID to grant admin attribute
@@ -281,7 +281,7 @@ def vans():
         update_form = UpdateVanForm()
         van_numbers = dbm.get_van_nums()
         if request.method == 'POST':
-            van_number = clean(form.van_number.data)
+            van_number = unquote(form.van_number.data)
             dbm.insert_van(van_number)
         try:
             return render_template('vans.html', van_numbers=van_numbers, form=form, update_form=update_form)
@@ -323,7 +323,7 @@ def users():
     elif dbm.check_admin(username) == 0:
         return redirect(url_for('index'))
     elif request.method == 'POST':
-        user_id = clean(request.form.get('user_id'))
+        user_id = request.form.get('user_id')
         dbm.confirm_account(user_id)
     else:
         return render_template('users.html', users=get_users)

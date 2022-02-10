@@ -91,6 +91,7 @@
         toggleMe('#deleteBtn' + id, '#updateBtn' + id, '#confirmMe' + id);
         // Un-attach and re-attach the event listener
         $(element).off().on('click', '#yesBtn' + id, function () {
+          toggleProps('#yesBtn' + id);
           // Parameters to be sent in the request
           let url = (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) ? '/delete/van/' : '/delete/part/';
           // Append csrf token to data string
@@ -129,7 +130,9 @@
           // If amount is blank, or the amount is NaN notify the user
         } else if (Number.isNaN(amount) || !amount.val() || !partName.val() || !partNumber.val() || !vanNum) {
           $(instructions).html('Invalid or blank input').css('color', 'red');
-          toggleProps('#submit');
+          setTimeout(function () {
+            toggleProps('#submit');
+          }, 3000);
         }
       });
     },
@@ -171,6 +174,7 @@
         $('#table').off('click').on('click', '#confirmUpdateBtn'+id, function() {
           let text;
           let url;
+          toggleElem(id);
           if (!window.location.pathname.split('/')[2] && window.location.pathname !== '/parts') {
             if (selectElem.val()) {
               url = '/update/van/';
