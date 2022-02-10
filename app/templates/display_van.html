@@ -7,15 +7,19 @@
 <script src= "{{ url_for('static', filename='js/van/van-createJob.js') }}"></script>
 {% endblock %}
 {% block content %}
-<button value="Create Job" id="createJobBtn" class="createJobBtn">Create Job</button>
+<div id="table">
 <form id="myForm">
+    {% if not results %}
+    <button value="Create Job" id="createJobBtn" class="createJobBtn" disabled>Create Job</button>
+    {% else %}
+        <button value="Create Job" id="createJobBtn" class="createJobBtn">Create Job</button>
+    {% endif %}
   <p id="instructions">Enter the Part Name,  Part Number, and Part Amount: </p>
     {{ form.partName(placeholder='Part Name', pattern='^\w+( +\w+)*$') }}
     {{ form.partNumber(placeholder='Part Number', pattern='^\w+( +\w+)*$') }}
     {{ form.partAmount(placeholder='Part Amount', pattern='[0-9]{1,5}', value=1, min=1) }}
     {{ form.submit(value='Add Part') }}
 </form>
-<div id="table">
   {#    If the results are empty, throw the following error    #}
   {% if not results %}
   <p style="color:red;">The database is empty, consider adding a part.</p>
