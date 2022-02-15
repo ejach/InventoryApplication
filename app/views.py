@@ -9,6 +9,7 @@ from werkzeug.exceptions import HTTPException, abort
 
 from app.Database.DatabaseConnector import DatabaseConnector
 from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, get_difference
+from app.decorators.flask_decorators import login_required, admin_login_required
 from app.Forms.LoginForm import LoginForm
 from app.Forms.PartsForm import PartsForm
 from app.Forms.RegisterForm import RegisterForm
@@ -37,54 +38,44 @@ dbc = DatabaseConnector()
 
 # Handle the 401 error
 @app.errorhandler(401)
+@login_required
 def custom_401(e):
-    if not session:
-        return redirect(url_for('login'))
-    else:
-        return Response(e, 401, {'error': '401: Unauthorized'})
+    return Response(e, 401, {'error': '401: Unauthorized'})
 
 
 # Handle the 404 error
 @app.errorhandler(404)
+@login_required
 def not_found(e):
-    if not session:
-        return redirect(url_for('login'))
-    else:
-        return render_template('error.html', e=e)
+    return render_template('error.html', e=e)
 
 
 # Handle the 409 error
 @app.errorhandler(409)
+@login_required
 def custom_401(e):
-    if not session:
-        return redirect(url_for('login'))
-    else:
-        return Response(e, 409, {'error': '409: Conflict'})
+    return Response(e, 409, {'error': '409: Conflict'})
 
 
 # Handle the 500 error
 @app.errorhandler(500)
+@login_required
 def internal_error(e):
-    if not session:
-        return redirect(url_for('login'))
-    else:
-        return render_template('error.html', e=e)
+    return render_template('error.html', e=e)
 
 
 # Main index.html route
 @app.route('/', strict_slashes=False, methods=['GET', 'POST'])
+@login_required
 def index():
-    if 'logged_in' not in session:
-        return redirect(url_for('login'))
-    else:
-        try:
-            username = session['username']
-            session['is_admin'] = dbm.check_admin(username)
-            return render_template('index.html', username=username)
-        except IndexError:
-            abort(404), 404
-        except HTTPException:
-            abort(500)
+    try:
+        username = session['username']
+        session['is_admin'] = dbm.check_admin(username)
+        return render_template('index.html', username=username)
+    except IndexError:
+        abort(404), 404
+    except HTTPException:
+        abort(500)
 
 
 # app route for /login
@@ -147,33 +138,39 @@ def logout():
 
 # Parts.html route
 @app.route('/parts', strict_slashes=False, methods=['GET', 'POST'])
+@login_required
 def parts():
-    if not session:
-        return redirect(url_for('login'))
-    else:
-        results = dbm.fetchall()
-        webui_host = dbc.get_webui_host()
-        van_nums = dbm.get_van_nums()
-        form = PartsForm()
-        update_form = UpdatePartsForm()
-        if request.method == 'POST':
-            # Sanitizes the input using bleach
-            part_name = form.partName.data
-            part_amount = str(form.partAmount.data)
-            part_number = form.partNumber.data
-            van_number = unquote(form.van.data)
-            # Insert into the database
-            dbm.insert(part_name=part_name, part_amount=part_amount, part_number=part_number, van_number=van_number)
-        try:
-            # Populate the van choices for the insert/update part select statements
-            form.van.choices = dbm.get_selections()
-            update_form.newVan.choices = dbm.get_selections()
-            return render_template('parts.html', results=results, webui_host=webui_host, van_nums=van_nums, form=form,
-                                   update_form=update_form)
-        except IndexError:
-            abort(404), 404
-        except HTTPException:
-            abort(500)
+    results = dbm.fetchall()
+    webui_host = dbc.get_webui_host()
+    van_nums = dbm.get_van_nums()
+    form = PartsForm()
+    update_form = UpdatePartsForm()
+    if request.method == 'POST':
+        # Sanitizes the input using bleach
+        part_name = form.partName.data
+        part_amount = str(form.partAmount.data)
+        part_number = form.partNumber.data
+        van_number = unquote(form.van.data)
+        # Insert into the database
+        dbm.insert(part_name=part_name, part_amount=part_amount, part_number=part_number, van_number=van_number)
+    try:
+        # Populate the van choices for the insert/update part select statements
+        form.van.choices = dbm.get_selections()
+        update_form.newVan.choices = dbm.get_selections()
+        return render_template('parts.html', results=results, webui_host=webui_host, van_nums=van_nums, form=form,
+                               update_form=update_form)
+    except IndexError:
+        abort(404), 404
+    except HTTPException:
+        abort(500)
+
+
+# Route for the /parts/<part_number> route
+@app.route('/parts/<part_id>', methods=['GET', 'POST'])
+@login_required
+def parts_number(part_id):
+    results = dbm.get_part_information(part_id)
+    return render_template('display_part.html', parts=results)
 
 
 # Displays the table code in parts_table.html, so it can be refreshed dynamically without reloading the page
@@ -273,56 +270,49 @@ def update(id_type):
 
 # Route for /vans
 @app.route('/vans', strict_slashes=False, methods=['GET', 'POST'])
+@login_required
 def vans():
-    if not session:
-        return redirect(url_for('login'))
-    else:
-        form = VanForm()
-        update_form = UpdateVanForm()
-        van_numbers = dbm.get_van_nums()
-        if request.method == 'POST':
-            van_number = unquote(form.van_number.data)
-            dbm.insert_van(van_number)
-        try:
-            return render_template('vans.html', van_numbers=van_numbers, form=form, update_form=update_form)
-        except IndexError:
-            abort(404), 404
-        except HTTPException:
-            abort(500)
+    form = VanForm()
+    update_form = UpdateVanForm()
+    van_numbers = dbm.get_van_nums()
+    if request.method == 'POST':
+        van_number = unquote(form.van_number.data)
+        dbm.insert_van(van_number)
+    try:
+        return render_template('vans.html', van_numbers=van_numbers, form=form, update_form=update_form)
+    except IndexError:
+        abort(404), 404
+    except HTTPException:
+        abort(500)
 
 
 # Route for /vans that consumes the van_id
 @app.route('/vans/<van_id>', strict_slashes=False)
+@login_required
 def van_num(van_id=0):
     form = PartsForm()
     update_form = UpdatePartsForm()
-    if not session:
-        return redirect(url_for('login'))
+    results = dbm.get_vans(van_id)
+    check_exist = dbm.check_if_exists(van_id)
+    # If there are no results in the van database, but it exists, execute the following
+    if results is None and check_exist:
+        return render_template('display_van.html', results=None, check_exist=check_exist, form=form,
+                               update_form=update_form)
+    # If the results are not None, return the following
+    elif results is not None:
+        return render_template('display_van.html', results=results, form=form, update_form=update_form)
+    # Otherwise, redirect to the main /vans page
     else:
-        results = dbm.get_vans(van_id)
-        check_exist = dbm.check_if_exists(van_id)
-        # If there are no results in the van database, but it exists, execute the following
-        if results is None and check_exist:
-            return render_template('display_van.html', results=None, check_exist=check_exist, form=form,
-                                   update_form=update_form)
-        # If the results are not None, return the following
-        elif results is not None:
-            return render_template('display_van.html', results=results, form=form, update_form=update_form)
-        # Otherwise, redirect to the main /vans page
-        else:
-            return redirect(url_for('vans'))
+        return redirect(url_for('vans'))
 
 
 # Allows admins to manage the users that have access to the system
 @app.route('/users', strict_slashes=False, methods=['GET', 'POST'])
+@admin_login_required
 def users():
     username = session['username']
     get_users = dbm.get_users(username)
-    if 'logged_in' not in session:
-        return redirect(url_for('login'))
-    elif dbm.check_admin(username) == 0:
-        return redirect(url_for('index'))
-    elif request.method == 'POST':
+    if request.method == 'POST':
         user_id = request.form.get('user_id')
         dbm.confirm_account(user_id)
     else:
@@ -332,44 +322,40 @@ def users():
 
 
 # Route for jobs/
-@app.route('/jobs/', methods=['GET'])
+@app.route('/jobs/', strict_slashes=False, methods=['GET'])
+@admin_login_required
 def _jobs():
-    if not session or not session['is_admin']:
-        redirect(url_for('index'))
-    else:
-        all_jobs = dbm.get_jobs()
-        return render_template('display_jobs.html', jobs=all_jobs)
+    all_jobs = dbm.get_jobs()
+    return render_template('display_jobs.html', jobs=all_jobs)
 
 
 # Route for jobs/<van_id>
-@app.route('/jobs/<van_id>', methods=['GET', 'POST'])
+@app.route('/jobs/<van_id>', strict_slashes=False, methods=['GET', 'POST'])
+@admin_login_required
 def jobs(van_id):
-    if not session:
-        redirect(url_for('index'))
-    else:
-        van_amount = dbm.get_total_parts_by_van(van_id)
-        select_parts = dbm.get_parts_by_van(van_id)
-        check_exist = dbm.check_if_exists(van_id)
-        # If the van does not exist or does not contain at least one part, redirect to index
-        if not check_exist or not select_parts:
-            return redirect(url_for('index'))
-        elif request.method == 'POST' and request.is_json and select_parts:
-            content = request.get_json()
-            # The list of values to be added
-            lst = []
-            for i in content:
-                for key, val in i.items():
-                    lst.append(val)
-            # Zip values into the format [(value, value), (value, value), ...]
-            values = [*zip(lst[::2], lst[1::2])]
-            # Values to get difference of
-            res = [int(i) for i in lst[::2]]
-            parts_used = sum(res)
-            # Get the difference of the two values
-            difference = get_difference(int(van_amount), int(parts_used))
-            dbm.update_multiple_parts_by_van(values)
-            # Record job in the database if there is at least 1 part changed
-            if difference > 0:
-                dbm.record_job(session['username'], str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')), van_id,
-                               difference)
-        return render_template('jobs.html', van_parts=select_parts)
+    van_amount = dbm.get_total_parts_by_van(van_id)
+    select_parts = dbm.get_parts_by_van(van_id)
+    check_exist = dbm.check_if_exists(van_id)
+    # If the van does not exist or does not contain at least one part, redirect to index
+    if not check_exist or not select_parts:
+        return redirect(url_for('index'))
+    elif request.method == 'POST' and request.is_json and select_parts:
+        content = request.get_json()
+        # The list of values to be added
+        lst = []
+        for i in content:
+            for key, val in i.items():
+                lst.append(val)
+        # Zip values into the format [(value, value), (value, value), ...]
+        values = [*zip(lst[::2], lst[1::2])]
+        # Values to get difference of
+        res = [int(i) for i in lst[::2]]
+        parts_used = sum(res)
+        # Get the difference of the two values
+        difference = get_difference(int(van_amount), int(parts_used))
+        dbm.update_multiple_parts_by_van(values)
+        # Record job in the database if there is at least 1 part changed
+        if difference > 0:
+            dbm.record_job(session['username'], str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')), van_id,
+                           difference)
+    return render_template('jobs.html', van_parts=select_parts)
