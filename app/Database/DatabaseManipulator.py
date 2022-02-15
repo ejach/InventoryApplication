@@ -203,6 +203,18 @@ class DatabaseManipulator:
         except Error as e:
             print(str(e))
 
+    # Get part information by part id
+    def get_part_information(self, part_id):
+        try:
+            self.conn.ping()
+            stmt = self.stmt.get_select_part_by_id()
+            self.cursor.execute(stmt, part_id)
+            results = self.cursor.fetchall()
+            self.conn.close()
+            return results
+        except Error as e:
+            print(str(e))
+
     # Delete entries from database by ID
     def delete(self, row_id):
         try:

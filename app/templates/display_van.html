@@ -28,7 +28,7 @@
     <th>Part Name</th><th>Part Number</th><th>Van</th><th>Amount</th><th>Action</th><br/>
     {% for row in results %}
     <tr>
-        <td>{{ update_form.id(value=row[0]) }}<p class="thisPartName" id="thisPartName{{ row[0] }}">{{ row[1] }}</p>
+        <td>{{ update_form.id(value=row[0]) }}<a href="/parts/{{ row[0] }}"><p class="thisPartName" id="thisPartName{{ row[0] }}">{{ row[1] }}</p></a>
             {{ update_form.partName(class='partName', pattern='^\w+( +\w+)*$', placeholder=update_form.partNumber.label.text, id='partName' ~ row[0], value=row[1], data_value=row[0]) }}</td>
         <td><p class="thisPartNumber" id="thisPartNumber{{ row[0] }}">{{ row[3] }}</p>
             {{ update_form.partNumber(class='partNumber', pattern='^\w+( +\w+)*$', placeholder=update_form.partNumber.label.text, id='partNumber' ~ row[0], value=row[3], data_value=row[0]) }}</td>
