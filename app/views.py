@@ -170,7 +170,15 @@ def parts():
 @login_required
 def parts_number(part_id):
     results = dbm.get_part_information(part_id)
-    return render_template('display_part.html', parts=results)
+    # If results exist, render template
+    if results:
+        return render_template('display_part.html', parts=results)
+    # Else, redirect
+    else:
+        if 'vans' in str(request.referrer):
+            return redirect(url_for('vans'))
+        else:
+            return redirect(url_for('parts'))
 
 
 # Displays the table code in parts_table.html, so it can be refreshed dynamically without reloading the page
