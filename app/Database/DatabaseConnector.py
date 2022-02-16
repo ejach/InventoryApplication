@@ -1,6 +1,7 @@
+from contextlib import contextmanager
 from os import environ
 
-from pymysql import connect, Error
+from pymysql import connect
 
 
 class DatabaseConnector:
@@ -12,18 +13,12 @@ class DatabaseConnector:
         self.password = environ.get('password')
         self.webui_host = environ.get('webui_host')
         self.db = environ.get('db')
-        self.conn = connect(host=self.host, user=self.user, password=self.password, database=self.db,
-                            port=self.db_port, autocommit=True)
-        self.cursor = self.conn.cursor()
 
     def get_host(self):
         return self.host
 
     def get_port(self):
         return self.port
-
-    def get_cursor(self):
-        return self.cursor
 
     def get_password(self):
         return self.password
@@ -34,11 +29,12 @@ class DatabaseConnector:
     def get_db(self):
         return self.db
 
-    # Test if the connection is successful; print errors if it was not
+    @contextmanager
     def get_conn(self):
-        with self.conn as connection:
-            try:
-                if connection.open:
-                    return connection
-            except Error as e:
-                print(e)
+        connection = connect(host=self.host, user=self.user, password=self.password, database=self.db,
+                             port=self.db_port, autocommit=True)
+        cursor = connection.cursor()
+        try:
+            yield cursor
+        finally:
+            connection.close()
