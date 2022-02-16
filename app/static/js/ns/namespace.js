@@ -193,7 +193,7 @@
             let partAmountHtml = partAmount.val();
             // If the window location is not /parts, get it from the URL, else prompt the user for the vanNum
             let vanNumHtml = (window.location.pathname !== '/parts') ? window.location.pathname.split('/')[2] : $('#vanNumber'+id+' option:selected').text();
-            if (!partNameHtml || !partNumberHtml || !partAmountHtml || parseInt(partAmountHtml) !== partAmountHtml || parseInt(partAmountHtml) < 0) {
+            if (!partNameHtml || !partNumberHtml || !partAmountHtml || parseInt(partAmountHtml) < 0) {
               $(instructions).html('Blank or invalid input will not be accepted.').css('color', 'red');
               toggleProps('.deleteBtn', '.updateBtn');
               origVal('#newPartAmount' + id);

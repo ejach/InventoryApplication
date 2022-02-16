@@ -24,93 +24,102 @@ username = 'user' + random_time_string
 password = 'pass' + random_time_string
 
 
+# Get last van row ID
+def get_last_van_row_id():
+    with dbm.db.get_conn() as cursor:
+        stmt = tdbs.get_last_van_id
+        cursor.execute(stmt)
+        res = cursor.fetchall()
+        return res[0][0]
+
+
+# Get last part row ID
+def get_last_part_row_id():
+    with dbm.db.get_conn() as cursor:
+        stmt = tdbs.get_last_part_id
+        cursor.execute(stmt)
+        res = cursor.fetchall()
+        return res[0][0]
+
+# Get last account row ID
+def get_last_account_row_id():
+    with dbm.db.get_conn() as cursor:
+        stmt = tdbs.get_last_acc_id
+        cursor.execute(stmt)
+        res = cursor.fetchall()
+        return res[0][0]
+
 # Delete account by ID
 def delete_account(this_id):
-    dbm.conn.ping()
-    stmt = tdbs.get_delete_account_by_id()
-    dbm.cursor.execute(stmt, this_id)
-    dbm.conn.close()
+    with dbm.db.get_conn() as cursor:
+        stmt = tdbs.get_delete_account_by_id()
+        cursor.execute(stmt, this_id)
 
 
 # Delete job by ID
 def delete_job(this_id):
-    dbm.conn.ping()
-    stmt = tdbs.get_delete_job_by_id()
-    dbm.cursor.execute(stmt, this_id)
-    dbm.conn.close()
+    with dbm.db.get_conn() as cursor:
+        stmt = tdbs.get_delete_job_by_id()
+        cursor.execute(stmt, this_id)
 
 
 # Check if part exists
 def check_if_part_exist(part_name, part_amount, part_number, van_number):
-    dbm.conn.ping()
-    get_part = tdbs.get_check_part_existence()
-    values = (part_name, part_amount, part_number, van_number,)
-    dbm.cursor.execute(get_part, values)
-    results = dbm.cursor.fetchall()
-    dbm.conn.close()
-    if not results:
-        return False
-    else:
-        return True
+    with dbm.db.get_conn() as cursor:
+        get_part = tdbs.get_check_part_existence()
+        values = (part_name, part_amount, part_number, van_number,)
+        cursor.execute(get_part, values)
+        results = cursor.fetchall()
+        if not results:
+            return False
+        else:
+            return True
 
 
 # Check if job exists
 def check_if_job_exists(_username, _time, van_number, parts_used):
-    dbm.conn.ping()
-    stmt = tdbs.get_check_job_existence()
-    values = (_username, _time, van_number, parts_used)
-    dbm.cursor.execute(stmt, values)
-    results = dbm.cursor.fetchall()
-    dbm.conn.close()
-    if not results:
-        return False
-    else:
-        return True
+    with dbm.db.get_conn() as cursor:
+        stmt = tdbs.get_check_job_existence()
+        values = (_username, _time, van_number, parts_used)
+        cursor.execute(stmt, values)
+        results = cursor.fetchall()
+        if not results:
+            return False
+        else:
+            return True
 
 
 # Check if van exists
 def check_if_van_exist(this_id):
-    dbm.conn.ping()
-    get_van = tdbs.get_check_van_existence()
-    dbm.cursor.execute(get_van, this_id)
-    results = dbm.cursor.fetchall()
-    dbm.conn.close()
-    if not results:
-        return False
-    else:
-        return True
+    with dbm.db.get_conn() as cursor:
+        get_van = tdbs.get_check_van_existence()
+        cursor.execute(get_van, this_id)
+        results = cursor.fetchall()
+        if not results:
+            return False
+        else:
+            return True
 
 
 # Get a random existing van number
 def get_random_van():
-    dbm.conn.ping()
-    get_first_van = tdbs.get_get_random_van()
-    dbm.cursor.execute(get_first_van)
-    results = dbm.cursor.fetchone()
-    dbm.conn.close()
-    return results[0]
+    with dbm.db.get_conn() as cursor:
+        get_first_van = tdbs.get_get_random_van()
+        cursor.execute(get_first_van)
+        results = cursor.fetchone()
+        return results[0]
 
 
 # Get a random existing username
 def get_random_username():
-    dbm.conn.ping()
-    stmt = tdbs.get_get_random_username()
-    dbm.cursor.execute(stmt)
-    results = dbm.cursor.fetchone()
-    dbm.conn.close()
-    return results[0]
+    with dbm.db.get_conn() as cursor:
+        stmt = tdbs.get_get_random_username()
+        cursor.execute(stmt)
+        results = cursor.fetchone()
+        return results[0]
 
 
 class DBMUnitTest(TestCase):
-    # Make sure the database connection is pinged and closed after each test
-    def setUp(self) -> None:
-        print('***SETUP***')
-        dbc.conn.ping()
-
-    def tearDown(self) -> None:
-        print('***TEARDOWN***')
-        dbc.conn.close()
-
     # Checks the different functions that interact with the parts database
     def test_parts_delete(self):
         print('test_parts_delete() TEST')
@@ -119,8 +128,8 @@ class DBMUnitTest(TestCase):
         van_number = random_string + random_time_string
         # Create a van in the database
         dbm.insert_van(van_number)
-        van_id = dbm.cursor.lastrowid
-        # Make sure it exists
+        van_id = get_last_van_row_id()
+        # Make sure it exist
         self.assertTrue(dbm.check_if_exists(van_number))
         # Add a part into the database
         dbm.insert(part_name=part_name, part_number=part_number, part_amount=random_digit, van_number=van_number)
@@ -140,12 +149,12 @@ class DBMUnitTest(TestCase):
         print('test_parts_update() TEST')
         # Create another van
         dbm.insert_van(random_time_string)
-        van_id = dbm.cursor.lastrowid
+        van_id = get_last_van_row_id()
         # Add another part into the database
         dbm.insert(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
                    van_number=random_time_string)
         # Get last part ID from the initial insert statement
-        update_part_id = dbm.cursor.lastrowid
+        update_part_id = get_last_part_row_id()
         # Check that it exists, again
         self.assertTrue(
             check_if_part_exist(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
@@ -187,7 +196,7 @@ class DBMUnitTest(TestCase):
         van_name = 'test_van' + random_string
         # Insert it into the database
         dbm.insert_van(van_name)
-        van_id = dbm.cursor.lastrowid
+        van_id = get_last_van_row_id()
         # Assert that check_if_exists will return True
         self.assertTrue(dbm.check_if_exists(van_name))
         print('insert_van() test -> PASSED')
@@ -205,7 +214,7 @@ class DBMUnitTest(TestCase):
         # Insert it into the database
         dbm.insert_van(van_name)
         # Get the van_id from the last insert statement
-        van_id = dbm.cursor.lastrowid
+        van_id = get_last_van_row_id()
         # Delete the van from the database after getting the lastrowid
         dbm.delete_van(van_id)
         # Check if it exists in the database after deleting
@@ -222,7 +231,7 @@ class DBMUnitTest(TestCase):
         # Insert it into the database
         dbm.insert_van(van_name)
         # Get the row id after inserting
-        van_id = dbm.cursor.lastrowid
+        van_id = get_last_van_row_id()
         # Update it to a new van name
         dbm.update_van(van_id, new_van_name)
         # Check if the van exists
@@ -245,7 +254,7 @@ class DBMUnitTest(TestCase):
         # Insert it into the database
         dbm.insert_van(van_name)
         # Get the lastrowid and delete it
-        van_id = dbm.cursor.lastrowid
+        van_id = get_last_van_row_id()
         # Assert that check_duplicates will return false as it exists in the database
         self.assertFalse(dbm.check_duplicates(van_name))
         print('check_duplicates() duplicate van FALSE test -> PASSED')
@@ -273,7 +282,7 @@ class DBMUnitTest(TestCase):
         print('test_login_confirmation() TEST')
         # Register new account
         dbm.register(username=username, password=password, conf_password=password)
-        last_id = dbm.cursor.lastrowid
+        last_id = get_last_account_row_id()
         self.assertTrue(dbm.check_if_account_exists(username=username))
         print('CREATE ACCOUNT TEST -> PASSED')
         # Check login with this account, expected output is false
@@ -296,7 +305,7 @@ class DBMUnitTest(TestCase):
         # Create an account
         dbm.register(username, password, password)
         # Get account id
-        acc_id = dbm.cursor.lastrowid
+        acc_id = get_last_account_row_id()
         # Make sure account exists
         self.assertTrue(dbm.check_if_account_exists(username))
         print('CREATE DENIED ACCOUNT TEST -> PASSED')
@@ -315,7 +324,7 @@ class DBMUnitTest(TestCase):
         # Create test van
         dbm.insert_van(random_time_string)
         # Get the van ID
-        van_id = dbm.cursor.lastrowid
+        van_id = get_last_van_row_id()
         # Make sure it exists
         self.assertTrue(check_if_van_exist(van_id))
         # Insert a random part into the database with random values
@@ -348,14 +357,14 @@ class DBMUnitTest(TestCase):
         # Insert van number into database
         dbm.insert_van(random_time_string)
         # Get van ID
-        van_id = dbm.cursor.lastrowid
+        van_id = get_last_van_row_id()
         # Check if it exists
         self.assertTrue(dbm.check_if_exists(random_time_string))
         # Insert a random part into the database
         dbm.insert(part_name=random_string, part_amount=random_digit + random_digit, part_number=random_digit,
                    van_number=random_time_string)
         # Get the ID of the last inserted part
-        part_id = dbm.cursor.lastrowid
+        part_id = get_last_part_row_id()
         # Make sure it exists
         self.assertTrue(check_if_part_exist(part_name=random_string, part_amount=random_digit + random_digit,
                                             part_number=random_digit, van_number=random_time_string))
@@ -379,7 +388,7 @@ class DBMUnitTest(TestCase):
         print('test_toggle_admin() TEST')
         # Register a random user account
         dbm.register(username=username, password=password, conf_password=password)
-        this_id = dbm.cursor.lastrowid
+        this_id = get_last_account_row_id()
         self.assertTrue(dbm.check_if_account_exists(username))
         # Make the specified account an admin
         dbm.modify_admin(this_id, 1)
@@ -401,7 +410,7 @@ class DBMUnitTest(TestCase):
         this_string = random_digit + random_digit + random_time_string
         # Insert random van into database
         dbm.insert_van(this_string)
-        this_id = dbm.cursor.lastrowid
+        this_id = get_last_van_row_id()
         # Make sure the method returns the string that was inserted
         self.assertIn(member=(this_string, this_string), container=dbm.get_selections())
         print('get_selections TEST -> PASSED')
@@ -416,7 +425,7 @@ class DBMUnitTest(TestCase):
         print('test_update_parts() TEST')
         # Create a new van
         dbm.insert_van(random_time_string)
-        van_id = dbm.cursor.lastrowid
+        van_id = get_last_van_row_id()
         # Get random van from existing vans
         random_van = get_random_van()
         # Get the first van
@@ -425,7 +434,7 @@ class DBMUnitTest(TestCase):
         # Add part to new van
         dbm.insert(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
                    van_number=random_time_string)
-        part_id = dbm.cursor.lastrowid
+        part_id = get_last_part_row_id()
         self.assertTrue(
             check_if_part_exist(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
                                 van_number=random_time_string))
@@ -458,7 +467,7 @@ class DBMUnitTest(TestCase):
         van_num = random_time_string
         # Create a random van
         dbm.insert_van(van_num)
-        van_id = dbm.cursor.lastrowid
+        van_id = get_last_van_row_id()
         # Make sure that you cannot create a job from a van with no parts
         dbm.record_job(random_string, random_time_string + random_digit, van_num, random_numbers)
         self.assertFalse(check_if_job_exists(random_string, random_time_string + random_digit,
@@ -488,7 +497,7 @@ class DBMUnitTest(TestCase):
         # Insert van into database
         van_num = random_numbers
         dbm.insert_van(van_num)
-        van_id = dbm.cursor.lastrowid
+        van_id = get_last_van_row_id()
         self.assertTrue(check_if_van_exist(van_id))
         # Insert part into database
         dbm.insert(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
