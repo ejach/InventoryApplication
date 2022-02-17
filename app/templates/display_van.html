@@ -4,7 +4,6 @@
 <script src= "{{ url_for('static', filename='js/van/van-parts-addPart.js') }}"></script>
 <script src= "{{ url_for('static', filename='js/van/van-parts-deletePart.js') }}"></script>
 <script src= "{{ url_for('static', filename='js/van/van-parts-updatePart.js') }}"></script>
-<script src= "{{ url_for('static', filename='js/van/van-createJob.js') }}"></script>
 {% endblock %}
 {% block content %}
 <div id="table">
@@ -12,7 +11,7 @@
     {% if not results %}
     <button value="Create Job" id="createJobBtn" class="createJobBtn" disabled>Create Job</button>
     {% else %}
-        <button value="Create Job" id="createJobBtn" class="createJobBtn">Create Job</button>
+    <button onclick="window.location.href='/jobs/{{ request.path.rsplit('/', 1)[-1] }}'" value="Create Job" id="createJobBtn" class="createJobBtn">Create Job</button>
     {% endif %}
   <p id="instructions">Enter the Part Name,  Part Number, and Part Amount: </p>
     {{ form.partName(placeholder='Part Name', pattern='^\w+( +\w+)*$') }}
