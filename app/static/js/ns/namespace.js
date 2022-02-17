@@ -65,7 +65,6 @@
         error: function (e) {
           console.log('ERROR : ', e);
           toggleProps(toggles);
-          return errorFunc;
         }
       });
     }
