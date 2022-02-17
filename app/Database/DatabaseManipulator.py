@@ -1,3 +1,5 @@
+from inspect import getframeinfo, currentframe
+
 from bcrypt import gensalt, hashpw, checkpw
 from pymysql import Error
 
@@ -73,7 +75,7 @@ class DatabaseManipulator:
                 else:
                     return True
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get password by username
     def get_password_by_username(self, username):
@@ -86,7 +88,7 @@ class DatabaseManipulator:
                 fin_res = [i[2] for i in username_res]
                 return fin_res
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Check if account exists in the database
     def check_if_account_exists(self, username):
@@ -101,7 +103,7 @@ class DatabaseManipulator:
                 else:
                     return True
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Check if the van exists and has a part within it from either the parts or vans DB
     def check_if_exists(self, van_number):
@@ -125,7 +127,7 @@ class DatabaseManipulator:
                 else:
                     return False
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Insert van into the database
     def insert_van(self, van_number):
@@ -139,7 +141,7 @@ class DatabaseManipulator:
             except TypeError as e:
                 print(str(e) + '\n' + 'Blank input detected, row not inserted')
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get all vans by van number
     def get_vans(self, van_number):
@@ -156,7 +158,7 @@ class DatabaseManipulator:
                 else:
                     return results
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get list of van numbers that exist in the database
     def get_van_nums(self):
@@ -167,7 +169,7 @@ class DatabaseManipulator:
                 results = cursor.fetchall()
                 return results
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get the selections from the Vans that currently exist in the database
     def get_selections(self):
@@ -187,7 +189,7 @@ class DatabaseManipulator:
             except TypeError as e:
                 print(str(e) + '\n' + 'Blank input detected, row not inserted')
             except Error as e:
-                print(str(e))
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get part information by part id
     def get_part_information(self, part_id):
@@ -198,7 +200,7 @@ class DatabaseManipulator:
                 results = cursor.fetchall()
                 return results
             except Error as e:
-                print(str(e))
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Delete entries from database by ID
     def delete(self, row_id):
@@ -207,7 +209,7 @@ class DatabaseManipulator:
                 stmt = self.stmt.get_delete_statement()
                 cursor.execute(stmt, (int(row_id),))
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Update entries from database by ID
     def update(self, row_id, part_name, part_amount, part_number, van_number):
@@ -221,7 +223,7 @@ class DatabaseManipulator:
             except TypeError as e:
                 print(str(e) + '\n' + 'Blank input detected, database not manipulated')
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Delete van by van_id
     def delete_van(self, van_id):
@@ -230,7 +232,7 @@ class DatabaseManipulator:
                 stmt = self.stmt.get_delete_van()
                 cursor.execute(stmt, (int(van_id),))
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Update van by van_id
     def update_van(self, van_id, van_number):
@@ -244,7 +246,7 @@ class DatabaseManipulator:
             except TypeError as e:
                 print(str(e) + '\n' + 'Blank input detected, database not manipulated')
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Check if account is confirmed
     def check_if_confirmed(self, username):
@@ -259,7 +261,7 @@ class DatabaseManipulator:
                 else:
                     return False
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Confirm account by ID
     def confirm_account(self, user_id):
@@ -268,7 +270,7 @@ class DatabaseManipulator:
                 stmt = self.stmt.confirm_account
                 cursor.execute(stmt, user_id)
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Delete account by ID
     def delete_account(self, user_id):
@@ -277,7 +279,7 @@ class DatabaseManipulator:
                 stmt = self.stmt.delete_account
                 cursor.execute(stmt, user_id)
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Login by username and password
     def login(self, username, password):
@@ -289,7 +291,7 @@ class DatabaseManipulator:
             else:
                 return False
         except Error as e:
-            print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+            print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Register by username, password, and conf_password
     def register(self, username, password, conf_password):
@@ -306,7 +308,7 @@ class DatabaseManipulator:
                 else:
                     return False
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Check if user is an admin by username
     def check_admin(self, username):
@@ -318,7 +320,7 @@ class DatabaseManipulator:
                 res = int(''.join(map(str, results[0])))
                 return res
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Make / remove user from admin
     def modify_admin(self, user_id, value):
@@ -328,7 +330,7 @@ class DatabaseManipulator:
                 values = (value, user_id)
                 cursor.execute(stmt, values)
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get users that exist in the DB excluding the current user's username
     def get_users(self, username):
@@ -339,7 +341,7 @@ class DatabaseManipulator:
                 results = cursor.fetchall()
                 return results
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get parts by van number
     def get_parts_by_van(self, van_number):
@@ -350,7 +352,7 @@ class DatabaseManipulator:
                 results = cursor.fetchall()
                 return results
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Update multiple parts according to the van number
     def update_multiple_parts_by_van(self, values):
@@ -359,7 +361,7 @@ class DatabaseManipulator:
                 stmt = self.stmt.get_update_part_amount_by_van()
                 cursor.executemany(stmt, values)
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Record a new job in the database
     def record_job(self, username, time, van_number, parts_used):
@@ -369,7 +371,7 @@ class DatabaseManipulator:
                 vals = (username, time, van_number, parts_used)
                 cursor.execute(stmt, vals)
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get all jobs from database
     def get_jobs(self):
@@ -380,7 +382,7 @@ class DatabaseManipulator:
                 results = cursor.fetchall()
                 return results
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get the total amount of parts by van
     def get_total_parts_by_van(self, van):
@@ -392,4 +394,4 @@ class DatabaseManipulator:
                 res = [i[0] for i in results]
                 return res[0]
             except Error as e:
-                print(str(e) + '\n' + 'Lost connection to the MySQL server.')
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
