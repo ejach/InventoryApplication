@@ -295,7 +295,7 @@
           // Parameters to be sent in the request
           let url = '/delete/user';
           let data = 'user_id=' + id;
-          let toggles = ['.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn', '.adminBtn'].toString();
+          let toggles = ['.deleteBtn', '.denyBtn', '.confirmBtn', '.confirmYesBtn', '.denyNoBtn', '.makeAdminBtn'].toString();
           postRequest(url, data, toggles, null, $getPath);
         });
         $(noBtn).off('click').click(function () {

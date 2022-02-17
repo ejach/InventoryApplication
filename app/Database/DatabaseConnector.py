@@ -31,10 +31,7 @@ class DatabaseConnector:
 
     @contextmanager
     def get_conn(self):
-        connection = connect(host=self.host, user=self.user, password=self.password, database=self.db,
-                             port=self.db_port, autocommit=True)
-        cursor = connection.cursor()
-        try:
+        with connect(host=self.host, user=self.user, password=self.password, database=self.db,
+                     port=self.db_port, autocommit=True) as connection:
+            cursor = connection.cursor()
             yield cursor
-        finally:
-            connection.close()
