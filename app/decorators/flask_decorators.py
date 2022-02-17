@@ -17,8 +17,11 @@ def login_required(func):
 def admin_login_required(func):
     @wraps(func)
     def decorated_function(*args, **kwargs):
-        if 'logged_in' not in session or not session['is_admin']:
+        if 'logged_in' not in session:
             return redirect(url_for('login'))
-        return func(*args, **kwargs)
+        elif not session['is_admin']:
+            return redirect(url_for('index'))
+        else:
+            return func(*args, **kwargs)
 
     return decorated_function

@@ -339,7 +339,7 @@ def _jobs():
 
 # Route for jobs/<van_id>
 @app.route('/jobs/<van_id>', strict_slashes=False, methods=['GET', 'POST'])
-@admin_login_required
+@login_required
 def jobs(van_id):
     van_amount = dbm.get_total_parts_by_van(van_id)
     select_parts = dbm.get_parts_by_van(van_id)
