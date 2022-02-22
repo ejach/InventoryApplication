@@ -138,7 +138,7 @@
       $('.updateThresh').off().on('click', updateBtn, function () {
         toggleMe(newThresh, submitBtn, updateBtn, myThresh, cancelBtn);
         $('.submitBtn').off().on('click', submitBtn, function () {
-          if (!Number.isFinite(newThresh) && !newThresh.val() && !parseInt(newThresh.val()) > 0) {
+          if (Number.isFinite(newThresh) || !newThresh.val() || !(newThresh.val() > 0)) {
             $(instructions).html('Invalid or blank input will not be accepted').css('color', 'red');
           } else {
             let toggles = ['#newThresh', '#submitBtn', '#cancelBtn'].toString();
