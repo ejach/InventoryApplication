@@ -11,6 +11,11 @@
     }
   }
 
+  // Reset element passed in to its original value
+      let origVal = function (elem) {
+        return $(elem).attr('value');
+      }
+
   // Toggle the props that are passed through
   let toggleProps = function () {
     for (let i=0; i < arguments.length; i++) {
@@ -25,7 +30,7 @@
 
   // POST request function
   let postRequest = function (url, data, toggles, enctype, getPath, extras, type) {
-    if (type !== 'insert') {
+    if (type !== 'insert' && type !== 'thresh') {
       $.ajax({
         type: 'POST',
         enctype: enctype,
@@ -45,7 +50,26 @@
           toggleProps(toggles);
         }
       });
-    } else {
+    } else if (type === 'thresh') {
+      $.ajax({
+        type: 'POST',
+        enctype: enctype,
+        url: url,
+        data: data,
+        cache: false,
+        timeout: 800000,
+        // On success, load the span from the getPath
+        success: function () {
+          $('#info').load(getPath);
+          toggleProps(toggles);
+        },
+        // On failure, print errors
+        error: function (e) {
+          console.log('ERROR : ', e);
+          toggleProps(toggles);
+        }
+      });
+    } else if (type === 'insert') {
       $.ajax({
         type: 'POST',
         enctype: enctype,
@@ -104,6 +128,32 @@
         });
       });
     },
+    updateThresh : function ($getpath) {
+      let updateBtn = $('#updateThresh');
+      let newThresh = $('#newThresh');
+      let submitBtn = $('#submitBtn');
+      let cancelBtn = $('#cancelBtn')
+      let myThresh = $('#myThresh');
+      let instructions = $('#instructions');
+      $('.updateThresh').off().on('click', updateBtn, function () {
+        toggleMe(newThresh, submitBtn, updateBtn, myThresh, cancelBtn);
+        $('.submitBtn').off().on('click', submitBtn, function () {
+          if (!Number.isFinite(newThresh) && !newThresh.val() && !parseInt(newThresh.val()) > 0) {
+            $(instructions).html('Invalid or blank input will not be accepted').css('color', 'red');
+          } else {
+            let toggles = ['#newThresh', '#submitBtn', '#cancelBtn'].toString();
+            let data = 'newThresh=' + newThresh.val() + '&id=' + $('#id').val();
+            postRequest('/update/threshold', data, toggles, null, $getpath, null, 'thresh');
+            toggleMe(newThresh, submitBtn, updateBtn, myThresh, cancelBtn);
+            $(instructions).html('Part Information').css('color', 'black');
+          }
+        });
+      });
+      $('.cancelBtn').off().on('click', cancelBtn,  function () {
+        newThresh.val(origVal(newThresh));
+        toggleMe(newThresh, submitBtn, updateBtn, myThresh, cancelBtn);
+      });
+    },
     addPart : function ($getPath) {
       $('#submit').click(function (event) {
         // Prevents form from submitting
@@ -151,10 +201,6 @@
           ', #newPartAmount' + id + ', #confirmUpdateBtn' + id + ', #deleteBtn' + id + ', #partName' + id +
           ', #partNumber' + id  + ', #cancelUpdateBtn' + id).toggle();
         }
-      }
-      // Reset element passed in to its original value
-      let origVal = function (elem) {
-        return $(elem).attr('value');
       }
 
       $(document.body).off().on('click', '.updateBtn', function(){

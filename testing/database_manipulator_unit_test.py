@@ -41,6 +41,7 @@ def get_last_part_row_id():
         res = cursor.fetchall()
         return res[0][0]
 
+
 # Get last account row ID
 def get_last_account_row_id():
     with dbm.db.get_conn() as cursor:
@@ -48,6 +49,7 @@ def get_last_account_row_id():
         cursor.execute(stmt)
         res = cursor.fetchall()
         return res[0][0]
+
 
 # Delete account by ID
 def delete_account(this_id):
@@ -87,6 +89,16 @@ def check_if_job_exists(_username, _time, van_number, parts_used):
             return False
         else:
             return True
+
+
+# Get max ID from low_parts
+def get_low_part_id():
+    with dbm.db.get_conn() as cursor:
+        stmt = tdbs.get_low_part_id
+        cursor.execute(stmt)
+        cursor.execute(stmt)
+        results = cursor.fetchall()
+        return results[0][0]
 
 
 # Check if van exists
@@ -464,7 +476,7 @@ class DBMUnitTest(TestCase):
 
     def test_create_job(self):
         print('test_create_job() TEST')
-        van_num = random_time_string
+        van_num = random_time_string + digits
         # Create a random van
         dbm.insert_van(van_num)
         van_id = get_last_van_row_id()
@@ -478,7 +490,7 @@ class DBMUnitTest(TestCase):
                    van_number=van_num)
         self.assertTrue(
             check_if_part_exist(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
-                                van_number=random_time_string))
+                                van_number=van_num))
         # Create job, make sure it exists
         dbm.record_job(username=random_string, time=random_time_string, van_number=van_num, parts_used=random_digit)
         self.assertTrue(check_if_job_exists(_username=random_string, _time=random_time_string,
@@ -520,6 +532,35 @@ class DBMUnitTest(TestCase):
                                              van_number=van_num, parts_used=random_digit))
         self.assertFalse(check_if_van_exist(van_id))
         print('test_job_part_difference() TEST -> PASSED')
+
+    def test_enter_low_threshold(self):
+        print('test_enter_low_threshold() TEST')
+        van_num = random_digit + random_digit + random_string
+        # Insert van
+        dbm.insert_van(van_num)
+        van_id = get_last_van_row_id()
+        # First digit from range 1-5
+        start_digit = ''.join(choice(digits) for z in range(1, 5))
+        # Second digit from range 6-15
+        thresh_digit = ''.join(choice(digits) for z in range(6, 15))
+        # Insert random part into the van just created
+        dbm.insert(random_string, start_digit, random_string, van_num)
+        part_id = get_last_part_row_id()
+        # Make sure the part exists
+        self.assertTrue(check_if_part_exist(random_string, start_digit, random_string, van_num))
+        print('insert part TEST -> PASSED')
+        # Make sure the ID of the low part exists in the low parts table
+        dbm.update_threshold(thresh_digit, part_id)
+        self.assertEqual(part_id, get_low_part_id())
+        # Make it higher
+        dbm.update_threshold(start_digit, part_id)
+        self.assertNotEqual(part_id, get_low_part_id())
+        print('update threshold TEST -> PASSED')
+        # Delete the van when finished
+        dbm.delete_van(van_id)
+        self.assertFalse(check_if_van_exist(van_id))
+        self.assertFalse(check_if_part_exist(random_string, start_digit, random_string, van_num))
+        print('test_enter_low_threshold() TEST -> PASSED')
 
 
 if __name__ == '__main__':

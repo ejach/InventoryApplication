@@ -1,4 +1,5 @@
 -- Used for the parts database
+-- auto-generated definition
 create table parts
 (
     id          int auto_increment
@@ -7,10 +8,20 @@ create table parts
     amount      int          default 0   not null,
     part_number varchar(255) default '0' null,
     van_number  varchar(255)             null,
+    low_thresh  int                      null,
     constraint parts_vans_van_number_fk
         foreign key (van_number) references vans (van_number)
             on update cascade on delete cascade
 );
+
+create index parts_amount_index
+    on parts (amount);
+
+create index parts_name_index
+    on parts (name);
+
+create index parts_part_number_index
+    on parts (part_number);
 
 create index van_number
     on parts (van_number);

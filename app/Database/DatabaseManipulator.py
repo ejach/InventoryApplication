@@ -248,6 +248,27 @@ class DatabaseManipulator:
             except Error as e:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
+    # Update part's threshold
+    def update_threshold(self, thresh, part_id):
+        with self.db.get_conn() as cursor:
+            try:
+                stmt = self.stmt.get_modify_thresh()
+                values = (thresh, part_id)
+                cursor.execute(stmt, values)
+            except Error as e:
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
+
+    # Get table of low parts
+    def get_low_parts(self):
+        with self.db.get_conn() as cursor:
+            try:
+                stmt = self.stmt.get_low_parts()
+                cursor.execute(stmt)
+                results = cursor.fetchall()
+                return results
+            except Error as e:
+                print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
+
     # Check if account is confirmed
     def check_if_confirmed(self, username):
         with self.db.get_conn() as cursor:

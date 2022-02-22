@@ -5,6 +5,8 @@
     width="250px" height="250px" /></a>
     <a href="/parts" id="myCard"><p class="caption">Parts</p><img class="parts" src="{{ url_for('static', filename='assets/toolbox.svg') }}"
       width="250px" height="250px" /></a>
+      <a href="/parts/low" id="myCard"><p class="caption">Low Parts</p><img class="lowParts" src="{{ url_for('static', filename='assets/red_toolbox.svg') }}"
+      width="250px" height="250px" /></a>
     </div>
     <p id="welcomeMsg">Welcome, <b>{{ username }}</b>.</p>
 {% endblock %}

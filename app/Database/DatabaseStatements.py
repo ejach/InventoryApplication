@@ -29,6 +29,8 @@ class DatabaseStatements:
         self.delete_account = f'DELETE FROM {self.db}.accounts WHERE `id` = %s'
         self.get_users = f'SELECT id, LOWER(username), is_admin, is_confirmed FROM {self.db}.accounts ' \
                          f'WHERE username != LOWER(%s)'
+        self.modify_thresh = f'UPDATE {self.db}.parts SET low_thresh = %s WHERE id = %s'
+        self.low_parts = f'SELECT * FROM {self.db}.parts WHERE low_thresh > amount'
         self.check_if_username_exists = f'SELECT * FROM {self.db}.accounts WHERE `username` = LOWER(%s)'
         self.get_password_by_username = f'SELECT `password` FROM {self.db}.accounts WHERE `username` = LOWER(%s)'
         self.insert = f'INSERT INTO {self.db}.parts (name, amount, part_number, van_number) VALUES (%s, %s, %s, %s)'
@@ -96,3 +98,9 @@ class DatabaseStatements:
 
     def get_select_part_by_id(self):
         return self.select_part_by_id
+
+    def get_modify_thresh(self):
+        return self.modify_thresh
+
+    def get_low_parts(self):
+        return self.low_parts
