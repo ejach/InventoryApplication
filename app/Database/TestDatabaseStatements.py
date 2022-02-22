@@ -16,6 +16,7 @@ class TestDatabaseStatements:
         self.get_random_van = f'SELECT `van_number` FROM {self.db}.vans ORDER BY RAND() LIMIT 1;'
         self.get_random_username = f'SELECT `username` FROM {self.db}.accounts ORDER BY RAND() LIMIT 1;'
         self.delete_job_by_id = f'DELETE FROM {self.db}.jobs WHERE job_id = %s'
+        self.get_low_part_id = f'SELECT MAX( id ) FROM {self.db}.parts WHERE low_thresh > amount'
 
     def get_delete_account_by_id(self):
         return self.delete_account_by_id

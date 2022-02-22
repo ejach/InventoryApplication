@@ -45,6 +45,20 @@
   top: 0;
 }
 
+.setThresh, #myThresh,#updateThresh {
+  float: left;
+}
+
+.threshold, #submitBtn {
+  float: left;
+  display: none;
+}
+
+#newThresh, #cancelBtn {
+    float: left;
+    display: none;
+}
+
 .createJobBtn {
   width: 100%;
 }
@@ -56,6 +70,16 @@
 }
 
 #card {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 10%;
+  margin-left: 15%;
+  margin-right: 15%;
+}
+
+#partCard {
+  margin-left: 15%;
+  padding-top: 3%;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 25px;
@@ -97,6 +121,13 @@ table {
     margin-left: auto;
     margin-right: auto;
     transition: length 1s;
+}
+
+#info {
+  width: 1%;
+  display:inline-block;
+  white-space: nowrap;
+  margin-left: 6%;
 }
 
 .partName, .partNumber, .newPartAmount {
