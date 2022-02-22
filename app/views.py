@@ -1,4 +1,5 @@
 from datetime import datetime
+from inspect import getframeinfo, currentframe
 from os import environ
 from urllib.parse import unquote
 
@@ -15,6 +16,7 @@ from app.Forms.PartsForm import PartsForm
 from app.Forms.RegisterForm import RegisterForm
 from app.Forms.UpdatePartsForm import UpdatePartsForm
 from app.Forms.UpdateVanForm import UpdateVanForm
+from app.Forms.UpdatePartThresh import UpdatePartThresh
 from app.Forms.VanForm import VanForm
 from app.csp import csp
 
@@ -168,17 +170,26 @@ def parts():
 # Route for the /parts/<part_number> route
 @app.route('/parts/<part_id>', methods=['GET', 'POST'])
 @login_required
-def parts_number(part_id):
+def display_part(part_id):
     results = dbm.get_part_information(part_id)
     # If results exist, render template
     if results:
-        return render_template('display_part.html', parts=results)
+        form = UpdatePartThresh()
+        return render_template('display_part.html', parts=results, form=form)
     # Else, redirect
     else:
         if 'vans' in str(request.referrer):
             return redirect(url_for('vans'))
         else:
             return redirect(url_for('parts'))
+
+
+# Row for displaying low parts
+@app.route('/parts/low', methods=['GET'])
+@login_required
+def low_parts():
+    results = dbm.get_low_parts()
+    return render_template('low_parts.html', results=results)
 
 
 # Displays the table code in parts_table.html, so it can be refreshed dynamically without reloading the page
@@ -214,6 +225,11 @@ def table(table_name, van_number):
         update_form.newVan.choices = dbm.get_selections()
         return render_template('load/parts_table.html', results=results, van_nums=van_nums, form=form,
                                update_form=update_form)
+    # Requirements for the individual attributes for a part
+    elif table_name == 'display_part' and van_number != 'all':
+        form = UpdatePartThresh()
+        results = dbm.get_part_information(part_id=van_number)
+        return render_template('load/display_part_table.html', parts=results, form=form)
     # if table_name is vans_list, and van_number is all, return the following
     elif table_name == 'vans_list' and van_number == 'all':
         update_form = UpdateVanForm()
@@ -258,6 +274,13 @@ def update(id_type):
             if check_input(part_id) and check_input(part_name) and check_input(part_amount) \
                     and check_input(part_number) and check_input(van_number):
                 dbm.update(part_id, part_name, part_amount, part_number, van_number)
+        # Update the threshold of a part by its ID
+        if request.method == 'POST' and id_type == 'threshold':
+            form = UpdatePartThresh()
+            part_id = form.id.data
+            thresh = form.newThresh.data
+            if check_input(str(part_id)) and check_input(str(thresh)):
+                dbm.update_threshold(thresh, part_id)
         # Route to update a van by the ID
         elif request.method == 'POST' and id_type == 'van':
             form = UpdateVanForm()
@@ -273,7 +296,8 @@ def update(id_type):
         # If the /update route is accessed, re-route to index
         return redirect(url_for('index'))
     except TypeError as e:
-        print(str(e) + '\n' + 'Blank input detected, database not manipulated.')
+        print(str(getframeinfo(currentframe()).function) + '\n' + str(e) + '\n'
+              + 'Blank input detected, database not manipulated.')
 
 
 # Route for /vans
