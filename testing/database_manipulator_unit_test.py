@@ -562,6 +562,34 @@ class DBMUnitTest(TestCase):
         self.assertFalse(check_if_part_exist(random_string, start_digit, random_string, van_num))
         print('test_enter_low_threshold() TEST -> PASSED')
 
+    def test_invalid_threshold(self):
+        print('test_invalid_low_threshold() TEST')
+        van_num = random_digit + random_digit + random_time_string
+        # Insert van
+        dbm.insert_van(van_num)
+        van_id = get_last_van_row_id()
+        neg_digit = '-' + ''.join(choice(digits) for _ in range(1, 5))
+        # First digit from range 1-5
+        start_digit = ''.join(choice(digits) for _ in range(1, 5))
+        # Insert random part into the van just created
+        dbm.insert(random_string, start_digit, random_string, van_num)
+        part_id = get_last_part_row_id()
+        # Make sure the part exists
+        self.assertTrue(check_if_part_exist(random_string, start_digit, random_string, van_num))
+        print('insert part TEST -> PASSED')
+        # Make sure the part doesn't appear in the low table at all if it is negative
+        dbm.update_threshold(neg_digit, part_id)
+        self.assertNotEqual(part_id, get_low_part_id())
+        # Make it a character so it fails
+        dbm.update_threshold(random_string, part_id)
+        self.assertNotEqual(part_id, get_low_part_id())
+        print('update threshold INVALID TEST -> PASSED')
+        # Delete the van when finished
+        dbm.delete_van(van_id)
+        self.assertFalse(check_if_van_exist(van_id))
+        self.assertFalse(check_if_part_exist(random_string, start_digit, random_string, van_num))
+        print('test_enter_invalid_threshold() TEST -> PASSED')
+
 
 if __name__ == '__main__':
     main()
