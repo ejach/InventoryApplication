@@ -129,15 +129,15 @@
       });
     },
     updateThresh : function ($getpath) {
-      let updateBtn = $('#updateThresh');
-      let newThresh = $('#newThresh');
-      let submitBtn = $('#submitBtn');
-      let cancelBtn = $('#cancelBtn')
-      let myThresh = $('#myThresh');
-      let instructions = $('#instructions');
-      $('.updateThresh').off().on('click', updateBtn, function () {
+     $(document).off('click').on('click', '.updateThresh', function () {
+        let updateBtn = $('#updateThresh');
+        let submitBtn = $('#submitBtn');
+        let cancelBtn = $('#cancelBtn')
+        let myThresh = $('#myThresh');
+        let newThresh = $('#newThresh');
+        let instructions = $('#instructions');
         toggleMe(newThresh, submitBtn, updateBtn, myThresh, cancelBtn);
-        $('.submitBtn').off().on('click', submitBtn, function () {
+        $(submitBtn).off('click').click(function () {
           if (Number.isFinite(newThresh) || !newThresh.val() || !(newThresh.val() > 0)) {
             $(instructions).html('Invalid or blank input will not be accepted').css('color', 'red');
           } else {
@@ -149,9 +149,9 @@
           }
         });
       });
-      $('.cancelBtn').off().on('click', cancelBtn,  function () {
-        newThresh.val(origVal(newThresh));
-        toggleMe(newThresh, submitBtn, updateBtn, myThresh, cancelBtn);
+      $('.main').off('click').on('click', '.cancelBtn',  function () {
+        $('#myThresh').val(origVal('#myThresh'));
+        toggleMe('#myThresh', '#submitBtn', '#updateThresh', '#newThresh', '#cancelBtn');
       });
     },
     addPart : function ($getPath) {

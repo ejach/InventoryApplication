@@ -49,12 +49,13 @@
   float: left;
 }
 
-.threshold, #submitBtn {
+.threshold {
   float: left;
   display: none;
 }
 
-#newThresh, #cancelBtn {
+#newThresh, #cancelBtn, .submitBtn {
+    width: 150px;
     float: left;
     display: none;
 }
@@ -232,7 +233,12 @@ h1 {
     height: 25%;
 }
 @media (orientation: portrait) {
+    #card > a > img {
+      width: 100px;
+      height: 100px;
+  }
   input, button, .container {
+
     font-size: 30px;
   }
   p {
@@ -249,6 +255,8 @@ h1 {
       font-size: 35px;
   }
 }
+
+
 
 @media (orientation: landscape) {
   .topnav {
