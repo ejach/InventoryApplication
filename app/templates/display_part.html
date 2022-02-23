@@ -7,7 +7,7 @@
 <h3 id="instructions">Part Information</h3>
 <div id="partCard">
 <img id="myCard" src="{{ url_for('static', filename='assets/no-image.svg') }}"
-  width="250px" height="250px" />
+  width="250px" height="250px"  alt="Part Image"/>
 <div id="info">
 {% for row in parts %}
         <p id="myName">Name: {{ row[1] }}</p>
@@ -19,15 +19,15 @@
         <p id="myAmount">Amount: {{ row[2] }}</p>
     {% if not row[5] %}
         <input type="button" value="Set minimum threshold" id="updateThresh" class="updateThresh" />
+        {{ form.newThresh(class=form.newThresh.name, min=1, default=1, id=form.newThresh.name, value=1, placeholder='Threshold') }}
         {{ form.id(value=row[0]) }}
-        {{ form.newThresh(class=form.newThresh.name, min=1, id=form.newThresh.name, value=row[5], placeholder='Threshold') }}
         {{ form.submitBtn(class=form.submitBtn.name, id= form.submitBtn.name) }}
         <input type="button" value="Cancel" id="cancelBtn" class="cancelBtn" />
     {% else %}
         <p id="myThresh">Threshold: {{ row[5] }}</p>
-        <input type="button" value="Update threshold" id="updateThresh" class="updateThresh" />
-        {{ form.id(value=row[0]) }}
+        <input type="button" value="Update minimum threshold" id="updateThresh" class="updateThresh" />
         {{ form.newThresh(class=form.newThresh.name, min=1, id=form.newThresh.name, value=row[5], placeholder='Threshold') }}
+        {{ form.id(value=row[0]) }}
         {{ form.submitBtn(class=form.submitBtn.name, id= form.submitBtn.name) }}
         <input type="button" value="Cancel" id="cancelBtn" class="cancelBtn" />
     {% endif %}
