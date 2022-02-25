@@ -1,5 +1,6 @@
 #title {
-  text-decoration: none;
+    color: inherit;
+    text-decoration: inherit;
 }
 
 .sidenav {
