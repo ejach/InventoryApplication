@@ -3,6 +3,10 @@
     text-decoration: inherit;
 }
 
+a:visited {
+  color: blue;
+}
+
 .sidenav {
   display: none;
   width: 200px;
