@@ -78,6 +78,11 @@
   margin-right: 15%;
 }
 
+#lowPart {
+    color:red;
+    font-weight:bold;
+}
+
 #partCard {
   margin-left: 15%;
   padding-top: 3%;
