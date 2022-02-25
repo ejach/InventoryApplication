@@ -9,9 +9,9 @@
 <div id="table">
 <form id="myForm">
     {% if not results %}
-    <button value="Create Job" id="createJobBtn" class="createJobBtn" disabled>Create Job</button>
+    <input type="button" value="Create Job" id="createJobBtn" class="createJobBtn" disabled />
     {% else %}
-    <button onclick="window.location.href='/jobs/{{ request.path.rsplit('/', 1)[-1] }}'" value="Create Job" id="createJobBtn" class="createJobBtn">Create Job</button>
+    <input type="button" onclick="window.location.href='/jobs/{{ request.path.rsplit('/', 1)[-1] }}'" value="Create Job" id="createJobBtn" class="createJobBtn" formnovalidate/>
     {% endif %}
   <p id="instructions">Enter the Part Name,  Part Number, and Part Amount: </p>
     {{ form.partName(placeholder='Part Name', pattern='^\w+( +\w+)*$') }}
