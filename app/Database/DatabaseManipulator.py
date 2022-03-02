@@ -8,7 +8,7 @@ from app.Database.DatabaseStatements import DatabaseStatements
 
 
 # Prevent inputs that only contain spaces from being entered into the database
-def check_input(test_input):
+def check_input(test_input: str) -> bool:
     if test_input and not test_input.isspace() and '-' not in test_input:
         return True
     else:
@@ -16,7 +16,7 @@ def check_input(test_input):
 
 
 # Create MD5 hash of password to insert into database
-def create_password_hash(password):
+def create_password_hash(password: bytes) -> bytes:
     salt = gensalt()
     hashed = hashpw(password, salt)
     if check_password_hash(password, hashed):
@@ -24,7 +24,7 @@ def create_password_hash(password):
 
 
 # Check if the password is equal to each other
-def check_password(password, conf_password):
+def check_password(password: str, conf_password: str) -> bool:
     if password == conf_password:
         return True
     else:
@@ -32,7 +32,7 @@ def check_password(password, conf_password):
 
 
 # Check if MD5 hash matches the password given
-def check_password_hash(password, my_hash):
+def check_password_hash(password: bytes, my_hash: bytes) -> bool:
     if checkpw(password, my_hash):
         return True
     else:
@@ -40,7 +40,7 @@ def check_password_hash(password, my_hash):
 
 
 # get difference of two values
-def get_difference(op1, op2):
+def get_difference(op1: int, op2: int) -> int:
     if op1 > op2:
         return op1 - op2
     elif op1 < op2:
@@ -50,12 +50,12 @@ def get_difference(op1, op2):
 
 
 class DatabaseManipulator:
-    def __init__(self):
+    def __init__(self) -> None:
         self.db = DatabaseConnector()
         self.stmt = DatabaseStatements()
 
     # Get all parts entries from database
-    def fetchall(self):
+    def fetchall(self) -> tuple:
         with self.db.get_conn() as cursor:
             stmt = self.stmt.get_select_statement()
             cursor.execute(stmt)
@@ -63,7 +63,7 @@ class DatabaseManipulator:
             return results
 
     # Checks to see if the van_number exists in the database already
-    def check_duplicates(self, van_number):
+    def check_duplicates(self, van_number: str) -> bool:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_vans_dupes()
@@ -78,7 +78,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get password by username
-    def get_password_by_username(self, username):
+    def get_password_by_username(self, username: str) -> list:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_check_if_username_exists()
@@ -91,7 +91,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Check if account exists in the database
-    def check_if_account_exists(self, username):
+    def check_if_account_exists(self, username: str) -> bool:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_check_if_username_exists()
@@ -106,7 +106,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Check if the van exists and has a part within it from either the parts or vans DB
-    def check_if_exists(self, van_number):
+    def check_if_exists(self, van_id: int) -> bool:
         with self.db.get_conn() as cursor:
             try:
                 # Use the distinct select statement in the parts DB
@@ -122,7 +122,7 @@ class DatabaseManipulator:
                 # List the results in an array
                 fin_dupes = [i[0] for i in dupe_results]
                 # If the van_number exists in either database, return True; otherwise return False
-                if fin_dist.count(van_number) > 0 or van_number in fin_dupes:
+                if fin_dist.count(van_id) > 0 or van_id in fin_dupes:
                     return True
                 else:
                     return False
@@ -130,7 +130,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Insert van into the database
-    def insert_van(self, van_number):
+    def insert_van(self, van_number: str) -> None:
         with self.db.get_conn() as cursor:
             try:
                 # If the input is valid and the check_duplicates is valid, commit to DB
@@ -144,7 +144,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get all vans by van number
-    def get_vans(self, van_number):
+    def get_vans(self, van_number: int) -> any:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_select_vans_statement()
@@ -161,7 +161,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get list of van numbers that exist in the database
-    def get_van_nums(self):
+    def get_van_nums(self) -> tuple:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_select_vans_order_statement()
@@ -172,13 +172,13 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get the selections from the Vans that currently exist in the database
-    def get_selections(self):
+    def get_selections(self) -> list:
         results = self.get_van_nums()
         re = [(g[1], g[1]) for g in results]
         return re
 
     # Insert entries into database
-    def insert(self, part_name, part_amount, part_number, van_number):
+    def insert(self, part_name: str, part_amount: str, part_number: str, van_number: str) -> None:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_insert_statement()
@@ -192,7 +192,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get part information by part id
-    def get_part_information(self, part_id):
+    def get_part_information(self, part_id: str) -> tuple:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_select_part_by_id()
@@ -203,7 +203,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Delete entries from database by ID
-    def delete(self, row_id):
+    def delete(self, row_id: str) -> None:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_delete_statement()
@@ -212,7 +212,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Update entries from database by ID
-    def update(self, row_id, part_name, part_amount, part_number, van_number):
+    def update(self, row_id: str, part_name: str, part_amount: str, part_number: str, van_number: str) -> None:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_update_statement()
@@ -226,7 +226,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Delete van by van_id
-    def delete_van(self, van_id):
+    def delete_van(self, van_id: str) -> None:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_delete_van()
@@ -235,7 +235,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Update van by van_id
-    def update_van(self, van_id, van_number):
+    def update_van(self, van_id: str, van_number: str) -> None:
         with self.db.get_conn() as cursor:
             try:
                 # Check for duplicates and validate input
@@ -249,7 +249,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Update part's threshold
-    def update_threshold(self, thresh, part_id):
+    def update_threshold(self, thresh: int, part_id: int) -> None:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_modify_thresh()
@@ -259,7 +259,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get table of low parts
-    def get_low_parts(self):
+    def get_low_parts(self) -> tuple:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_low_parts()
@@ -270,10 +270,10 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Check if account is confirmed
-    def check_if_confirmed(self, username):
+    def check_if_confirmed(self, username: str) -> bool:
         with self.db.get_conn() as cursor:
             try:
-                stmt = self.stmt.check_confirmed
+                stmt = self.stmt.get_check_confirmed()
                 cursor.execute(stmt, username)
                 results = cursor.fetchone()
                 res = int(''.join(map(str, results)))
@@ -285,25 +285,25 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Confirm account by ID
-    def confirm_account(self, user_id):
+    def confirm_account(self, user_id: str) -> None:
         with self.db.get_conn() as cursor:
             try:
-                stmt = self.stmt.confirm_account
+                stmt = self.stmt.get_confirm_account()
                 cursor.execute(stmt, user_id)
             except Error as e:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Delete account by ID
-    def delete_account(self, user_id):
+    def delete_account(self, user_id: str) -> None:
         with self.db.get_conn() as cursor:
             try:
-                stmt = self.stmt.delete_account
+                stmt = self.stmt.get_delete_account()
                 cursor.execute(stmt, user_id)
             except Error as e:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Login by username and password
-    def login(self, username, password):
+    def login(self, username: str, password: str) -> bool:
         try:
             hash_pw = self.get_password_by_username(username)
             if hash_pw and check_password_hash(password.encode('utf8'), hash_pw[0].encode('utf8')) \
@@ -315,7 +315,7 @@ class DatabaseManipulator:
             print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Register by username, password, and conf_password
-    def register(self, username, password, conf_password):
+    def register(self, username: str, password: str, conf_password: str) -> bool:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_register()
@@ -332,10 +332,10 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Check if user is an admin by username
-    def check_admin(self, username):
+    def check_admin(self, username: str) -> int:
         with self.db.get_conn() as cursor:
             try:
-                stmt = self.stmt.check_admin
+                stmt = self.stmt.get_check_admin()
                 cursor.execute(stmt, username)
                 results = cursor.fetchall()
                 res = int(''.join(map(str, results[0])))
@@ -344,7 +344,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Make / remove user from admin
-    def modify_admin(self, user_id, value):
+    def modify_admin(self, user_id: str, value: str) -> None:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_modify_admin()
@@ -354,10 +354,10 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get users that exist in the DB excluding the current user's username
-    def get_users(self, username):
+    def get_users(self, username: str) -> tuple:
         with self.db.get_conn() as cursor:
             try:
-                stmt = self.stmt.get_users
+                stmt = self.stmt.get_get_users()
                 cursor.execute(stmt, username)
                 results = cursor.fetchall()
                 return results
@@ -365,7 +365,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get parts by van number
-    def get_parts_by_van(self, van_number):
+    def get_parts_by_van(self, van_number: str) -> tuple:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_select_parts_by_van()
@@ -376,7 +376,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Update multiple parts according to the van number
-    def update_multiple_parts_by_van(self, values):
+    def update_multiple_parts_by_van(self, values: list) -> None:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_update_part_amount_by_van()
@@ -385,20 +385,20 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Record a new job in the database
-    def record_job(self, username, time, van_number, parts_used):
+    def record_job(self, username: str, time: str, van_number: str, parts_used: int) -> None:
         with self.db.get_conn() as cursor:
             try:
-                stmt = self.stmt.insert_job
+                stmt = self.stmt.get_insert_job()
                 vals = (username, time, van_number, parts_used)
                 cursor.execute(stmt, vals)
             except Error as e:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get all jobs from database
-    def get_jobs(self):
+    def get_jobs(self) -> tuple:
         with self.db.get_conn() as cursor:
             try:
-                stmt = self.stmt.get_jobs
+                stmt = self.stmt.get_get_jobs()
                 cursor.execute(stmt)
                 results = cursor.fetchall()
                 return results
@@ -406,10 +406,10 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get the total amount of parts by van
-    def get_total_parts_by_van(self, van):
+    def get_total_parts_by_van(self, van: int) -> int:
         with self.db.get_conn() as cursor:
             try:
-                stmt = self.stmt.select_total_amount_by_van
+                stmt = self.stmt.get_select_total_amount_by_van()
                 cursor.execute(stmt, van)
                 results = cursor.fetchall()
                 res = [i[0] for i in results]

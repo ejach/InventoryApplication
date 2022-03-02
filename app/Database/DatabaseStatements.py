@@ -78,6 +78,24 @@ class DatabaseStatements:
     def get_register(self):
         return self.register
 
+    def get_get_jobs(self):
+        return self.get_jobs
+
+    def get_insert_job(self):
+        return self.insert_job
+
+    def get_get_users(self):
+        return self.get_users
+
+    def get_check_admin(self):
+        return self.check_admin
+
+    def get_confirm_account(self):
+        return self.confirm_account
+
+    def get_check_confirmed(self):
+        return self.check_confirmed
+
     def get_check_if_username_exists(self):
         return self.check_if_username_exists
 
@@ -104,3 +122,6 @@ class DatabaseStatements:
 
     def get_low_parts(self):
         return self.low_parts
+
+    def get_delete_account(self):
+        return self.delete_account
