@@ -144,7 +144,7 @@ class DatabaseManipulator:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))
 
     # Get all vans by van number
-    def get_vans(self, van_number: int) -> any:
+    def get_vans(self, van_number: int) -> tuple or None:
         with self.db.get_conn() as cursor:
             try:
                 stmt = self.stmt.get_select_vans_statement()
