@@ -8,4 +8,4 @@ cryptography~=36.0.1
 bcrypt~=3.2.0
 PyMySQL~=1.0.2
 requests==2.27.1
-responses~=0.18.0
+responses~=0.19.0
