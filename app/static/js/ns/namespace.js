@@ -28,8 +28,21 @@
     }
   }
 
+  // Toggle input
+  let toggleInput = function () {
+    for (let i=0; i < arguments.length; i++) {
+      let elem = arguments[i];
+      if ($(elem).attr('disabled') === 'disabled') {
+        $(elem).attr('disabled', false);
+      } else {
+        $(elem).attr('disabled', true);
+      }
+    }
+  }
+
   // POST request function
   let postRequest = function (url, data, toggles, enctype, getPath, extras, type) {
+    $('html').css('cursor', 'progress');
     if (type !== 'insert' && type !== 'thresh') {
       $.ajax({
         type: 'POST',
@@ -42,12 +55,14 @@
         success: function () {
           $('#table').load(getPath);
           toggleProps(toggles);
+          $('html').css('cursor', 'default');
           return extras;
         },
         // On failure, print errors
         error: function (e) {
           console.log('ERROR : ', e);
           toggleProps(toggles);
+          $('html').css('cursor', 'default');
         }
       });
     } else if (type === 'thresh') {
@@ -62,11 +77,13 @@
         success: function () {
           $('#info').load(getPath);
           toggleProps(toggles);
+          $('html').css('cursor', 'default');
         },
         // On failure, print errors
         error: function (e) {
           console.log('ERROR : ', e);
           toggleProps(toggles);
+          $('html').css('cursor', 'default');
         }
       });
     } else if (type === 'insert') {
@@ -83,12 +100,14 @@
         success: function () {
           $('#table').load(getPath);
           toggleProps(toggles);
+          $('html').css('cursor', 'default');
           return extras;
         },
         // On failure, print errors
         error: function (e) {
           console.log('ERROR : ', e);
           toggleProps(toggles);
+          $('html').css('cursor', 'default');
         }
       });
     }
@@ -474,6 +493,8 @@
           const data = new FormData(form);
           // Disable submit button until something happens
           $(btnLogin).prop('disabled', true);
+          toggleInput('#username', '#password');
+          $('html').css('cursor', 'progress');
           $.ajax({
             type: 'POST',
             enctype: 'multipart/form-data',
@@ -485,12 +506,17 @@
             timeout: 800000,
             // On success, load the span from the getPath and re-enable the submit button
             success: function () {
-              $(btnLogin).prop('disabled', false);
               $(instructions).html('Login').css('color', 'black');
+              $('html').css('cursor', 'default');
               location.reload();
             },
             // On failure, print errors and re-enable the submit button
             error: function (e) {
+              $('html').css('cursor', 'default');
+              $(btnLogin).prop('disabled', false);
+              toggleInput('#username', '#password');
+              // Reset the password if incorrect user/pass combo
+              $('#password').val(null);
               if (e.status === 401) {
                 $(instructions).html('Incorrect login credentials').css('color', 'red');
               } else {
@@ -499,7 +525,6 @@
               $(btnLogin).prop('disabled', false);
             }
           });
-          $(form).trigger('reset');
         }
       });
     },
@@ -507,17 +532,19 @@
       let registerBtn = $('#registerBtn');
       // On submit, execute the following
       $(registerBtn).click(function (event) {
-        let username = $('#username').val();
-        let password = $('#password').val();
-        let confPass = $('#confPass').val();
+        let username = $('#username');
+        let password = $('#password');
+        let confPass = $('#confPass');
         let instructions = $('#instructions');
         event.preventDefault();
-        if (password === confPass && username && password && confPass) {
+        if (password.val() === confPass.val() && username.val() && password.val() && confPass.val()) {
           // Prevents form from submitting
           const form = $('#registerForm')[0];
           const data = new FormData(form);
           // Disable submit button until something happens
           $(registerBtn).prop('disabled', true);
+          toggleInput('#username', '#password', '#confPass');
+          $('html').css('cursor', 'progress');
           $.ajax({
             type: 'POST',
             enctype: 'multipart/form-data',
@@ -529,21 +556,23 @@
             timeout: 800000,
             // On success, redirect to /login
             success: function () {
-              $(registerBtn).prop('disabled', false);
               window.location.replace('/login');
+              $('html').css('cursor', 'default');
             },
             // On failure, print errors and re-enable the submit button
             error: function (e) {
+              $('html').css('cursor', 'default');
+              toggleInput('#username', '#password', '#confPass');
               if (e.status === 409) {
                 $(instructions).html('Username already exists, please try again').css('color', 'red');
+                $('#username').val(null);
               } else {
                 console.log('ERROR : ', e);
               }
               $(registerBtn).prop('disabled', false);
             }
           });
-          $(form).trigger('reset');
-        } else if (password !== confPass || !password || !confPass || !username) {
+        } else if (password.val() !== confPass.val() || !password.val() || !confPass.val() || !username.val()) {
           $(instructions).html('Username, Password, and Confirm Password must not be empty and passwords must match')
           .css('color', 'red');
         } else {
