@@ -143,7 +143,6 @@ def logout():
 @login_required
 def parts():
     results = dbm.fetchall()
-    webui_host = dbc.get_webui_host()
     van_nums = dbm.get_van_nums()
     form = PartsForm()
     update_form = UpdatePartsForm()
@@ -159,7 +158,7 @@ def parts():
         # Populate the van choices for the insert/update part select statements
         form.van.choices = dbm.get_selections()
         update_form.newVan.choices = dbm.get_selections()
-        return render_template('parts.html', results=results, webui_host=webui_host, van_nums=van_nums, form=form,
+        return render_template('parts.html', results=results, van_nums=van_nums, form=form,
                                update_form=update_form)
     except IndexError:
         abort(404), 404
@@ -321,11 +320,11 @@ def vans():
 # Route for /vans that consumes the van_id
 @app.route('/vans/<van_id>', strict_slashes=False)
 @login_required
-def van_num(van_id=0):
+def van_num(van_number):
     form = PartsForm()
     update_form = UpdatePartsForm()
-    results = dbm.get_vans(van_id)
-    check_exist = dbm.check_if_exists(van_id)
+    results = dbm.get_vans(van_number)
+    check_exist = dbm.check_if_exists(van_number)
     # If there are no results in the van database, but it exists, execute the following
     if results is None and check_exist:
         return render_template('display_van.html', results=None, check_exist=check_exist, form=form,
