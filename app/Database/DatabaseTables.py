@@ -7,7 +7,7 @@ Base = declarative_base()
 metadata = Base.metadata
 
 
-# Accounts database
+# Accounts table
 class Account(Base):
     __tablename__ = 'accounts'
 
@@ -18,7 +18,7 @@ class Account(Base):
     is_confirmed = Column(Integer, server_default=text("'0'"))
 
 
-# Vans database
+# Vans table
 class Van(Base):
     __tablename__ = 'vans'
 
@@ -26,7 +26,7 @@ class Van(Base):
     van_number = Column(String(255), index=True)
 
 
-# Jobs database
+# Jobs table
 class Job(Base):
     __tablename__ = 'jobs'
 
@@ -39,7 +39,7 @@ class Job(Base):
     van = relationship('Van')
 
 
-# Parts database
+# Parts table
 class Part(Base):
     __tablename__ = 'parts'
 
