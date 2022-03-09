@@ -352,12 +352,12 @@ class DatabaseManipulator:
 
     # Get users that exist in the DB excluding the current user's username
     def get_users(self, username: str) -> tuple:
-        with self.session as cursor:
+        with self.session as connection:
             try:
                 stmt = (select(Account.id, func.lower(Account.username), Account.is_admin, Account.is_confirmed).where(
                     Account.username != func.lower(username)
                 ))
-                results = cursor.execute(stmt).fetchall()
+                results = connection.execute(stmt).fetchall()
                 return results
             except Error or SQLAlchemyError as e:
                 print(str(getframeinfo(currentframe()).function) + '\n' + str(e))

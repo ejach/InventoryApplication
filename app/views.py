@@ -8,7 +8,6 @@ from flask_talisman import Talisman
 from flask_wtf import CSRFProtect
 from werkzeug.exceptions import HTTPException, abort
 
-from app.Database.DatabaseConnector import DatabaseConnector
 from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, get_difference
 from app.decorators.flask_decorators import login_required, admin_login_required
 from app.Forms.LoginForm import LoginForm
@@ -34,8 +33,6 @@ if 'DYNO' in environ:
 
 # Instantiate the DatabaseManipulator
 dbm = DatabaseManipulator()
-# Instantiate the DatabaseConnector
-dbc = DatabaseConnector()
 
 
 # Handle the 401 error
@@ -318,7 +315,7 @@ def vans():
 
 
 # Route for /vans that consumes the van_id
-@app.route('/vans/<van_id>', strict_slashes=False)
+@app.route('/vans/<van_number>', strict_slashes=False)
 @login_required
 def van_num(van_number):
     form = PartsForm()
