@@ -1,13 +1,11 @@
+from os import environ
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import NullPool
 
-from app.Database.DatabaseConnector import DatabaseConnector
-
-dbc = DatabaseConnector()
-
-engine = create_engine(f'mysql+pymysql://{dbc.user}:{dbc.password}@{dbc.host}:{dbc.db_port}/{dbc.db}',
-                       poolclass=NullPool)
+engine = create_engine(f'mysql+pymysql://{environ.get("username")}:{environ.get("password")}@{environ.get("host")}:'
+                       f'{int(environ.get("db_port"))}/{environ.get("db")}', poolclass=NullPool)
 
 
 class DatabaseSession:
