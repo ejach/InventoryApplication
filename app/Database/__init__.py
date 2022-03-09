@@ -1,13 +1,13 @@
 from sqlalchemy import create_engine
-from sqlalchemy.pool import QueuePool
 from sqlalchemy.orm import Session
+from sqlalchemy.pool import NullPool
 
 from app.Database.DatabaseConnector import DatabaseConnector
 
 dbc = DatabaseConnector()
 
 engine = create_engine(f'mysql+pymysql://{dbc.user}:{dbc.password}@{dbc.host}:{dbc.db_port}/{dbc.db}',
-                       pool_pre_ping=True, poolclass=QueuePool)
+                       poolclass=NullPool)
 
 
 class DatabaseSession:
