@@ -1,7 +1,4 @@
-from contextlib import contextmanager
 from os import environ
-
-from pymysql import connect
 
 
 class DatabaseConnector:
@@ -13,25 +10,3 @@ class DatabaseConnector:
         self.password = environ.get('password')
         self.webui_host = environ.get('webui_host')
         self.db = environ.get('db')
-
-    def get_host(self):
-        return self.host
-
-    def get_port(self):
-        return self.port
-
-    def get_password(self):
-        return self.password
-
-    def get_webui_host(self):
-        return self.webui_host
-
-    def get_db(self):
-        return self.db
-
-    @contextmanager
-    def get_conn(self):
-        with connect(host=self.host, user=self.user, password=self.password, database=self.db,
-                     port=self.db_port, autocommit=True) as connection:
-            cursor = connection.cursor()
-            yield cursor
