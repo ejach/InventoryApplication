@@ -2,6 +2,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/flask?logo=python&label=flask&style=flat-square&color=FFD43B)](https://pypi.org/project/flask/)
 [![PyPI](https://img.shields.io/pypi/v/gunicorn?logo=python&label=gunicorn&style=flat-square&color=FFD43B)](https://pypi.org/project/gunicorn/)
+[![PyPI](https://img.shields.io/pypi/v/sqlalchemy?logo=python&label=SQLAlchemy&style=flat-square&color=FFD43B)](https://pypi.org/project/sqlalchemy/)
 [![PyPI](https://img.shields.io/pypi/v/pymysql?logo=python&label=PyMySQL&style=flat-square&color=FFD43B)](https://pypi.org/project/pymysql/)
 [![LGTM](https://img.shields.io/lgtm/grade/python/github/ejach/InventoryApplication?color=FFD43B&logo=python&style=flat-square)](https://lgtm.com/projects/g/ejach/InventoryApplication/)
 [![LGTM](https://img.shields.io/lgtm/grade/javascript/github/ejach/InventoryApplication?color=FFD43B&logo=javascript&style=flat-square)](https://lgtm.com/projects/g/ejach/InventoryApplication/)
