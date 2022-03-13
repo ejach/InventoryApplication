@@ -139,23 +139,26 @@ def logout():
 @app.route('/parts', strict_slashes=False, methods=['GET', 'POST'])
 @login_required
 def parts():
-    results = dbm.fetchall()
+    part_results = dbm.fetchall()
     van_nums = dbm.get_van_nums()
     form = PartsForm()
     update_form = UpdatePartsForm()
     if request.method == 'POST':
-        # Sanitizes the input using bleach
         part_name = form.partName.data
         part_amount = str(form.partAmount.data)
         part_number = form.partNumber.data
         van_number = unquote(form.van.data)
+        part_type = str(form.unit.data)
         # Insert into the database
-        dbm.insert(part_name=part_name, part_amount=part_amount, part_number=part_number, van_number=van_number)
+        dbm.insert(part_name=part_name, part_amount=part_amount, part_number=part_number, van_number=van_number,
+                   part_type=part_type)
     try:
-        # Populate the van choices for the insert/update part select statements
+        # Populate the van choices and type choices for the insert/update part select statements
         form.van.choices = dbm.get_selections()
+        form.unit.choices = dbm.get_part_type_names()
         update_form.newVan.choices = dbm.get_selections()
-        return render_template('parts.html', results=results, van_nums=van_nums, form=form,
+        update_form.newUnit.choices = dbm.get_part_type_names()
+        return render_template('parts.html', results=part_results, van_nums=van_nums, form=form,
                                update_form=update_form)
     except IndexError:
         abort(404), 404
@@ -180,12 +183,29 @@ def display_part(part_id):
             return redirect(url_for('parts'))
 
 
-# Row for displaying low parts
-@app.route('/parts/low', methods=['GET'])
+# Route for displaying low parts
+@app.route('/parts/low', strict_slashes=False, methods=['GET'])
 @login_required
 def low_parts():
     results = dbm.get_low_parts()
     return render_template('low_parts.html', results=results)
+
+
+# Route for displaying the type of parts
+@app.route('/parts/type', strict_slashes=False, methods=['GET'])
+def type_parts():
+    results = dbm.get_part_types()
+    return render_template('type_parts.html', results=results)
+
+
+# Route for displaying parts by Type ID
+@app.route('/parts/type/<type_id>', strict_slashes=False, methods=['GET'])
+def type_parts_id(type_id):
+    results = dbm.get_part_type_by_name(type_id)
+    update_form = UpdatePartsForm()
+    update_form.newVan.choices = dbm.get_selections()
+    update_form.newUnit.choices = dbm.get_part_type_names()
+    return render_template('display_type_part.html', results=results, update_form=update_form)
 
 
 # Displays the table code in parts_table.html, so it can be refreshed dynamically without reloading the page
@@ -197,6 +217,8 @@ def table(table_name, van_number):
         update_form = UpdatePartsForm()
         results = dbm.get_vans(van_number)
         check_exist = dbm.check_if_exists(van_number)
+        form.unit.choices = dbm.get_part_type_names()
+        update_form.newUnit.choices = dbm.get_part_type_names()
         return render_template('load/van_table.html', results=results, check_exist=check_exist, form=form,
                                update_form=update_form)
     # Requirements to return the list of accounts
@@ -219,6 +241,7 @@ def table(table_name, van_number):
         van_nums = dbm.get_van_nums()
         # Set the choices for selecting a new van
         update_form.newVan.choices = dbm.get_selections()
+        update_form.newUnit.choices = dbm.get_part_types()
         return render_template('load/parts_table.html', results=results, van_nums=van_nums, form=form,
                                update_form=update_form)
     # Requirements for the individual attributes for a part
@@ -231,6 +254,12 @@ def table(table_name, van_number):
         update_form = UpdateVanForm()
         van_nums = dbm.get_van_nums()
         return render_template('load/vans_list.html', van_numbers=van_nums, update_form=update_form)
+    elif table_name == 'part_type_list' and van_number != 'all':
+        results = dbm.get_part_type_by_name(type_name=van_number)
+        update_form = UpdatePartsForm()
+        update_form.newVan.choices = dbm.get_selections()
+        update_form.newUnit.choices = dbm.get_part_type_names()
+        return render_template('load/display_part_type_table.html', results=results, update_form=update_form)
     # If the url is attempted to be accessed, redirect to index
     else:
         return redirect(url_for('index'))
@@ -267,9 +296,10 @@ def update(id_type):
             part_amount = str(form.newPartAmount.data)
             part_number = form.partNumber.data
             van_number = unquote(form.newVan.data)
+            part_type = form.newUnit.data
             if check_input(part_id) and check_input(part_name) and check_input(part_amount) \
-                    and check_input(part_number) and check_input(van_number):
-                dbm.update(part_id, part_name, part_amount, part_number, van_number)
+                    and check_input(part_number) and check_input(van_number) and check_input(part_type):
+                dbm.update(part_id, part_name, part_amount, part_number, van_number, part_type)
         # Update the threshold of a part by its ID
         if request.method == 'POST' and id_type == 'threshold':
             form = UpdatePartThresh()
@@ -318,17 +348,20 @@ def vans():
 @app.route('/vans/<van_number>', strict_slashes=False)
 @login_required
 def van_num(van_number):
-    form = PartsForm()
+    insert_form = PartsForm()
     update_form = UpdatePartsForm()
+    # Populate the insert form/update form select elements
+    insert_form.unit.choices = dbm.get_part_type_names()
+    update_form.newUnit.choices = dbm.get_part_type_names()
     results = dbm.get_vans(van_number)
     check_exist = dbm.check_if_exists(van_number)
     # If there are no results in the van database, but it exists, execute the following
     if results is None and check_exist:
-        return render_template('display_van.html', results=None, check_exist=check_exist, form=form,
+        return render_template('display_van.html', results=None, check_exist=check_exist, form=insert_form,
                                update_form=update_form)
     # If the results are not None, return the following
     elif results is not None:
-        return render_template('display_van.html', results=results, form=form, update_form=update_form)
+        return render_template('display_van.html', results=results, form=insert_form, update_form=update_form)
     # Otherwise, redirect to the main /vans page
     else:
         return redirect(url_for('vans'))

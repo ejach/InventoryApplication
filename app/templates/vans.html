@@ -14,6 +14,7 @@
 <p id="instructions">Select a van: </p>
 {% endif %}
 <div id="table">
+<div class="card">
 <span id="mySpan" class="table">
   {% for row in van_numbers %}
   <a href="/vans/{{ row[1] }}" id="link">{{ update_form.id(value=row[0]) }}<img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
@@ -35,6 +36,7 @@
     </form>
     {% endfor %}
   </span>
+</div>
 </div>
 {% if session['is_admin'] %}
   <span id="addVan">

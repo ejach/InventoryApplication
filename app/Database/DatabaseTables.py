@@ -47,7 +47,19 @@ class Part(Base):
     name = Column(String(255), index=True)
     amount = Column(Integer, nullable=False, index=True, server_default=text("'0'"))
     part_number = Column(String(255), index=True, server_default=text("'0'"))
-    van_number = Column(ForeignKey('vans.van_number', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+    van_number = Column(String(255), index=True)
     low_thresh = Column(Integer)
+    type = Column(ForeignKey('part_type.type_name', ondelete='CASCADE', onupdate='CASCADE'), index=True)
+    unit = Column(ForeignKey('part_type.type_unit', ondelete='CASCADE', onupdate='CASCADE'), index=True)
 
-    van = relationship('Van')
+    part_type = relationship('PartType', primaryjoin='Part.type == PartType.type_name')
+    part_type1 = relationship('PartType', primaryjoin='Part.unit == PartType.type_unit')
+
+
+# PartType table
+class PartType(Base):
+    __tablename__ = 'part_type'
+
+    id = Column(Integer, primary_key=True)
+    type_name = Column(String(255), index=True)
+    type_unit = Column(String(255), index=True)

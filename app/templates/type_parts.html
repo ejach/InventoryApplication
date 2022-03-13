@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block scripts %}
+
+{% endblock %}
+{% block content %}
+  <table class="table" id="table">
+    <th>Type Name</th><th>Type Unit</th>
+        {% for row in results %}
+        <tr>
+            <td><a href="/parts/type/{{ row[1] }}">{{ row[1] }}</a></td>
+            <td>{{ row[2] }}</td>
+        </tr>
+        {% endfor %}
+  </table>
+{% endblock %}

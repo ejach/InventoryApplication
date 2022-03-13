@@ -81,10 +81,10 @@ a:visited {
 
 #card {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 10%;
-  margin-left: 15%;
-  margin-right: 15%;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 1%;
+  margin-left: 10%;
+  margin-right: 10%;
 }
 
 #lowPart {
@@ -219,7 +219,7 @@ h1 {
 }
 
 
-.confirmMe, .confirmYesBtn, .denyNoBtn, .confirmText, .thisYesBtn, .thisNoBtn, .confirmNote {
+.confirmMe, .confirmYesBtn, .denyNoBtn, .newUnit, .confirmText, .thisYesBtn, .thisNoBtn, .confirmNote {
     display: none;
 }
 .yesBtn {
@@ -251,6 +251,9 @@ h1 {
       width: 100px;
       height: 100px;
   }
+  #card {
+    grid-template-columns: 1fr 1fr;
+  }
   input, button, .container {
 
     font-size: 30px;
@@ -275,10 +278,11 @@ h1 {
 @media (orientation: landscape) {
   .topnav {
     max-width: 45%;
+    max-height: 50%;
   }
 
   #card > a > img {
-    width: 200px;
+    width: 85%;
     height: 200px;
   }
   input, button, .container {

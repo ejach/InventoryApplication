@@ -13,6 +13,8 @@ from app.Database.DatabaseTables import Van, Part, Account, Job
 # from app.Database.TestDatabaseStatements import TestDatabaseStatements
 
 # Instantiate the database classes
+from app.decorators.flask_decorators import db_connector
+
 dbm = DatabaseManipulator()
 # tdbs = TestDatabaseStatements()
 session = DatabaseSession()
@@ -29,65 +31,71 @@ password = 'pass' + random_time_string
 
 
 # Check if part exists
-def check_if_part_exist(part_name, part_amount, part_number, van_number):
-    with session as connection:
-        get_part = (select(Part.name, Part.amount, Part.part_number, Part.van_number)
-                    .where(Part.name == part_name, Part.amount == part_amount, Part.part_number == part_number,
-                           Part.van_number == van_number))
-        results = connection.execute(get_part).fetchall()
-        if not results:
-            return False
-        else:
-            return True
+@db_connector
+def check_if_part_exist(part_name, part_amount, part_number, van_number, **kwargs):
+    connection = kwargs.pop('connection')
+    get_part = (select(Part.name, Part.amount, Part.part_number, Part.van_number)
+                .where(Part.name == part_name, Part.amount == part_amount, Part.part_number == part_number,
+                       Part.van_number == van_number))
+    results = connection.execute(get_part).fetchall()
+    if not results:
+        return False
+    else:
+        return True
 
 
 # Check if job exists
-def check_if_job_exists(_username, _time, van_number, parts_used):
-    with session as connection:
-        stmt = (select(Job.username, Job.time, Job.van_number, Job.parts_used)
-                .where(Job.username == _username, Job.time == _time, Job.van_number == van_number,
-                       Job.parts_used == parts_used))
-        results = connection.execute(stmt).fetchall()
-        if not results:
-            return False
-        else:
-            return True
+@db_connector
+def check_if_job_exists(_username, _time, van_number, parts_used, **kwargs):
+    connection = kwargs.pop('connection')
+    stmt = (select(Job.username, Job.time, Job.van_number, Job.parts_used)
+            .where(Job.username == _username, Job.time == _time, Job.van_number == van_number,
+                   Job.parts_used == parts_used))
+    results = connection.execute(stmt).fetchall()
+    if not results:
+        return False
+    else:
+        return True
 
 
 # Get max ID from low_parts
-def get_low_part_id():
-    with session as connection:
-        stmt = (select(func.max(Part.id)).where(Part.low_thresh > Part.amount))
-        results = connection.execute(stmt).fetchall()
-        return results[0][0]
+@db_connector
+def get_low_part_id(**kwargs):
+    connection = kwargs.pop('connection')
+    stmt = (select(func.max(Part.id)).where(Part.low_thresh > Part.amount))
+    results = connection.execute(stmt).fetchall()
+    return results[0][0]
 
 
 # Check if van exists
-def check_if_van_exist(this_id):
-    with session as connection:
-        get_van = (select(Van.id, Van.van_number).where(Van.id == this_id))
-        results = connection.execute(get_van).fetchall()
-        if not results:
-            return False
-        else:
-            return True
+@db_connector
+def check_if_van_exist(this_id, **kwargs):
+    connection = kwargs.pop('connection')
+    get_van = (select(Van.id, Van.van_number).where(Van.id == this_id))
+    results = connection.execute(get_van).fetchall()
+    if not results:
+        return False
+    else:
+        return True
 
 
 # Get the last ID inserted into the database by Table Object passed in
-def get_last_id(*args):
-    with session as connection:
-        for arg in args:
-            get_id = (select(func.max(arg.id)))
+@db_connector
+def get_last_id(*args, **kwargs):
+    connection = kwargs.pop('connection')
+    for arg in args:
+        get_id = (select(func.max(arg.id)))
         results = connection.execute(get_id).fetchone()
         return results
 
 
 # Get a random existing van number
-def get_random_van():
-    with session as connection:
-        get_first_van = (select(Van.van_number).order_by(func.rand()).limit(1))
-        results = connection.execute(get_first_van).fetchone()
-        return results[0]
+@db_connector
+def get_random_van(**kwargs):
+    connection = kwargs.pop('connection')
+    get_first_van = (select(Van.van_number).order_by(func.rand()).limit(1))
+    results = connection.execute(get_first_van).fetchone()
+    return results[0]
 
 
 class DBMUnitTest(TestCase):

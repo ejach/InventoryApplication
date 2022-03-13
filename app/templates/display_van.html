@@ -17,6 +17,18 @@
     {{ form.partName(placeholder='Part Name', pattern='^\w+( +\w+)*$') }}
     {{ form.partNumber(placeholder='Part Number', pattern='^\w+( +\w+)*$') }}
     {{ form.partAmount(placeholder='Part Amount', pattern='[0-9]{1,5}', value=1, min=1) }}
+    <select name="unit" id="unit">
+    {% if not form.unit.choices %}
+        <option value="" disabled selected>No part types</option>
+    {% else %}
+        {% for option in form.unit %}
+            {% if loop.first %}
+                <option value="" disabled selected>{{ form.unit.label.text }}</option>
+            {% endif %}
+                {{ option }}
+        {% endfor %}
+    {% endif %}
+    </select>
     {{ form.submit(value='Add Part') }}
 </form>
   {#    If the results are empty, throw the following error    #}
@@ -24,7 +36,7 @@
   <p style="color:red;">The database is empty, consider adding a part.</p>
   {% else %}
   <table class="table">
-    <th>Part Name</th><th>Part Number</th><th>Van</th><th>Amount</th><th>Action</th><br/>
+    <th>Part Name</th><th>Part Number</th><th>Van</th><th>Amount</th><th>Type</th><th>Action</th><br/>
     {% for row in results %}
     <tr>
         <td>{{ update_form.id(value=row[0]) }}<a href="/parts/{{ row[0] }}"><p class="thisPartName" id="thisPartName{{ row[0] }}">{{ row[1] }}</p></a>
@@ -32,8 +44,22 @@
         <td><p class="thisPartNumber" id="thisPartNumber{{ row[0] }}">{{ row[3] }}</p>
             {{ update_form.partNumber(class='partNumber', pattern='^\w+( +\w+)*$', placeholder=update_form.partNumber.label.text, id='partNumber' ~ row[0], value=row[3], data_value=row[0]) }}</td>
         <td><p class="thisVanNumber" id="thisVanNumber{{ row[0] }}">{{ row[4] }}</p>
-    <td><p class="thisAmount" id="thisAmount{{ row[0] }}">{{ row[2] }}</p>
+    <td><p class="thisAmount" id="thisAmount{{ row[0] }}">{{ row[2] }} {{ row[6] }}</p>
             {{ update_form.newPartAmount(class=update_form.newPartAmount.name, pattern='[0-9]{1,5}', id=update_form.newPartAmount.name ~ row[0], value=row[2], min=1) }}</td>
+        <td><p class="thisPartUnit" id="thisPartUnit{{ row[0] }}">{{ row[5] }}</p>
+        {% if not row[5] %}
+            <select name="newUnit" class="newUnit" id="newUnit{{ row[0] }}">
+            {% for option in update_form.newUnit %}
+                {% if loop.first %}
+                    <option value="" disabled selected>{{ update_form.newUnit.label.text }}</option>
+                {% endif %}
+                    {{ option }}
+            {% endfor %}
+            </select>
+        {% else %}
+                {{ update_form.newUnit(class='newUnit', id='newUnit' ~ row[0], data_value=row[0]) }}
+        {% endif %}
+        </td>
       <td><p class="confirmMe" id="confirmMe{{ row[0] }}">Are you sure?
         <input type="button" class="yesBtn" id="yesBtn{{ row[0] }}" value="Yes" name="yesBtn"
         data-value="{{ row[0] }}" />

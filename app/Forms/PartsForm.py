@@ -20,4 +20,10 @@ class PartsForm(FlaskForm):
         'Select Van',
         validators=[DataRequired()]
     )
+
+    unit = SelectField(
+        'Select Unit',
+        validators=[DataRequired()]
+    )
+
     submit = SubmitField('Submit', id='submit')
