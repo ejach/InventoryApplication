@@ -157,7 +157,7 @@ h1 {
     font-size: 56px;
 }
 
-#myName, #myNumber, #myAmount, #myVan {
+#myName, #myNumber, #myAmount, #myType,  #myVan {
     float: left;
 }
 

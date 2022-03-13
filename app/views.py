@@ -205,7 +205,11 @@ def type_parts_id(type_id):
     update_form = UpdatePartsForm()
     update_form.newVan.choices = dbm.get_selections()
     update_form.newUnit.choices = dbm.get_part_type_names()
-    return render_template('display_type_part.html', results=results, update_form=update_form)
+    # Make sure the part exists, if not redirect back to the /types route
+    if dbm.check_if_type_exists(type_id):
+        return render_template('display_type_part.html', results=results, update_form=update_form)
+    else:
+        return redirect(url_for('type_parts'))
 
 
 # Displays the table code in parts_table.html, so it can be refreshed dynamically without reloading the page

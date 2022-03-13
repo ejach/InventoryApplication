@@ -47,7 +47,9 @@ DYNO=FALSE
 
     _Make sure that your user has read/write permissions in the database/table that has been created or else it will not work._
 
-6. Run the program using `python wsgi.py`
+6. Setup your database and add an admin account by running `$ python setup.py`
+
+7. Run the program using `python wsgi.py`
 
 ### Docker Run
 `$ docker run -it -e host=<host> -e db_port=<db_port> -e username=<username> -e password=<password> -e webui_host=<webui_host> -e webui_port=<webui_port> -e db_port=<db_port> -e db=<db> -e db_schema=<db_schema> ghcr.io/ejach/inventoryapplication:latest`

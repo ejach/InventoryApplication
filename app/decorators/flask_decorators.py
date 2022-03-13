@@ -6,7 +6,7 @@ from flask import redirect, url_for, session
 from pymysql import Error
 from sqlalchemy.exc import OperationalError
 
-from app.Database import DatabaseSession
+from app.decorators import DatabaseSession
 
 
 # Make sure the user is logged in
@@ -49,6 +49,8 @@ def db_connector(f):
                       str(getframeinfo(currentframe()).lineno) + '\n' + str(e) + '\n'
                       + 'Blank input detected, database not manipulated')
                 conn.rollback()
+            finally:
+                conn.close()
             return result
 
     return with_connection_

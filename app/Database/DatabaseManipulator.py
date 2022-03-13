@@ -126,25 +126,33 @@ class DatabaseManipulator:
         else:
             return True
 
-    # Check if the van exists and has a part within it from either the parts or vans DB
+    # Check if duplicates exist in the database
     @db_connector
-    def check_if_exists(self, van_number: str, **kwargs) -> bool:
+    def get_dupes(self, query_table: object, row_to_find: str, **kwargs) -> bool:
         connection = kwargs.pop('connection')
         # Use the distinct select statement in the parts DB
-        get_vans_dist = (select(distinct(Van.van_number)).order_by(Van.van_number))
+        get_vans_dist = (select(distinct(query_table)).order_by(query_table))
         dist_results = connection.execute(get_vans_dist).fetchall()
         # List the results in an array
         fin_dist = [i[0] for i in dist_results]
         # Use the list of duplicates to see if the van exists in the vans DB
-        get_duplicates = (select(Van.van_number))
+        get_duplicates = (select(query_table))
         dupe_results = connection.execute(get_duplicates).fetchall()
         # List the results in an array
         fin_dupes = [i[0] for i in dupe_results]
         # If the van_number exists in either database, return True; otherwise return False
-        if fin_dist.count(van_number) > 0 or van_number in fin_dupes:
+        if fin_dist.count(row_to_find) > 0 or row_to_find in fin_dupes:
             return True
         else:
             return False
+
+    # Check if the van exists and has a part within it from either the parts or vans DB
+    def check_if_exists(self, van_number: str) -> bool:
+        return self.get_dupes(Van.van_number, van_number)
+
+    # Check if part type exists
+    def check_if_type_exists(self, part_type: str) -> bool:
+        return self.get_dupes(PartType.type_name, part_type)
 
     # Insert van into the database
     @db_connector
@@ -199,14 +207,25 @@ class DatabaseManipulator:
     @db_connector
     def insert_part_type(self, part_type: str, part_unit: str, **kwargs) -> None:
         connection = kwargs.pop('connection')
-        pass
+        if check_input(part_type) and check_input(part_unit):
+            stmt = (insert(PartType).values(type_name=part_type, type_unit=part_unit))
+            connection.execute(stmt)
+            connection.commit()
+
+    # Delete part type from database by ID
+    @db_connector
+    def delete_part_type(self, type_id: str, **kwargs) -> None:
+        connection = kwargs.pop('connection')
+        stmt = (delete(PartType).where(PartType.id == type_id))
+        connection.execute(stmt)
+        connection.commit()
 
     # Get part information by part id
     @db_connector
     def get_part_information(self, part_id: str, **kwargs) -> tuple:
         connection = kwargs.pop('connection')
-        stmt = (select(Part.id, Part.name, Part.amount, Part.part_number, Part.van_number, Part.low_thresh)
-                .where(Part.id == part_id))
+        stmt = (select(Part.id, Part.name, Part.amount, Part.part_number, Part.van_number, Part.low_thresh, Part.type,
+                       Part.unit).where(Part.id == part_id))
         results = connection.execute(stmt).fetchall()
         return results
 

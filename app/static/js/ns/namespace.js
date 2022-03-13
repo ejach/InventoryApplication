@@ -135,8 +135,8 @@
         $(element).off().on('click', '#yesBtn' + id, function () {
           toggleProps('#yesBtn' + id);
           // Parameters to be sent in the request
-          let url = (window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1] &&
-          !window.location.pathname.split('/parts/type')) ? '/delete/van/' : '/delete/part/';
+          let url = (window.location.pathname.split('/')[2] !== 'type' && window.location.pathname !== '/parts'
+              && !window.location.pathname.split('/vans/')[1]) ? '/delete/van/' : '/delete/part/';
           // Append csrf token to data string
           let data = 'Delete=' + id;
           let toggles = ['.deleteBtn', '.updateBtn'].toString();
