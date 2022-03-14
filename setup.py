@@ -55,7 +55,7 @@ engine = create_engine(url, echo=True)
 session = Session(engine)
 
 # Import the module from GitHub
-dbm = import_file('https://raw.githubusercontent.com/ejach/InventoryApplication/dev/app/Database/DatabaseTables.py')
+dbm = import_file('https://raw.githubusercontent.com/ejach/InventoryApplication/main/app/Database/DatabaseTables.py')
 
 if admin_pass and admin_user and conf_admin_pass:
 
