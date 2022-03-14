@@ -207,7 +207,7 @@ class DatabaseManipulator:
     @db_connector
     def insert_part_type(self, part_type: str, part_unit: str, **kwargs) -> None:
         connection = kwargs.pop('connection')
-        if check_input(part_type) and check_input(part_unit):
+        if check_input(part_type) and check_input(part_unit) and not self.check_if_type_exists(part_type):
             stmt = (insert(PartType).values(type_name=part_type, type_unit=part_unit))
             connection.execute(stmt)
             connection.commit()
@@ -219,6 +219,15 @@ class DatabaseManipulator:
         stmt = (delete(PartType).where(PartType.id == type_id))
         connection.execute(stmt)
         connection.commit()
+
+    # Update part type
+    @db_connector
+    def update_part_type(self, type_id: str, type_name: str, type_unit: str, **kwargs) -> None:
+        connection = kwargs.pop('connection')
+        if check_input(type_name) and check_input(type_unit) and check_input(type_id):
+            stmt = (update(PartType).values(type_name=type_name, type_unit=type_unit).where(PartType.id == type_id))
+            connection.execute(stmt)
+            connection.commit()
 
     # Get part information by part id
     @db_connector

@@ -524,6 +524,62 @@
         }
       });
     },
+    updateType : function(getPath) {
+      $(document.body).off().on('click', '.updateBtn', function() {
+        let id = this.dataset.value;
+        let yesBtn = $('#confirmUpdateBtn' + id);
+        let noBtn = $('#cancelUpdateBtn' + id);
+        let newTypeName = $('#newTypeName' + id);
+        let newTypeUnit = $('#newTypeUnit' + id);
+        let typeUnit = $('#thisPartTypeUnit' + id);
+        let typeName = $('#thisPartTypeName' + id);
+        let updateBtn = $('#updateBtn' + id);
+        let updateBtnCls = $('.updateBtn');
+        let instructions = $('#instructions');
+        let denyBtn = $('#deleteBtn' + id);
+        let denyBtnCls = $('.denyBtn');
+        let confirmBtnCls = $('.confirmBtn');
+        let deleteBtnCls = $('.deleteBtn');
+        toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, updateBtnCls);
+        toggleMe(yesBtn, noBtn, newTypeName, newTypeUnit, typeUnit, typeName, updateBtn, denyBtn);
+        $(yesBtn).off().click(function () {
+          if (newTypeName.val() && newTypeUnit.val()) {
+            const url = '/update/type'
+            let data = 'id=' + id + '&newTypeName=' + newTypeName.val() + '&newTypeUnit=' + newTypeUnit.val();
+            let toggles = ['.confirmBtnCls', '.denyBtn', '.deleteBtn', '.updateBtn'].toString();
+            postRequest(url, data, toggles, null, getPath, $(instructions).html('Enter a Part Type and a Part Unit ' +
+                '(i.e. measure capacity in how many Feet, Parts, etc.):').css('color', 'black'), 'updateType');
+          } else {
+            $(instructions).html('Invalid or blank input not allowed').css('color', 'red');
+          }
+        });
+        $(noBtn).off().click(function () {
+          toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, updateBtnCls);
+          toggleMe(yesBtn, noBtn, newTypeName, newTypeUnit, typeUnit, typeName, updateBtn, denyBtn);
+        });
+      });
+    },
+    deleteType : function (getPath) {
+      $(document).off().on('click', '.deleteBtn', function () {
+        let id = this.dataset.value;
+        let updateBtnCls = $('.updateBtn');
+        let denyBtn = $('#deleteBtn' + id);
+        let denyBtnCls = $('.denyBtn');
+        let confirmBtnCls = $('.confirmBtn');
+        let deleteBtnCls = $('.deleteBtn');
+        let submitBtn = $('#yesBtn' + id);
+        let updateBtn = $('#updateBtn' + id);
+        let confirmMe = $('#confirmMe' + id);
+        toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, updateBtnCls);
+        toggleMe(confirmMe, updateBtn, denyBtn);
+        $(submitBtn).click(function () {
+          const url = '/delete/type';
+          let data = 'id=' + id;
+          let toggles = ['.confirmBtn', '.deleteBtn', '.denyBtn'].toString();
+          postRequest(url, data, toggles, null, getPath, null, 'delete');
+        });
+      });
+    },
     loginUser : function () {
       let username = $('#username');
       let password = $('#password');

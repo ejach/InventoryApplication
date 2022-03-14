@@ -4,15 +4,15 @@ from time import time
 from unittest import TestCase, main
 
 from sqlalchemy import select, func
+from sqlalchemy.sql.functions import count
 
-from app.decorators import DatabaseSession
 from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, create_password_hash, check_password, \
     check_password_hash
 from app.Database.DatabaseTables import Van, Part, Account, Job, PartType
-
-# Instantiate the database classes
+from app.decorators import DatabaseSession
 from app.decorators.flask_decorators import db_connector
 
+# Instantiate the database classes
 dbm = DatabaseManipulator()
 session = DatabaseSession()
 
@@ -105,6 +105,28 @@ def get_random_van(**kwargs):
     get_first_van = (select(Van.van_number).order_by(func.rand()).limit(1))
     results = connection.execute(get_first_van).fetchone()
     return results[0]
+
+
+# Get part type duplicates
+@db_connector
+def get_part_type_duplicates(type_name, **kwargs):
+    connection = kwargs.pop('connection')
+    stmt = (select(count(PartType.type_name)).where(PartType.type_name == type_name))
+    results = connection.execute(stmt).fetchone()
+    return results
+
+
+# Check if part type exists by type_name and type_unit
+@db_connector
+def check_if_part_type_exists(type_name, type_unit, **kwargs):
+    connection = kwargs.pop('connection')
+    stmt = (select(PartType.type_name, PartType.type_unit).where(PartType.type_name == type_name
+                                                                 and PartType.type_unit == type_unit))
+    results = connection.execute(stmt).fetchone()
+    if results:
+        return True
+    else:
+        return False
 
 
 class DBMUnitTest(TestCase):
@@ -675,6 +697,78 @@ class DBMUnitTest(TestCase):
         self.assertFalse(check_if_van_exist(van_id))
         self.assertFalse(check_if_part_exist(random_string, start_digit, random_string, van_num, part_type))
         print('test_enter_invalid_threshold() TEST -> PASSED')
+
+    def test_type_insertion(self):
+        print('test_type_insertion() TEST')
+        # Create random part type
+        part_type = random_string + random_digit
+        part_unit = random_string
+        random_van = get_random_van()[0]
+        # Insert part type
+        dbm.insert_part_type(part_type, part_unit)
+        type_id = get_last_id(PartType)[0]
+        print('Type Insertion TEST -> PASSED')
+        # Add type to part
+        dbm.insert(part_name=random_string, part_amount=random_digit, part_number=random_numbers,
+                   van_number=random_van, part_type=part_type)
+        part_id = get_last_id(Part)[0]
+        self.assertTrue(check_if_part_exist(part_name=random_string,
+                                            part_amount=random_digit, part_number=random_numbers,
+                                            van_number=random_van, part_type=part_type))
+        print('Insert Part TEST -> PASSED')
+        self.assertIn(part_type, dbm.get_part_type_names())
+        print('Check Part Type TEST -> PASSED')
+        # Delete part type
+        dbm.delete_part_type(type_id)
+        # Make sure it is deleted
+        self.assertFalse(check_if_type_exist(type_id))
+        # Delete part
+        dbm.delete(part_id)
+        self.assertFalse(check_if_part_exist(part_name=random_string,
+                                             part_amount=random_digit, part_number=random_numbers,
+                                             van_number=random_van, part_type=part_type))
+        print('test_type_insertion() TEST -> PASSED')
+
+    def test_type_update(self):
+        print('test_type_update() TEST')
+        # Create random part type
+        part_type = random_string + random_digit
+        part_unit = random_string
+        # Insert part type
+        dbm.insert_part_type(part_type, part_unit)
+        type_id = get_last_id(PartType)[0]
+        print('Insert Type TEST -> PASSED')
+        dbm.update_part_type(type_id=type_id, type_name=random_string, type_unit=random_string + random_digit)
+        self.assertTrue(check_if_part_type_exists(type_name=random_string, type_unit=random_string + random_digit))
+        print('Update Type TEST -> PASSED')
+        # Delete part type
+        dbm.delete_part_type(type_id)
+        # Make sure it is deleted
+        self.assertFalse(check_if_type_exist(type_id))
+        print('test_type_update() TEST -> PASSED')
+
+    def test_type_duplicate_insertion(self):
+        print('test_type_duplicate_insertion() TEST')
+        # Create random part type
+        part_type = random_string + random_digit
+        part_unit = random_string
+        # Insert part type
+        dbm.insert_part_type(part_type, part_unit)
+        type_id = get_last_id(PartType)[0]
+        print('Insert Type TEST -> PASSED')
+        # Make sure it exists
+        self.assertTrue(check_if_type_exist(type_id))
+        # Insert the same part type/unit
+        dbm.insert_part_type(part_type, part_unit)
+        # Make sure the part type is not duplicated
+        dupe_count = get_part_type_duplicates(part_type)
+        self.assertLess(dupe_count[0], 2)
+        print('Type Duplicate TEST -> PASSED')
+        # Delete part type
+        dbm.delete_part_type(type_id)
+        # Make sure it is deleted
+        self.assertFalse(check_if_type_exist(type_id))
+        print('test_type_duplicate_insertion() TEST -> PASSED')
 
 
 if __name__ == '__main__':

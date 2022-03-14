@@ -10,6 +10,7 @@ from werkzeug.exceptions import HTTPException, abort
 
 from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, get_difference
 from app.Forms.AddTypeForm import AddTypeForm
+from app.Forms.UpdateTypeForm import UpdateTypeForm
 from app.decorators.flask_decorators import login_required, admin_login_required
 from app.Forms.LoginForm import LoginForm
 from app.Forms.PartsForm import PartsForm
@@ -196,12 +197,13 @@ def low_parts():
 @app.route('/parts/type', strict_slashes=False, methods=['GET', 'POST'])
 def type_parts():
     add_type_form = AddTypeForm()
+    update_type_form = UpdateTypeForm()
     results = dbm.get_part_types()
     if request.method == 'POST':
         type_name = add_type_form.typeName.data
         type_unit = add_type_form.typeUnit.data
         dbm.insert_part_type(str(type_name), str(type_unit))
-    return render_template('type_parts.html', results=results, form=add_type_form)
+    return render_template('type_parts.html', results=results, form=add_type_form, update_form=update_type_form)
 
 
 # Route for displaying parts by Type ID
@@ -219,32 +221,32 @@ def type_parts_id(type_id):
 
 
 # Displays the table code in parts_table.html, so it can be refreshed dynamically without reloading the page
-@app.route('/table/<table_name>/<van_number>', strict_slashes=False, methods=['GET', 'POST'])
-def table(table_name, van_number):
+@app.route('/table/<table_name>/<quantity_id>', strict_slashes=False, methods=['GET', 'POST'])
+def table(table_name, quantity_id):
     # Requirements to return the results for a van by its number
-    if table_name == 'vans' and van_number != 'all':
+    if table_name == 'vans' and quantity_id != 'all':
         form = PartsForm()
         update_form = UpdatePartsForm()
-        results = dbm.get_vans(van_number)
-        check_exist = dbm.check_if_exists(van_number)
+        results = dbm.get_vans(quantity_id)
+        check_exist = dbm.check_if_exists(quantity_id)
         form.unit.choices = dbm.get_part_type_names()
         update_form.newUnit.choices = dbm.get_part_type_names()
         return render_template('load/van_table.html', results=results, check_exist=check_exist, form=form,
                                update_form=update_form)
     # Requirements to return the list of accounts
-    elif table_name == 'users' and van_number != 'all':
+    elif table_name == 'users' and quantity_id != 'all':
         results = dbm.get_users(username=session['username'])
         return render_template('load/accounts_table.html', users=results)
     # Requirements to return the job list of parts
-    elif table_name == 'jobs' and van_number != 'all':
-        select_parts = dbm.get_parts_by_van(van_number)
+    elif table_name == 'jobs' and quantity_id != 'all':
+        select_parts = dbm.get_parts_by_van(quantity_id)
         return render_template('load/jobs_table.html', van_parts=select_parts)
     # Requirements to return the full job list of parts
-    elif table_name == 'jobs' and van_number == 'all':
+    elif table_name == 'jobs' and quantity_id == 'all':
         job_parts = dbm.get_jobs()
         return render_template('load/display_jobs_table.html', jobs=job_parts)
     # Requirements to return the master list of parts
-    elif table_name == 'main' and van_number == 'all':
+    elif table_name == 'main' and quantity_id == 'all':
         form = PartsForm()
         update_form = UpdatePartsForm()
         results = dbm.fetchall()
@@ -255,25 +257,27 @@ def table(table_name, van_number):
         return render_template('load/parts_table.html', results=results, van_nums=van_nums, form=form,
                                update_form=update_form)
     # Requirements for the individual attributes for a part
-    elif table_name == 'display_part' and van_number != 'all':
+    elif table_name == 'display_part' and quantity_id != 'all':
         form = UpdatePartThresh()
-        results = dbm.get_part_information(part_id=van_number)
+        results = dbm.get_part_information(part_id=quantity_id)
         return render_template('load/display_part_table.html', parts=results, form=form)
     # if table_name is vans_list, and van_number is all, return the following
-    elif table_name == 'vans_list' and van_number == 'all':
+    elif table_name == 'vans_list' and quantity_id == 'all':
         update_form = UpdateVanForm()
         van_nums = dbm.get_van_nums()
         return render_template('load/vans_list.html', van_numbers=van_nums, update_form=update_form)
-    elif table_name == 'part_type_list' and van_number != 'all':
-        results = dbm.get_part_type_by_name(type_name=van_number)
+    elif table_name == 'part_type_list' and quantity_id != 'all':
+        results = dbm.get_part_type_by_name(type_name=quantity_id)
         update_form = UpdatePartsForm()
         update_form.newVan.choices = dbm.get_selections()
         update_form.newUnit.choices = dbm.get_part_type_names()
         return render_template('load/display_part_type_table.html', results=results, update_form=update_form)
-    elif table_name == 'part_type_list' and van_number == 'all':
+    elif table_name == 'part_type_list' and quantity_id == 'all':
         add_type_form = AddTypeForm()
+        update_type_form = UpdateTypeForm()
         results = dbm.get_part_types()
-        return render_template('load/type_table.html', results=results, form=add_type_form)
+        return render_template('load/type_table.html', results=results, form=add_type_form,
+                               update_form=update_type_form)
     # If the url is attempted to be accessed, redirect to index
     else:
         return redirect(url_for('index'))
@@ -294,6 +298,11 @@ def delete(id_type):
     elif request.method == 'POST' and id_type == 'user':
         user_id = request.form.get('user_id')
         dbm.delete_account(user_id)
+    # If the id_type is a type, delete the type
+    elif request.method == 'POST' and id_type == 'type':
+        form = UpdateTypeForm()
+        type_id = form.id.data
+        dbm.delete_part_type(type_id)
     # If the /delete route is accessed, re-route to index
     return redirect(url_for('index'))
 
@@ -333,6 +342,12 @@ def update(id_type):
             user_id = request.form.get('user_id')
             value = request.form.get('value')
             dbm.modify_admin(user_id, value)
+        elif request.method == 'POST' and id_type == 'type':
+            update_type_form = UpdateTypeForm()
+            type_id = update_type_form.id.data
+            type_unit = update_type_form.newTypeUnit.data
+            type_name = update_type_form.newTypeName.data
+            dbm.update_part_type(type_id=type_id, type_unit=type_unit, type_name=type_name)
         # If the /update route is accessed, re-route to index
         return redirect(url_for('index'))
     except TypeError as e:

@@ -1,9 +1,28 @@
-  <table class="table" id="table">
-    <th>Type Name</th><th>Type Unit</th>
+<table class="table" id="table">
+    <th>Type Name</th><th>Type Unit</th><th>Action</th>
         {% for row in results %}
         <tr>
-            <td><a href="/parts/type/{{ row[1] }}">{{ row[1] }}</a></td>
-            <td>{{ row[2] }}</td>
+            {{ update_form.id(value=row[0]) }}
+            <td><a id="thisPartTypeName{{ row[0] }}" href="/parts/type/{{ row[1] }}">{{ row[1] }}</a>
+            {{ update_form.newTypeName(class='newTypeName', pattern='^\w+( +\w+)*$',
+            placeholder=update_form.newTypeName.label.text, id='newTypeName' ~ row[0], value=row[1],
+            data_value=row[0]) }}</td>
+            <td> <p id="thisPartTypeUnit{{ row[0] }}">{{ row[2] }}</p>
+            {{ update_form.newTypeUnit(class='newTypeUnit', pattern='^\w+( +\w+)*$',
+            placeholder=update_form.newTypeUnit.label.text, id='newTypeUnit' ~ row[0], value=row[2],
+            data_value=row[0]) }}</td>
+            <td><p class="confirmMe" id="confirmMe{{ row[0] }}">Are you sure?
+            <input type="button" class="yesBtn" id="yesBtn{{ row[0] }}" value="Yes" name="yesBtn"
+            data-value="{{ row[0] }}" />
+            <input type="button" class="noBtn" id="noBtn{{ row[0] }}" value="No" name="noBtn"
+            data-value="{{ row[0] }}" /></p>
+            <input type="button" class="deleteBtn" value="Delete" id="deleteBtn{{ row[0] }}" name="deleteBtn"
+            data-value="{{ row[0] }}" />
+            <input type="button" class="updateBtn" name="updateBtn" id="updateBtn{{ row[0] }}" value="Edit"
+            data-value="{{ row[0] }}" />
+            {{ update_form.confirmUpdateBtn(class=update_form.confirmUpdateBtn.name, id=update_form.confirmUpdateBtn.name ~ row[0], data_value=row[0]) }}
+            <input type="button" class="cancelUpdateBtn" name="cancelUpdateBtn" id="cancelUpdateBtn{{ row[0] }}" value="Cancel"
+            data-value="{{ row[0] }}" /></td>
         </tr>
         {% endfor %}
   </table>

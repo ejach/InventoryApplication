@@ -7,6 +7,10 @@ a:visited {
   color: blue;
 }
 
+.newTypeName,.newTypeUnit {
+  display: none;
+}
+
 .sidenav {
   display: none;
   width: 200px;
