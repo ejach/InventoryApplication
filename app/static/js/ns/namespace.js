@@ -502,6 +502,28 @@
           }, 5000);
       });
     },
+    // Functionality to add part type on /parts/type
+    addType : function (getPath) {
+      let typeName = $('#typeName');
+      let typeUnit = $('#typeUnit');
+      let submitBtn = $('#submit');
+      let instructions = $('#instructions');
+      let form = $('#myForm');
+      $(submitBtn).click(function (event) {
+        event.preventDefault();
+        if (typeName.val() && typeUnit.val()) {
+          let url = '/parts/type'
+          let data = 'typeName=' + typeName.val() + '&typeUnit=' + typeUnit.val();
+          postRequest(url, data, submitBtn, null, getPath);
+          toggleProps(submitBtn);
+          $(form).trigger('reset');
+          $(instructions).html('Enter a Part Type and a Part Unit ' +
+              '(i.e. measure capacity in how many Feet, Parts, etc.):  ').css('color', 'black');
+        } else {
+          $(instructions).html('Invalid or blank input not allowed.').css('color', 'red');
+        }
+      });
+    },
     loginUser : function () {
       let username = $('#username');
       let password = $('#password');

@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 
 
 # Import a module by URL and return it
-def import_cdn(uri, name=None):
+def import_file(uri, name=None):
     # Download the file
     wget.download(uri)
     if not name:
@@ -55,7 +55,7 @@ engine = create_engine(url, echo=True)
 session = Session(engine)
 
 # Import the module from GitHub
-dbm = import_cdn('https://raw.githubusercontent.com/ejach/InventoryApplication/main/app/Database/DatabaseTables.py')
+dbm = import_file('https://raw.githubusercontent.com/ejach/InventoryApplication/dev/app/Database/DatabaseTables.py')
 
 if admin_pass and admin_user and conf_admin_pass:
 

@@ -9,6 +9,7 @@ from flask_wtf import CSRFProtect
 from werkzeug.exceptions import HTTPException, abort
 
 from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, get_difference
+from app.Forms.AddTypeForm import AddTypeForm
 from app.decorators.flask_decorators import login_required, admin_login_required
 from app.Forms.LoginForm import LoginForm
 from app.Forms.PartsForm import PartsForm
@@ -191,11 +192,16 @@ def low_parts():
     return render_template('low_parts.html', results=results)
 
 
-# Route for displaying the type of parts
-@app.route('/parts/type', strict_slashes=False, methods=['GET'])
+# Route for displaying/adding the type of parts
+@app.route('/parts/type', strict_slashes=False, methods=['GET', 'POST'])
 def type_parts():
+    add_type_form = AddTypeForm()
     results = dbm.get_part_types()
-    return render_template('type_parts.html', results=results)
+    if request.method == 'POST':
+        type_name = add_type_form.typeName.data
+        type_unit = add_type_form.typeUnit.data
+        dbm.insert_part_type(str(type_name), str(type_unit))
+    return render_template('type_parts.html', results=results, form=add_type_form)
 
 
 # Route for displaying parts by Type ID
@@ -264,6 +270,10 @@ def table(table_name, van_number):
         update_form.newVan.choices = dbm.get_selections()
         update_form.newUnit.choices = dbm.get_part_type_names()
         return render_template('load/display_part_type_table.html', results=results, update_form=update_form)
+    elif table_name == 'part_type_list' and van_number == 'all':
+        add_type_form = AddTypeForm()
+        results = dbm.get_part_types()
+        return render_template('load/type_table.html', results=results, form=add_type_form)
     # If the url is attempted to be accessed, redirect to index
     else:
         return redirect(url_for('index'))
