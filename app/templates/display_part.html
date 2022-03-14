@@ -16,7 +16,9 @@
 
         <p id="myVan">Van Number: <a href="/vans/{{ row[4] }}">{{ row[4] }}</a></p>
 
-        <p id="myAmount">Amount: {{ row[2] }}</p>
+        <p id="myAmount">Amount: {{ row[2] }} {{ row[7] }}</p>
+
+        <p id="myType">Type: <a href="/parts/type/{{ row[6] }}">{{ row[6] }}</a></p>
     {% if not row[5] %}
         <input type="button" value="Set minimum threshold" id="updateThresh" class="updateThresh" />
         {{ form.newThresh(class=form.newThresh.name, min=1, default=1, id=form.newThresh.name, value=1, placeholder='Threshold') }}

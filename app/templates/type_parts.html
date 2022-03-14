@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block scripts %}
+<script src= "{{ url_for('static', filename='js/ns/namespace.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/parts/parts-addPartType.js') }}"></script>
+{% endblock %}
+{% block content %}
+    <form id="myForm">
+        <p id="instructions">Enter a Part Type and a Part Unit (i.e. measure capacity in how many Feet, Parts, etc.): </p>
+        {{ form.typeName(placeholder=form.typeName.label.text, pattern='^\w+( +\w+)*$') }}
+        {{ form.typeUnit(placeholder=form.typeUnit.label.text, pattern='^\w+( +\w+)*$') }}
+        {{ form.submit(value='Add Part Type') }}
+    </form>
+  <table class="table" id="table">
+    <th>Type Name</th><th>Type Unit</th>
+        {% for row in results %}
+        <tr>
+            <td><a href="/parts/type/{{ row[1] }}">{{ row[1] }}</a></td>
+            <td>{{ row[2] }}</td>
+        </tr>
+        {% endfor %}
+  </table>
+{% endblock %}

@@ -20,4 +20,8 @@ class UpdatePartsForm(FlaskForm):
     newVan = SelectField(
         validators=[DataRequired()]
     )
+    newUnit = SelectField(
+        'Select Unit',
+        validators=[DataRequired()]
+    )
     confirmUpdateBtn = SubmitField('Submit')
