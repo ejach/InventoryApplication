@@ -224,7 +224,7 @@ class DatabaseManipulator:
     @db_connector
     def update_part_type(self, type_id: str, type_name: str, type_unit: str, **kwargs) -> None:
         connection = kwargs.pop('connection')
-        if check_input(type_name) and check_input(type_unit) and check_input(type_id):
+        if check_input(type_name) and check_input(type_unit):
             stmt = (update(PartType).values(type_name=type_name, type_unit=type_unit).where(PartType.id == type_id))
             connection.execute(stmt)
             connection.commit()
