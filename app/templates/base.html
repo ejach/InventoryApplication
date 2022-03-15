@@ -3,8 +3,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="user-scalable=no" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
-{% if 'https' in request.base_url %}
-<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+{% if config.DYNO %}
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 {% endif %}
 <link rel="shortcut icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
 <link rel=stylesheet href="{{ url_for('static', filename='css/stylesheet.css') }}">
