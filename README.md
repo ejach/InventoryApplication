@@ -47,7 +47,7 @@ DYNO=FALSE
 
     _Make sure that your user has read/write permissions in the database/table that has been created or else it will not work._
 
-6. Setup your database and add an admin account by running `$ python setup.py`
+6. Setup your database and add an admin account by running `$ python db_setup.py`
 
 7. Run the program using `python wsgi.py`
 
