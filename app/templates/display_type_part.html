@@ -6,7 +6,7 @@
 {% endblock %}
 {% block content %}
     {% if results %}
-    <p id="instructions">{{ results[0][5] }}</p>
+        <p id="instructions">Part Type: <b>{{ results[0][5] }}</b></p>
     {% endif %}
   <table class="table" id="table">
     <th>Part Name</th><th>Part Number</th><th>Van</th><th>Amount</th><th>Type</th><th>Action</th><br/>
