@@ -556,6 +556,8 @@
         $(noBtn).off().click(function () {
           toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, updateBtnCls);
           toggleMe(yesBtn, noBtn, newTypeName, newTypeUnit, typeUnit, typeName, updateBtn, denyBtn);
+          newTypeName.val(origVal(newTypeName));
+          newTypeUnit.val(origVal(newTypeUnit));
         });
       });
     },
