@@ -253,7 +253,7 @@ def table(table_name, quantity_id):
         van_nums = dbm.get_van_nums()
         # Set the choices for selecting a new van
         update_form.newVan.choices = dbm.get_selections()
-        update_form.newUnit.choices = dbm.get_part_types()
+        update_form.newUnit.choices = dbm.get_part_type_names()
         return render_template('load/parts_table.html', results=results, van_nums=van_nums, form=form,
                                update_form=update_form)
     # Requirements for the individual attributes for a part
