@@ -270,7 +270,7 @@
               } else {
                  return $('#vanNumber'+id+' option:selected').text();
               }
-            }
+            };
             if (!partNameHtml || !partNumberHtml || !partAmountHtml || parseInt(partAmountHtml) < 0) {
               $(instructions).html('Blank or invalid input will not be accepted.').css('color', 'red');
               toggleProps('.deleteBtn', '.updateBtn');
@@ -285,7 +285,7 @@
                 } else {
                   return $(instructions).html('Part Type: ' + '<b>' + window.location.pathname.split('/')[3] + '</b>').css('color', 'black');
                 }
-              }
+              };
               text = 'id=' + id + '&partName=' + partNameHtml + '&newPartAmount=' + partAmountHtml + '&partNumber=' + partNumberHtml + '&newVan=' + vanNumHtml()
               + '&newUnit=' + partUnitHtml;
               url = (window.location.pathname.split('/')[2] !== 'type' && window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) ? '/update/van/' : '/update/part/';
@@ -512,7 +512,7 @@
       $(submitBtn).click(function (event) {
         event.preventDefault();
         if (typeName.val() && typeUnit.val()) {
-          let url = '/parts/type'
+          let url = '/parts/type';
           let data = 'typeName=' + typeName.val() + '&typeUnit=' + typeUnit.val();
           postRequest(url, data, submitBtn, null, getPath);
           toggleProps(submitBtn);
