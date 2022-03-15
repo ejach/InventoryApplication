@@ -521,6 +521,11 @@
               '(i.e. measure capacity in how many Feet, Parts, etc.):  ').css('color', 'black');
         } else {
           $(instructions).html('Invalid or blank input not allowed.').css('color', 'red');
+          // Disable the submit button for 3 seconds after invalid input detected
+          toggleProps(submitBtn);
+          setTimeout(function () {
+            toggleProps(submitBtn);
+          }, 3000);
         }
       });
     },
