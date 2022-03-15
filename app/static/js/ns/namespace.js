@@ -283,7 +283,7 @@
                 } else if (window.location.pathname.split('/')[1] === 'parts' && window.location.pathname.split('/')[2] !== 'type' && !window.location.pathname.split('/')[3]) {
                   return $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Van Number: ').css('color', 'black');
                 } else {
-                  return $(instructions).html('' + window.location.pathname.split('/')[3]).css('color', 'black');
+                  return $(instructions).html('Part Type: ' + '<b>' + window.location.pathname.split('/')[3] + '</b>').css('color', 'black');
                 }
               }
               text = 'id=' + id + '&partName=' + partNameHtml + '&newPartAmount=' + partAmountHtml + '&partNumber=' + partNumberHtml + '&newVan=' + vanNumHtml()
