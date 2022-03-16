@@ -175,6 +175,12 @@
       });
     },
     addPart : function ($getPath) {
+      let vanNum = window.location.pathname.split('/')[2] ? window.location.pathname.split('/')[2]
+          : $('#van').val();
+      let createJobBtn = $('#createJobBtn');
+      $('#myBtn').off().on('click', createJobBtn, function () {
+         window.location.replace('/jobs/' + vanNum);
+      });
       $('#submit').click(function (event) {
         // Prevents form from submitting
         event.preventDefault();
@@ -186,7 +192,6 @@
         let partNumber = $('#partNumber');
         let unit = $('#unit').val();
         let instructions = $('#instructions');
-        let vanNum = window.location.pathname.split('/')[2] ? window.location.pathname.split('/')[2] : $('#van').val();
         // Append vanNum from URL to the formData object if the current window is not /parts
         if (window.location.pathname !== '/parts') {
           let vanNum = window.location.pathname.split('/')[2];
