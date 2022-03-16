@@ -32,7 +32,6 @@ csrf.init_app(app)
 # Only trigger SSLify if the app is running on Heroku
 if 'DYNO' in environ:
     Talisman(app, content_security_policy=csp)
-    app.config['DYNO'] = True
 
 # Instantiate the DatabaseManipulator
 dbm = DatabaseManipulator()
