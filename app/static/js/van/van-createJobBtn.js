@@ -1,7 +1,7 @@
 $(function() {
     let createJobBtn = $('#createJobBtn');
     let vanNum = window.location.pathname.split('/')[2];
-    $('form').off().on('click', createJobBtn, function () {
+    $(createJobBtn).off().click(function () {
        window.location.replace('/jobs/' + vanNum);
     });
 });

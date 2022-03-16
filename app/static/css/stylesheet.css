@@ -3,6 +3,10 @@
     text-decoration: inherit;
 }
 
+#formElement {
+  display: none;
+}
+
 a:visited {
   color: blue;
 }
@@ -71,6 +75,10 @@ a:visited {
     width: 150px;
     float: left;
     display: none;
+}
+
+#warning {
+    color: red;
 }
 
 .createJobBtn {

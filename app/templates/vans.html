@@ -9,7 +9,7 @@
 {% block content %}
 {#    If the van_numbers is empty, throw the following error    #}
 {% if van_numbers == [] %}
-<p style="color:red;">The database is empty, consider adding a van.</p>
+<p id="warning">The database is empty, consider adding a van.</p>
 {% else %}
 <p id="instructions">Select a van: </p>
 {% endif %}
@@ -41,7 +41,7 @@
 {% if session['is_admin'] %}
   <span id="addVan">
     <img id="myCard" src="{{ url_for('static', filename='assets/add-button.svg') }}" width="100px" height="100px" />
-  </span><p id="paragraph">Add Van</p><form style="display: none;" id="formElement">
+  </span><p id="paragraph">Add Van</p><form id="formElement">
     {{ form.van_number(placeholder=form.van_number.label.text) }}
     {{ form.btnSubmit(value=form.btnSubmit.label.text) }}</form>
 {% endif %}
