@@ -3,7 +3,9 @@
     {% if not results %}
     <input type="button" value="Create Job" id="createJobBtn" class="createJobBtn" disabled />
     {% else %}
-    <input type="button" value="Create Job" id="createJobBtn" class="createJobBtn" formnovalidate/>
+    <div id="myBtn">
+        <input type="button" value="Create Job" id="createJobBtn" class="createJobBtn" formnovalidate/>
+    </div>
     {% endif %}
   <p id="instructions">Enter the Part Name,  Part Number, and Part Amount: </p>
     {{ form.partName(placeholder='Part Name', pattern='^\w+( +\w+)*$') }}
