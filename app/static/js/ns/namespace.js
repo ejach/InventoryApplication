@@ -186,6 +186,7 @@
         let partNumber = $('#partNumber');
         let unit = $('#unit').val();
         let instructions = $('#instructions');
+        let vanNum = window.location.pathname.split('/')[2] ? window.location.pathname.split('/')[2] : $('#van').val();
         // Append vanNum from URL to the formData object if the current window is not /parts
         if (window.location.pathname !== '/parts') {
           let vanNum = window.location.pathname.split('/')[2];
