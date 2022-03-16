@@ -175,12 +175,6 @@
       });
     },
     addPart : function ($getPath) {
-      let vanNum = window.location.pathname.split('/')[2] ? window.location.pathname.split('/')[2]
-          : $('#van').val();
-      let createJobBtn = $('#createJobBtn');
-      $('#myBtn').off().on('click', createJobBtn, function () {
-         window.location.replace('/jobs/' + vanNum);
-      });
       $('#submit').click(function (event) {
         // Prevents form from submitting
         event.preventDefault();
