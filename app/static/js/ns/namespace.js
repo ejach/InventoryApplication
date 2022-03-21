@@ -571,6 +571,7 @@
         let id = this.dataset.value;
         let updateBtnCls = $('.updateBtn');
         let denyBtn = $('#deleteBtn' + id);
+        let noBtn = $('#noBtn' + id);
         let denyBtnCls = $('.denyBtn');
         let confirmBtnCls = $('.confirmBtn');
         let deleteBtnCls = $('.deleteBtn');
@@ -584,6 +585,10 @@
           let data = 'id=' + id;
           let toggles = ['.confirmBtn', '.deleteBtn', '.denyBtn'].toString();
           postRequest(url, data, toggles, null, getPath, null, 'delete');
+        });
+        $(noBtn).off().click(function () {
+          toggleProps(confirmBtnCls, denyBtnCls, deleteBtnCls, updateBtnCls);
+          toggleMe(confirmMe, updateBtn, denyBtn);
         });
       });
     },
