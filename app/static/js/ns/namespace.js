@@ -60,7 +60,11 @@
         },
         // On failure, print errors
         error: function (e) {
-          console.log('ERROR : ', e);
+          if (e.status === 409) {
+            $('#instructions').html('Duplicate entries are not allowed.').css('color', 'red');
+          } else {
+            console.log('ERROR : ', e);
+          }
           toggleProps(toggles);
           $('html').css('cursor', 'default');
         }
@@ -243,7 +247,7 @@
         selectVanElem.find('option[value="'+vanNumOptVal+'"]').attr('selected',true);
         selectUnitElem.find('option[value="'+partUnitOptVal+'"]').attr('selected',true);
         toggleProps('.deleteBtn', '.updateBtn');
-        $('#table').off('click').on('click', '#confirmUpdateBtn'+id, function() {
+        $('#table').off('click').on('click', '#confirmUpdateBtn'+id, function(event) {
           let text;
           let url;
           toggleElem(id);
