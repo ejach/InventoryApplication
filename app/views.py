@@ -202,7 +202,11 @@ def type_parts():
     if request.method == 'POST':
         type_name = add_type_form.typeName.data
         type_unit = add_type_form.typeUnit.data
-        dbm.insert_part_type(str(type_name), str(type_unit))
+        if not dbm.check_if_type_exists(str(type_name.lower())):
+            dbm.insert_part_type(str(type_name), str(type_unit))
+        else:
+            return render_template('type_parts.html', results=results, form=add_type_form,
+                                   update_form=update_type_form), 409
     return render_template('type_parts.html', results=results, form=add_type_form, update_form=update_type_form)
 
 
@@ -347,7 +351,8 @@ def update(id_type):
             type_id = update_type_form.id.data
             type_unit = update_type_form.newTypeUnit.data
             type_name = update_type_form.newTypeName.data
-            dbm.update_part_type(type_id=type_id, type_unit=type_unit, type_name=type_name)
+            if not dbm.check_if_type_exists(type_name.lower()):
+                dbm.update_part_type(type_id=type_id, type_unit=type_unit, type_name=type_name)
         # If the /update route is accessed, re-route to index
         return redirect(url_for('index'))
     except TypeError as e:
