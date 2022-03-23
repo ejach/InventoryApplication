@@ -198,9 +198,11 @@
         }
         if (!Number.isFinite(amount) && amount.val() && partName.val() && partNumber.val() && vanNum && unit &&
         parseInt(amount.val()) !== amount.val() && parseInt(amount.val()) > 0) {
-          postRequest('/parts', data, ('#submit'), 'multipart/form-data', $getPath,window.location.pathname.split('/')[2]
+          postRequest('/parts', data, ('#submit'), 'multipart/form-data', $getPath,
+              window.location.pathname.split('/')[2]
           ? $(instructions).html('Enter the Part Name, Part Number, and Part Amount: ').css('color', 'black')
-          : $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Van Number: ').css('color', 'black'), 'insert');
+          : $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Van Number: ')
+                  .css('color', 'black'), 'insert');
           $(form).trigger('reset');
           // If amount is blank, or the amount is NaN notify the user
         } else {
@@ -261,6 +263,9 @@
               $(instructions).html('Select a van: ').css('color', 'black');
             } else {
               $(instructions).html('Blank input will not be accepted.').css('color', 'red');
+              setTimeout(function () {
+              toggleProps('.deleteBtn', '.updateBtn');
+              }, 3000);
             }
           } else {
             let partNumberHtml = partNumber.val();

@@ -369,7 +369,12 @@ def vans():
     van_numbers = dbm.get_van_nums()
     if request.method == 'POST':
         van_number = unquote(form.van_number.data)
-        dbm.insert_van(van_number)
+        # If the van doesn't exist, insert it
+        if not dbm.check_if_exists(van_number.lower()):
+            dbm.insert_van(van_number)
+        # Return 409 if the van already exists
+        else:
+            return render_template('vans.html', van_numbers=van_numbers, form=form, update_form=update_form), 409
     try:
         return render_template('vans.html', van_numbers=van_numbers, form=form, update_form=update_form)
     except IndexError:
