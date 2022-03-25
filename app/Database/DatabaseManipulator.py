@@ -1,9 +1,9 @@
 from os import environ
 from re import compile, IGNORECASE
 
-from vonage import vonage
 from bcrypt import gensalt, hashpw, checkpw
 from sqlalchemy import insert, select, update, delete, func, distinct
+from vonage import Sms, Client
 
 from app.Database.DatabaseTables import Account, Van, Job, Part, PartType
 from app.decorators.flask_decorators import db_connector
@@ -231,7 +231,10 @@ class DatabaseManipulator:
         pattern = compile(r'^[\dA-Z]{3}-[\dA-Z]{3}-[\dA-Z]{4}$', IGNORECASE)
         stmt = (select(Account.phone_num).where(Account.phone_num == phone_num))
         results = connection.execute(stmt).fetchall()
-        if pattern.match(phone_num) is not None and not results:
+        client = Client(key=environ.get('VONAGE_API_KEY'), secret=environ.get('VONAGE_API_SECRET'))
+        # Make sure the phone number is valid
+        insight_json = client.get_standard_number_insight(number='1' + phone_num.replace('-', ''))
+        if pattern.match(phone_num) is not None and not results and insight_json['status'] == 0:
             return True
         else:
             return False
@@ -244,14 +247,14 @@ class DatabaseManipulator:
         stmt = (select(Account.phone_num).where(Account.username == username))
         phone_num = [i[0] for i in connection.execute(stmt).fetchall()]
         # Line to separate each row for readability
-        line = '-'*20
-        client = vonage.Client(key=environ.get('VONAGE_API_KEY'), secret=environ.get('VONAGE_API_SECRET'))
+        line = '-' * 20
+        client = Client(key=environ.get('VONAGE_API_KEY'), secret=environ.get('VONAGE_API_SECRET'))
+        sms = Sms(client)
         # Format the list so it is readable
         low_parts = ['Part Name: ' + str(i[1]) + ', Part Number: ' + str(i[3]) + ', Van Number: ' + str(i[4]) +
                      ', Current Amount: ' + str(i[2]) + ', Part Threshold: ' + str(i[5]) + '\n' + line
                      for i in self.get_low_parts()]
         message = line + '\n' + '\n'.join(low_parts)
-        sms = vonage.Sms(client)
         response_data = sms.send_message(
             {
                 'from': environ.get('VONAGE_PHONE'),

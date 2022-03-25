@@ -10,17 +10,17 @@ from werkzeug.exceptions import HTTPException, abort
 
 from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, get_difference
 from app.Forms.AddTypeForm import AddTypeForm
-from app.Forms.LowPartsForm import LowPartsForm
-from app.Forms.UpdateTypeForm import UpdateTypeForm
-from app.decorators.flask_decorators import login_required, admin_login_required
 from app.Forms.LoginForm import LoginForm
+from app.Forms.LowPartsForm import LowPartsForm
 from app.Forms.PartsForm import PartsForm
 from app.Forms.RegisterForm import RegisterForm
-from app.Forms.UpdatePartsForm import UpdatePartsForm
-from app.Forms.UpdateVanForm import UpdateVanForm
 from app.Forms.UpdatePartThresh import UpdatePartThresh
+from app.Forms.UpdatePartsForm import UpdatePartsForm
+from app.Forms.UpdateTypeForm import UpdateTypeForm
+from app.Forms.UpdateVanForm import UpdateVanForm
 from app.Forms.VanForm import VanForm
 from app.csp import csp
+from app.decorators.flask_decorators import login_required, admin_login_required
 
 # Initialize the app
 app = Flask(__name__)
