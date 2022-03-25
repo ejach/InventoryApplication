@@ -38,10 +38,16 @@ password=root
 db_port=3306
 # Database schema name in the MySQL database (default is parts)
 db_schema=parts
+# Database table in the MySQL database (default is parts)
+db=parts
 # A string of text or characters used in the Flask sessions module
 SECRET_KEY=YOURKEY
 # Only use/uncomment if you are planning on deploying to Heroku; Default is False
 DYNO=FALSE
+# Need to have an account and API key with Vonage to support SMS texting
+VONAGE_API_KEY=xxx
+VONAGE_API_SECRET=xxx
+VONAGE_PHONE=1xxxxxxxxxx
 ```
 5. Install the requirements `$ pip install -r requirements.txt`
 
