@@ -8,8 +8,9 @@ from flask_talisman import Talisman
 from flask_wtf import CSRFProtect
 from werkzeug.exceptions import HTTPException, abort
 
-from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, get_difference
+from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, get_difference, check_phone_num
 from app.Forms.AddTypeForm import AddTypeForm
+from app.Forms.LowPartsForm import LowPartsForm
 from app.Forms.UpdateTypeForm import UpdateTypeForm
 from app.decorators.flask_decorators import login_required, admin_login_required
 from app.Forms.LoginForm import LoginForm
@@ -113,8 +114,10 @@ def register():
             username = form.username.data
             password = form.password.data
             conf_password = form.confPass.data
-            register_user = dbm.register(username, password, conf_password)
-            if register_user:
+            phone_num = form.phone.data
+            check_num = check_phone_num(phone_num)
+            register_user = dbm.register(username, password, conf_password, phone_num)
+            if register_user and check_num:
                 return redirect(url_for('login'))
             else:
                 return render_template('register.html', form=form), 409
@@ -186,11 +189,19 @@ def display_part(part_id):
 
 
 # Route for displaying low parts
-@app.route('/parts/low', strict_slashes=False, methods=['GET'])
+@app.route('/parts/low', strict_slashes=False, methods=['GET', 'POST'])
 @login_required
 def low_parts():
+    low_parts_form = LowPartsForm()
+    phone_num_res = [i[0] for i in dbm.get_phone_numbers()]
+    low_parts_form.user.choices = phone_num_res
     results = dbm.get_low_parts()
-    return render_template('low_parts.html', results=results)
+    if request.method == 'POST':
+        message_user = dbm.send_text(low_parts_form.user.data)
+        # If message is not sent, return HTTP 400
+        if not message_user:
+            return render_template('low_parts.html', results=results, form=low_parts_form), 400
+    return render_template('low_parts.html', results=results, form=low_parts_form)
 
 
 # Route for displaying/adding the type of parts

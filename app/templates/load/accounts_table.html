@@ -1,5 +1,5 @@
 <table id="table" class="table">
-            <th>Username</th><th>Admin</th><th>Confirmed</th><th>Action</th>
+            <th>Username</th><th>Admin</th><th>Confirmed</th><th>Phone Number</th><th>Action</th>
         {% for row in users %}
             <tr>
                 <td>{{ row[1] }}</td>
@@ -10,6 +10,7 @@
                 {% endif %}
                 {% if row[3] == 1 %}
                     <td>Yes</td>
+                    <td>{{ row[4] }}</td>
                     <td class="delRow" id="delRow{{ row[0] }}"><input type="button" value="Delete" class="deleteBtn" id="deleteBtn{{ row[0] }}" data-value="{{ row[0] }}" />
                     <input type="button" value="{{ 'Make Admin' if row[2] == 0 else 'Remove Admin' }}" class="makeAdminBtn" id="makeAdminBtn{{ row[0] }}" data-value="{{ row[0] }}" />
                     <p class="confirmNote" id="confirmNote{{ row[0] }}">Are you sure?</p>
@@ -25,6 +26,7 @@
                             data-value="{{ row[0] }}" />
                             <input type="button" class="denyNoBtn" id="denyNoBtn{{ row[0] }}" value="No" name="noBtn"
                             data-value="{{ row[0] }}" /></td>
+                        <td>{{ row[4] }}</td>
                         <td><input type="button" value="Delete" disabled/><input type="button" value="Make Admin" disabled/></td>
                 {% endif %}
             </tr>
