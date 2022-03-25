@@ -738,7 +738,8 @@
               $('html').css('cursor', 'default');
               toggleInput('#username', '#password', '#confPass', '#phone');
               if (e.status === 409) {
-                $(instructions).html('Username or phone number already exists, please try again').css('color', 'red');
+                $(instructions).html('Username or phone number already exists or is invalid, please try again')
+                    .css('color', 'red');
                 $('#username').val(null);
               } else {
                 console.log('ERROR : ', e);
