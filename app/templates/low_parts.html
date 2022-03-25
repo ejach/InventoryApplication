@@ -6,7 +6,7 @@
 {% block content %}
     <div id="table">
     <h3>Low parts</h3>
-    {% if session['is_admin'] %}
+    {% if session['is_admin'] and results|length > 0 %}
         <p id="instructions">Select user to send Low Parts list to: </p>
         <select name="phone" id="phone">
             {% for option in form.user %}
