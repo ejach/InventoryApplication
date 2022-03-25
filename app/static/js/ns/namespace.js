@@ -152,6 +152,50 @@
         });
       });
     },
+    textList : function () {
+      let submitBtn = $('#submitBtn');
+      let instructions = $('#instructions');
+      $(submitBtn).off().click(function () {
+        let phone = $('#phone').val();
+        toggleProps('#submitBtn');
+        if (phone !== null) {
+          $('html').css('cursor', 'progress');
+          let data = 'user=' + phone;
+          $.ajax({
+              type: 'POST',
+              enctype: null,
+              url: '/parts/low',
+              data: data,
+              cache: false,
+              timeout: 800000,
+              // On success, load the span from the getPath
+              success: function () {
+                $(instructions).html('Message sent successfully').css('color', 'green');
+                setTimeout(function () {
+                  $(instructions).html('Select user to send Low Parts list to:').css('color', 'black');
+                  toggleProps('#submitBtn');
+                }, 5000);
+                $('html').css('cursor', 'default');
+              },
+              // On failure, print errors
+              error: function (e) {
+                if (e.status === 400) {
+                  $(instructions).html('Message failed to send').css('color', 'red');
+                } else {
+                  console.log('ERROR : ', e);
+                }
+                setTimeout(function () {
+                  toggleProps('#submitBtn');
+                }, 5000);
+                $('html').css('cursor', 'default');
+              }
+            });
+        } else {
+          toggleProps('#submitBtn');
+          $(instructions).html('Blank input will not be accepted').css('color', 'red');
+        }
+      });
+    },
     updateThresh : function ($getpath) {
      $(document).off('click').on('click', '.updateThresh', function () {
         let updateBtn = $('#updateThresh');
@@ -654,20 +698,26 @@
     },
     registerUser : function () {
       let registerBtn = $('#registerBtn');
+      $('input[id="phone"]').keyup(function() {
+        $(this).val($(this).val().replace(/^(\d{3})(\d{3})(\d+)$/, '$1-$2-$3'));
+      });
       // On submit, execute the following
       $(registerBtn).click(function (event) {
         let username = $('#username');
         let password = $('#password');
         let confPass = $('#confPass');
+        let phone = $('#phone');
         let instructions = $('#instructions');
+        // Make sure the regex meets the required format
         event.preventDefault();
-        if (password.val() === confPass.val() && username.val() && password.val() && confPass.val()) {
+        if (password.val() === confPass.val() && username.val() && password.val() && confPass.val() && phone.val()
+        && phone.val().match(/^[\dA-Z]{3}-[\dA-Z]{3}-[\dA-Z]{4}$/)) {
           // Prevents form from submitting
           const form = $('#registerForm')[0];
           const data = new FormData(form);
           // Disable submit button until something happens
           $(registerBtn).prop('disabled', true);
-          toggleInput('#username', '#password', '#confPass');
+          toggleInput('#username', '#password', '#confPass', '#phone');
           $('html').css('cursor', 'progress');
           $.ajax({
             type: 'POST',
@@ -686,9 +736,9 @@
             // On failure, print errors and re-enable the submit button
             error: function (e) {
               $('html').css('cursor', 'default');
-              toggleInput('#username', '#password', '#confPass');
+              toggleInput('#username', '#password', '#confPass', '#phone');
               if (e.status === 409) {
-                $(instructions).html('Username already exists, please try again').css('color', 'red');
+                $(instructions).html('Username or phone number already exists, please try again').css('color', 'red');
                 $('#username').val(null);
               } else {
                 console.log('ERROR : ', e);
@@ -696,7 +746,8 @@
               $(registerBtn).prop('disabled', false);
             }
           });
-        } else if (password.val() !== confPass.val() || !password.val() || !confPass.val() || !username.val()) {
+        } else if (password.val() !== confPass.val() || !password.val() || !confPass.val() || !username.val()
+            || !phone.val() || !phone.val().match(/^[\dA-Z]{3}-[\dA-Z]{3}-[\dA-Z]{4}$/)) {
           $(instructions).html('Username, Password, and Confirm Password must not be empty and passwords must match')
           .css('color', 'red');
         } else {

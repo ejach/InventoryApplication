@@ -1,7 +1,23 @@
 {% extends "base.html" %}
+{% block scripts %}
+    <script src= "{{ url_for('static', filename='js/ns/namespace.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/accounts-sendText.js') }}"></script>
+{% endblock %}
 {% block content %}
     <div id="table">
-    <p id="instructions">Low parts</p>
+    <h3>Low parts</h3>
+    {% if session['is_admin'] %}
+        <p id="instructions">Select user to send Low Parts list to: </p>
+        <select name="phone" id="phone">
+            {% for option in form.user %}
+                {% if loop.first %}
+                    <option value="" disabled selected>{{ form.user.label.text }}</option>
+                {% endif %}
+                    {{ option }}
+            {% endfor %}
+        </select>
+    {{ form.submitBtn }}
+    {% endif %}
     <table class="table">
     <th>Part Name</th><th>Part Number</th><th>Van Number</th><th>Amount</th><th>Threshold</th>
         {% for row in results %}

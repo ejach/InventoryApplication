@@ -1,0 +1,3 @@
+$(function() {
+    ns.textList();
+});

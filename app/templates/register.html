@@ -9,6 +9,7 @@
     {{ form.username(placeholder='Username', pattern='^\w+( +\w+)*$') }}
     {{ form.password(placeholder='Password', pattern='^\w+( +\w+)*$') }}
     {{ form.confPass(placeholder='Confirm Password', pattern='^\w+( +\w+)*$') }}
+    {{ form.phone(placeholder=form.phone.name, maxlength=12) }}
     {{ form.submit(value='Register') }}
   <a href="/login" id="registerText">Already have an account? Click here to Login</a><br/>
 </form>

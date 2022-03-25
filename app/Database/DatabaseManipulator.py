@@ -1,3 +1,7 @@
+from os import environ
+from re import compile, IGNORECASE
+
+import vonage as vonage
 from bcrypt import gensalt, hashpw, checkpw
 from sqlalchemy import insert, select, update, delete, func, distinct
 
@@ -8,6 +12,19 @@ from app.decorators.flask_decorators import db_connector
 # Prevent inputs that only contain spaces from being entered into the database
 def check_input(test_input: str) -> bool:
     if test_input and not test_input.isspace() and '-' not in test_input:
+        return True
+    else:
+        return False
+
+
+# Check that the phone number is valid and not in the database already
+@db_connector
+def check_phone_num(phone_num: str, **kwargs) -> bool:
+    connection = kwargs.pop('connection')
+    pattern = compile(r'^[\dA-Z]{3}-[\dA-Z]{3}-[\dA-Z]{4}$', IGNORECASE)
+    stmt = (select(Account.phone_num).where(Account.phone_num == phone_num))
+    results = connection.execute(stmt).fetchall()
+    if pattern.match(phone_num) is not None and not results:
         return True
     else:
         return False
@@ -65,6 +82,14 @@ class DatabaseManipulator:
         results = connection.execute(stmt).fetchall()
         res = [i[0] for i in results]
         return res
+
+    # Get all phone numbers/users
+    @db_connector
+    def get_phone_numbers(self, **kwargs) -> list:
+        connection = kwargs.pop('connection')
+        stmt = (select(Account.username))
+        results = connection.execute(stmt).fetchall()
+        return results
 
     # Get all part types
     @db_connector
@@ -212,6 +237,36 @@ class DatabaseManipulator:
             connection.execute(stmt)
             connection.commit()
 
+    # Send text to the username supplied with the amount of low parts in the system
+    @db_connector
+    def send_text(self, username: str, **kwargs) -> bool:
+        connection = kwargs.pop('connection')
+        # Get the phone number by username
+        stmt = (select(Account.phone_num).where(Account.username == username))
+        phone_num = [i[0] for i in connection.execute(stmt).fetchall()]
+        # Line to separate each row for readability
+        line = '-'*20
+        client = vonage.Client(key=environ.get('VONAGE_API_KEY'), secret=environ.get('VONAGE_API_SECRET'))
+        # Format the list so it is readable
+        low_parts = ['Part Name: ' + str(i[1]) + ', Part Number: ' + str(i[3]) + ', Van Number: ' + str(i[4]) +
+                     ', Current Amount: ' + str(i[2]) + ', Part Threshold: ' + str(i[5]) + '\n' + line
+                     for i in self.get_low_parts()]
+        message = line + '\n' + '\n'.join(low_parts)
+        sms = vonage.Sms(client)
+        response_data = sms.send_message(
+            {
+                'from': environ.get('VONAGE_PHONE'),
+                'to': str('1' + phone_num[0]).replace('-', ''),
+                'text': message,
+            }
+        )
+        if response_data['messages'][0]['status'] == '0':
+            print('Message sent successfully.')
+            return True
+        else:
+            print(f'Message failed with error: {response_data["messages"][0]["error-text"]}')
+            return False
+
     # Delete part type from database by ID
     @db_connector
     def delete_part_type(self, type_id: str, **kwargs) -> None:
@@ -334,13 +389,13 @@ class DatabaseManipulator:
 
     # Register by username, password, and conf_password
     @db_connector
-    def register(self, username: str, password: str, conf_password: str, **kwargs) -> bool:
+    def register(self, username: str, password: str, conf_password: str, phone_num: str, **kwargs) -> bool:
         connection = kwargs.pop('connection')
         if check_password(password, conf_password) and check_input(password) and check_input(conf_password) \
                 and not self.check_if_account_exists(username):
             hashed_pw = create_password_hash(password.encode('utf-8'))
-            if check_password_hash(password.encode('utf-8'), hashed_pw):
-                stmt = (insert(Account).values(username=username, password=hashed_pw))
+            if check_password_hash(password.encode('utf-8'), hashed_pw) and check_phone_num(phone_num):
+                stmt = (insert(Account).values(username=username, password=hashed_pw, phone_num=phone_num))
                 connection.execute(stmt)
                 connection.commit()
             return True
@@ -368,9 +423,8 @@ class DatabaseManipulator:
     @db_connector
     def get_users(self, username: str, **kwargs) -> tuple:
         connection = kwargs.pop('connection')
-        stmt = (select(Account.id, func.lower(Account.username), Account.is_admin, Account.is_confirmed).where(
-            Account.username != func.lower(username)
-        ))
+        stmt = (select(Account.id, func.lower(Account.username), Account.is_admin, Account.is_confirmed,
+                       Account.phone_num).where(Account.username != func.lower(username)))
         results = connection.execute(stmt).fetchall()
         return results
 

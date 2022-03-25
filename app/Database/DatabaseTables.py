@@ -16,6 +16,7 @@ class Account(Base):
     password = Column(Text)
     is_admin = Column(Integer, server_default=text("'0'"))
     is_confirmed = Column(Integer, server_default=text("'0'"))
+    phone_num = Column(String(20))
 
 
 # Vans table
