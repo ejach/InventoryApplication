@@ -1,4 +1,4 @@
-from random import choice
+from random import choice, randint
 from string import ascii_letters, digits
 from time import time
 from unittest import TestCase, main
@@ -25,6 +25,16 @@ random_time_string = str(int(time()))
 
 username = 'user' + random_time_string
 password = 'pass' + random_time_string
+
+
+# Generate random phone number
+def random_phone_num_generator():
+    first = str(randint(100, 999))
+    second = str(randint(1, 888)).zfill(3)
+    last = (str(randint(1, 9998)).zfill(4))
+    while last in ['1111', '2222', '3333', '4444', '5555', '6666', '7777', '8888']:
+        last = (str(randint(1, 9998)).zfill(4))
+    return '{}-{}-{}'.format(first, second, last)
 
 
 # Check if part exists
@@ -316,7 +326,8 @@ class DBMUnitTest(TestCase):
     def test_login_confirmation(self):
         print('test_login_confirmation() TEST')
         # Register new account
-        dbm.register(username=username, password=password, conf_password=password)
+        dbm.register(username=username, password=password, conf_password=password,
+                     phone_num=random_phone_num_generator())
         last_id = get_last_id(Account)[0]
         self.assertTrue(dbm.check_if_account_exists(username=username))
         print('CREATE ACCOUNT TEST -> PASSED')
@@ -338,7 +349,7 @@ class DBMUnitTest(TestCase):
     def test_login_deny(self):
         print('test_login_deny() TEST')
         # Create an account
-        dbm.register(username, password, password)
+        dbm.register(username, password, password, random_phone_num_generator())
         # Get account id
         acc_id = get_last_id(Account)[0]
         # Make sure account exists
@@ -449,7 +460,8 @@ class DBMUnitTest(TestCase):
     def test_toggle_admin(self):
         print('test_toggle_admin() TEST')
         # Register a random user account
-        dbm.register(username=username, password=password, conf_password=password)
+        dbm.register(username=username, password=password, conf_password=password,
+                     phone_num=random_phone_num_generator())
         this_id = get_last_id(Account)[0]
         self.assertTrue(dbm.check_if_account_exists(username))
         # Make the specified account an admin

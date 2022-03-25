@@ -1,7 +1,7 @@
 from os import environ
 from re import compile, IGNORECASE
 
-import vonage as vonage
+from vonage import vonage
 from bcrypt import gensalt, hashpw, checkpw
 from sqlalchemy import insert, select, update, delete, func, distinct
 
@@ -12,19 +12,6 @@ from app.decorators.flask_decorators import db_connector
 # Prevent inputs that only contain spaces from being entered into the database
 def check_input(test_input: str) -> bool:
     if test_input and not test_input.isspace() and '-' not in test_input:
-        return True
-    else:
-        return False
-
-
-# Check that the phone number is valid and not in the database already
-@db_connector
-def check_phone_num(phone_num: str, **kwargs) -> bool:
-    connection = kwargs.pop('connection')
-    pattern = compile(r'^[\dA-Z]{3}-[\dA-Z]{3}-[\dA-Z]{4}$', IGNORECASE)
-    stmt = (select(Account.phone_num).where(Account.phone_num == phone_num))
-    results = connection.execute(stmt).fetchall()
-    if pattern.match(phone_num) is not None and not results:
         return True
     else:
         return False
@@ -87,7 +74,7 @@ class DatabaseManipulator:
     @db_connector
     def get_phone_numbers(self, **kwargs) -> list:
         connection = kwargs.pop('connection')
-        stmt = (select(Account.username))
+        stmt = (select(Account.username).where(Account.is_confirmed == 1))
         results = connection.execute(stmt).fetchall()
         return results
 
@@ -236,6 +223,18 @@ class DatabaseManipulator:
             stmt = (insert(PartType).values(type_name=part_type, type_unit=part_unit))
             connection.execute(stmt)
             connection.commit()
+
+    # Check that the phone number is valid and not in the database already
+    @db_connector
+    def check_phone_num(self, phone_num: str, **kwargs) -> bool:
+        connection = kwargs.pop('connection')
+        pattern = compile(r'^[\dA-Z]{3}-[\dA-Z]{3}-[\dA-Z]{4}$', IGNORECASE)
+        stmt = (select(Account.phone_num).where(Account.phone_num == phone_num))
+        results = connection.execute(stmt).fetchall()
+        if pattern.match(phone_num) is not None and not results:
+            return True
+        else:
+            return False
 
     # Send text to the username supplied with the amount of low parts in the system
     @db_connector
@@ -394,7 +393,7 @@ class DatabaseManipulator:
         if check_password(password, conf_password) and check_input(password) and check_input(conf_password) \
                 and not self.check_if_account_exists(username):
             hashed_pw = create_password_hash(password.encode('utf-8'))
-            if check_password_hash(password.encode('utf-8'), hashed_pw) and check_phone_num(phone_num):
+            if check_password_hash(password.encode('utf-8'), hashed_pw) and self.check_phone_num(phone_num):
                 stmt = (insert(Account).values(username=username, password=hashed_pw, phone_num=phone_num))
                 connection.execute(stmt)
                 connection.commit()

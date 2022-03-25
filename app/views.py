@@ -8,7 +8,7 @@ from flask_talisman import Talisman
 from flask_wtf import CSRFProtect
 from werkzeug.exceptions import HTTPException, abort
 
-from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, get_difference, check_phone_num
+from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, get_difference
 from app.Forms.AddTypeForm import AddTypeForm
 from app.Forms.LowPartsForm import LowPartsForm
 from app.Forms.UpdateTypeForm import UpdateTypeForm
@@ -115,7 +115,7 @@ def register():
             password = form.password.data
             conf_password = form.confPass.data
             phone_num = form.phone.data
-            check_num = check_phone_num(phone_num)
+            check_num = dbm.check_phone_num(phone_num)
             register_user = dbm.register(username, password, conf_password, phone_num)
             if register_user and check_num:
                 return redirect(url_for('login'))
