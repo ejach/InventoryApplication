@@ -23,13 +23,14 @@
   {% if session['logged_in'] %}
   <div id="sidenav" class="sidenav">
     <a href="/">Home</a>
-    <a href="/parts">Parts</a>
     <a href="/vans">Vans</a>
+    <a href="/parts">Parts</a>
+    <a href="/parts/low">Low Parts</a>
+    <a href="/parts/type">Part Types</a>
     {% if session['is_admin'] %}
     <a href="/users">Users</a>
     <a href="/jobs">Jobs</a>
     {% endif %}
-    <a href="/parts/type">Part Types</a>
     <a href="/logout">Logout</a>
   </div>
   {% endif %}

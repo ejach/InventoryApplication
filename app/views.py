@@ -115,10 +115,14 @@ def register():
             password = form.password.data
             conf_password = form.confPass.data
             phone_num = form.phone.data
-            check_num = dbm.check_phone_num(phone_num)
             register_user = dbm.register(username, password, conf_password, phone_num)
-            if register_user and check_num:
+            # Return HTTP 200 if the validation passes
+            if register_user == 200:
                 return redirect(url_for('login'))
+            # Return HTTP 422 if there is an invalid phone number
+            elif register_user == 422:
+                return render_template('register.html', form=form), 422
+            # Return HTTP 409 if there is a username/phone number conflict
             else:
                 return render_template('register.html', form=form), 409
         elif 'logged_in' not in session:

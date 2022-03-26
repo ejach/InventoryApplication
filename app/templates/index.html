@@ -9,6 +9,12 @@
       width="250px" height="250px" /></a>
     <a href="/parts/type" id="myCard"><p class="caption">Part Types</p><img class="typeParts" src="{{ url_for('static', filename='assets/part-type.svg') }}"
       width="250px" height="250px" /></a>
-    </div>
+    {% if session['is_admin'] %}
+    <a href="/users" id="myCard" class="users"><p class="caption">Users</p><img src="{{ url_for('static', filename='assets/users.svg') }}"
+      width="250px" height="250px" /></a>
+    <a href="/jobs" id="myCard" class="jobs"><p class="caption">Jobs</p><img src="{{ url_for('static', filename='assets/jobs.svg') }}"
+      width="250px" height="250px" /></a>
+    {% endif %}
+</div>
     <p id="welcomeMsg">Welcome, <b>{{ username }}</b>.</p>
 {% endblock %}

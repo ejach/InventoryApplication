@@ -51,6 +51,18 @@ def get_difference(op1: int, op2: int) -> int:
         return op1 - op2
 
 
+# Check that the phone number is valid using the Vonage API
+def check_phone_num(phone_num: str) -> bool:
+    pattern = compile(r'^[\dA-Z]{3}[\dA-Z]{3}[\dA-Z]{4}$', IGNORECASE)
+    client = Client(key=environ.get('VONAGE_API_KEY'), secret=environ.get('VONAGE_API_SECRET'))
+    # Make sure the phone number is valid
+    insight_json = client.get_standard_number_insight(number='1' + phone_num)
+    if pattern.match(phone_num) is not None and insight_json['status'] == 0:
+        return True
+    else:
+        return False
+
+
 class DatabaseManipulator:
     # Get all parts entries from database
     @db_connector
@@ -224,17 +236,13 @@ class DatabaseManipulator:
             connection.execute(stmt)
             connection.commit()
 
-    # Check that the phone number is valid and not in the database already
+    # Make sure the phone number is not in the database
     @db_connector
-    def check_phone_num(self, phone_num: str, **kwargs) -> bool:
+    def check_if_phone_num_exists(self, phone_num: str, **kwargs) -> bool:
         connection = kwargs.pop('connection')
-        pattern = compile(r'^[\dA-Z]{3}-[\dA-Z]{3}-[\dA-Z]{4}$', IGNORECASE)
         stmt = (select(Account.phone_num).where(Account.phone_num == phone_num))
         results = connection.execute(stmt).fetchall()
-        client = Client(key=environ.get('VONAGE_API_KEY'), secret=environ.get('VONAGE_API_SECRET'))
-        # Make sure the phone number is valid
-        insight_json = client.get_standard_number_insight(number='1' + phone_num.replace('-', ''))
-        if pattern.match(phone_num) is not None and not results and insight_json['status'] == 0:
+        if results:
             return True
         else:
             return False
@@ -391,18 +399,20 @@ class DatabaseManipulator:
 
     # Register by username, password, and conf_password
     @db_connector
-    def register(self, username: str, password: str, conf_password: str, phone_num: str, **kwargs) -> bool:
+    def register(self, username: str, password: str, conf_password: str, phone_num: str, **kwargs) -> int:
         connection = kwargs.pop('connection')
         if check_password(password, conf_password) and check_input(password) and check_input(conf_password) \
-                and not self.check_if_account_exists(username):
+                and not self.check_if_account_exists(username) and not self.check_if_phone_num_exists(phone_num):
             hashed_pw = create_password_hash(password.encode('utf-8'))
-            if check_password_hash(password.encode('utf-8'), hashed_pw) and self.check_phone_num(phone_num):
+            if check_password_hash(password.encode('utf-8'), hashed_pw) and check_phone_num(phone_num):
                 stmt = (insert(Account).values(username=username, password=hashed_pw, phone_num=phone_num))
                 connection.execute(stmt)
                 connection.commit()
-            return True
+                return 200
+            else:
+                return 422
         else:
-            return False
+            return 409
 
     # Check if user is an admin by username
     @db_connector
@@ -423,12 +433,15 @@ class DatabaseManipulator:
 
     # Get users that exist in the DB excluding the current user's username
     @db_connector
-    def get_users(self, username: str, **kwargs) -> tuple:
+    def get_users(self, username: str, **kwargs) -> list:
         connection = kwargs.pop('connection')
         stmt = (select(Account.id, func.lower(Account.username), Account.is_admin, Account.is_confirmed,
                        Account.phone_num).where(Account.username != func.lower(username)))
-        results = connection.execute(stmt).fetchall()
-        return results
+        res = [list(i) for i in connection.execute(stmt).fetchall()]
+        # Make the phone number more readable
+        for x in res:
+            x[4] = (format(int(x[4][:-1]), ',').replace(',', '-') + x[4][-1])
+        return res
 
     # Get parts by van number
     @db_connector

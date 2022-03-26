@@ -715,6 +715,8 @@
           // Prevents form from submitting
           const form = $('#registerForm')[0];
           const data = new FormData(form);
+          // Strip the '-' from the phone field to store in the database
+          data.set('phone', phone.val().replaceAll('-', ''));
           // Disable submit button until something happens
           $(registerBtn).prop('disabled', true);
           toggleInput('#username', '#password', '#confPass', '#phone');
@@ -738,9 +740,13 @@
               $('html').css('cursor', 'default');
               toggleInput('#username', '#password', '#confPass', '#phone');
               if (e.status === 409) {
-                $(instructions).html('Username or phone number already exists or is invalid, please try again')
+                $(instructions).html('Username or phone number already exists, please try again')
                     .css('color', 'red');
-                $('#username').val(null);
+                $(username).val(null);
+              } else if (e.status === 422) {
+               $(instructions).html('Phone number is invalid, please try again')
+                  .css('color', 'red');
+                $(phone).val(null);
               } else {
                 console.log('ERROR : ', e);
               }
