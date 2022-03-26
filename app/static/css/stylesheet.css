@@ -99,6 +99,14 @@ a:visited {
   margin-right: 10%;
 }
 
+.users {
+  grid-column: 2;
+}
+
+.jobs {
+  grid-column: 3;
+}
+
 #lowPart {
     color:red;
     font-weight:bold;
