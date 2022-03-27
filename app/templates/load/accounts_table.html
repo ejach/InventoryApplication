@@ -1,4 +1,7 @@
 <table id="table" class="table">
+            {% if not users %}
+              <p style="color:red;">The database is empty, consider adding a user.</p>
+            {% else %}
             <th>Username</th><th>Admin</th><th>Confirmed</th><th>Phone Number</th><th>Action</th>
         {% for row in users %}
             <tr>
@@ -32,3 +35,4 @@
             </tr>
         {% endfor %}
         </table>
+        {% endif %}

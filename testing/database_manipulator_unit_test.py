@@ -8,7 +8,7 @@ from sqlalchemy import select, func
 from sqlalchemy.sql.functions import count
 
 from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, create_password_hash, check_password, \
-    check_password_hash
+    check_password_hash, check_phone_num
 from app.Database.DatabaseTables import Van, Part, Account, Job, PartType
 from app.decorators import DatabaseSession
 from app.decorators.flask_decorators import db_connector
@@ -782,6 +782,47 @@ class DBMUnitTest(TestCase):
         # Make sure it is deleted
         self.assertFalse(check_if_type_exist(type_id))
         print('test_type_duplicate_insertion() TEST -> PASSED')
+
+    # Test validate phone number
+    def test_validate_phone_number(self):
+        print('test_validate_phone_number() TEST')
+        # Create account, make sure it works
+        self.assertEqual(dbm.register(username, password, password, getenv('TEST_PHONE')), 200)
+        user_id = get_last_id(Account)[0]
+        print('Valid Number TEST -> PASSED')
+        # Try to create another account using the same number, make sure the process fails
+        self.assertEqual(dbm.register(username, password, password, getenv('TEST_PHONE')), 409)
+        print('Existing Number TEST -> PASSED')
+        # Insert fake number into database
+        self.assertEqual(dbm.register(username, password, password, random_phone_num_generator()), 409)
+        print('Random Number TEST -> PASSED')
+        # Delete the account when finished
+        dbm.delete_account(user_id)
+        # Make sure it is deleted
+        self.assertFalse(dbm.check_if_account_exists(username))
+        print('test_validate_phone_number() TEST -> PASSED')
+
+    # Test the phone validation methods
+    def test_phone_num_methods(self):
+        print('test_phone_num_methods() TEST')
+        # Make sure a random number doesn't exist in the database
+        self.assertFalse(dbm.check_if_phone_num_exists(random_phone_num_generator()))
+        print('Random Number EXISTENCE FALSE TEST -> PASSED')
+        # Make sure a random number is not valid
+        self.assertFalse(check_phone_num(random_phone_num_generator()))
+        print('Random Number VALIDITY FALSE TEST -> PASSED')
+        # Make sure a real number exists
+        self.assertTrue(check_phone_num(getenv('TEST_PHONE')))
+        # Make sure a number that is inserted into the database exists
+        dbm.register(username, password, password, getenv('TEST_PHONE'))
+        user_id = get_last_id(Account)[0]
+        self.assertTrue(dbm.check_if_phone_num_exists(getenv('TEST_PHONE')))
+        print('Random Number EXISTENCE TRUE TEST -> PASSED')
+        # Delete when finished
+        dbm.delete_account(user_id)
+        # Make sure it is deleted
+        self.assertFalse(dbm.check_if_account_exists(username))
+        print('test_phone_num_methods() TEST -> PASSED')
 
 
 if __name__ == '__main__':
