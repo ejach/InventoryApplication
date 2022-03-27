@@ -4,7 +4,7 @@ from re import compile, IGNORECASE
 from bcrypt import gensalt, hashpw, checkpw
 from phonenumbers import is_valid_number, parse
 from requests import post
-from sqlalchemy import insert, select, update, delete, func, distinct, cast, CHAR
+from sqlalchemy import insert, select, update, delete, func, distinct
 
 from app.Database.DatabaseTables import Account, Van, Job, Part, PartType
 from app.decorators.flask_decorators import db_connector
