@@ -2,8 +2,9 @@ from os import environ
 from re import compile, IGNORECASE
 
 from bcrypt import gensalt, hashpw, checkpw
+from phonenumbers import is_valid_number, parse
+from requests import post
 from sqlalchemy import insert, select, update, delete, func, distinct
-from vonage import Sms, Client
 
 from app.Database.DatabaseTables import Account, Van, Job, Part, PartType
 from app.decorators.flask_decorators import db_connector
@@ -51,13 +52,13 @@ def get_difference(op1: int, op2: int) -> int:
         return op1 - op2
 
 
-# Check that the phone number is valid using the Vonage API
+# Check that the phone number is valid using the phonenumbers package
 def check_phone_num(phone_num: str) -> bool:
     pattern = compile(r'^[\dA-Z]{3}[\dA-Z]{3}[\dA-Z]{4}$', IGNORECASE)
-    client = Client(key=environ.get('VONAGE_API_KEY'), secret=environ.get('VONAGE_API_SECRET'))
-    # Make sure the phone number is valid
-    insight_json = client.get_standard_number_insight(number='1' + phone_num)
-    if pattern.match(phone_num) is not None and insight_json['status'] == 0:
+    # Use the phonenumbers package to make sure the phone number is valid
+    check_number = parse('+1' + phone_num, 'US')
+    valid_number = is_valid_number(check_number)
+    if pattern.match(phone_num) is not None and valid_number:
         return True
     else:
         return False
@@ -256,25 +257,19 @@ class DatabaseManipulator:
         phone_num = [i[0] for i in connection.execute(stmt).fetchall()]
         # Line to separate each row for readability
         line = '-' * 20
-        client = Client(key=environ.get('VONAGE_API_KEY'), secret=environ.get('VONAGE_API_SECRET'))
-        sms = Sms(client)
-        # Format the list so it is readable
-        low_parts = ['Part Name: ' + str(i[1]) + ', Part Number: ' + str(i[3]) + ', Van Number: ' + str(i[4]) +
-                     ', Current Amount: ' + str(i[2]) + ', Part Threshold: ' + str(i[5]) + '\n' + line
+        low_parts = ['Part Name: ' + str(i[1]) + ' \nPart Number: ' + str(i[3]) + '\nVan Number: ' + str(i[4]) +
+                     '\nCurrent Amount: ' + str(i[2]) + '\nPart Threshold: ' + str(i[5]) + '\n' + line
                      for i in self.get_low_parts()]
         message = line + '\n' + '\n'.join(low_parts)
-        response_data = sms.send_message(
-            {
-                'from': environ.get('VONAGE_PHONE'),
-                'to': str('1' + phone_num[0]).replace('-', ''),
-                'text': message,
-            }
-        )
-        if response_data['messages'][0]['status'] == '0':
-            print('Message sent successfully.')
+        # Send the message
+        send = post(url=environ.get('TILL_URL'),
+                    headers={'Content-Type': 'application/json'},
+                    json={'phone': ['1' + phone_num[0]],
+                          'method': 'SMS',
+                          'text': message})
+        if send.status_code == 200:
             return True
         else:
-            print(f'Message failed with error: {response_data["messages"][0]["error-text"]}')
             return False
 
     # Delete part type from database by ID

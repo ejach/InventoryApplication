@@ -44,10 +44,8 @@ db=parts
 SECRET_KEY=YOURKEY
 # Only use/uncomment if you are planning on deploying to Heroku; Default is False
 DYNO=FALSE
-# Need to have an account and API key with Vonage to support SMS texting
-VONAGE_API_KEY=xxx
-VONAGE_API_SECRET=xxx
-VONAGE_PHONE=1xxxxxxxxxx
+# Need to have a TILL URL with the username/api embedded to use SMS 
+TILL_URL=xxx
 ```
 5. Install the requirements `$ pip install -r requirements.txt`
 

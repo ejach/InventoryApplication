@@ -1,4 +1,18 @@
-### Expected Output
+### Unit Tests
+#### Test Environment
+```bash
+PYTHONUNBUFFERED=1
+host=xxx
+webui_host=localhost
+webui_port=5000
+username=xxx
+password=xxx
+db=xxx
+# Existing phone number used in unit testing
+TEST_PHONE=xxx
+```
+#### Expected Output
+
 ```
 Process finished with exit code 0
 test_add_part_amount() TEST
