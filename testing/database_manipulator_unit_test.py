@@ -1,3 +1,4 @@
+from os import getenv
 from random import choice, randint
 from string import ascii_letters, digits
 from time import time
@@ -34,7 +35,7 @@ def random_phone_num_generator():
     last = (str(randint(1, 9998)).zfill(4))
     while last in ['1111', '2222', '3333', '4444', '5555', '6666', '7777', '8888']:
         last = (str(randint(1, 9998)).zfill(4))
-    return '{}-{}-{}'.format(first, second, last)
+    return '1{}{}{}'.format(first, second, last)
 
 
 # Check if part exists
@@ -327,7 +328,7 @@ class DBMUnitTest(TestCase):
         print('test_login_confirmation() TEST')
         # Register new account
         dbm.register(username=username, password=password, conf_password=password,
-                     phone_num=random_phone_num_generator())
+                     phone_num=getenv('TEST_PHONE'))
         last_id = get_last_id(Account)[0]
         self.assertTrue(dbm.check_if_account_exists(username=username))
         print('CREATE ACCOUNT TEST -> PASSED')
@@ -349,7 +350,7 @@ class DBMUnitTest(TestCase):
     def test_login_deny(self):
         print('test_login_deny() TEST')
         # Create an account
-        dbm.register(username, password, password, random_phone_num_generator())
+        dbm.register(username, password, password, getenv('TEST_PHONE'))
         # Get account id
         acc_id = get_last_id(Account)[0]
         # Make sure account exists
@@ -461,7 +462,7 @@ class DBMUnitTest(TestCase):
         print('test_toggle_admin() TEST')
         # Register a random user account
         dbm.register(username=username, password=password, conf_password=password,
-                     phone_num=random_phone_num_generator())
+                     phone_num=getenv('TEST_PHONE'))
         this_id = get_last_id(Account)[0]
         self.assertTrue(dbm.check_if_account_exists(username))
         # Make the specified account an admin
