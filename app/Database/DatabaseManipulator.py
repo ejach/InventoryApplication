@@ -4,7 +4,7 @@ from re import compile, IGNORECASE
 from bcrypt import gensalt, hashpw, checkpw
 from phonenumbers import is_valid_number, parse
 from requests import post
-from sqlalchemy import insert, select, update, delete, func, distinct
+from sqlalchemy import insert, select, update, delete, func, distinct, cast, CHAR
 
 from app.Database.DatabaseTables import Account, Van, Job, Part, PartType
 from app.decorators.flask_decorators import db_connector
@@ -205,7 +205,7 @@ class DatabaseManipulator:
     @db_connector
     def get_van_nums(self, **kwargs) -> tuple:
         connection = kwargs.pop('connection')
-        stmt = select(Van.id, Van.van_number).order_by(Van.van_number)
+        stmt = select(Van.id, Van.van_number).order_by(func.length(Van.van_number))
         results = connection.execute(stmt).fetchall()
         return results
 
