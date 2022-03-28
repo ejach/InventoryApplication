@@ -754,9 +754,11 @@
             }
           });
         } else if (password.val() !== confPass.val() || !password.val() || !confPass.val() || !username.val()
-            || !phone.val() || !phone.val().match(/^[\dA-Z]{3}-[\dA-Z]{3}-[\dA-Z]{4}$/)) {
+            || !phone.val()) {
           $(instructions).html('Username, Password, and Confirm Password must not be empty and passwords must match')
-          .css('color', 'red');
+              .css('color', 'red');
+        } else if (!phone.val().match(/^[\dA-Z]{3}-[\dA-Z]{3}-[\dA-Z]{4}$/)) {
+            $(instructions).html('Phone number must be valid').css('color', 'red');
         } else {
           $(instructions).html('Register').css('color', 'black');
         }
