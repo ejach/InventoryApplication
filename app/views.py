@@ -17,8 +17,8 @@ from app.Forms.RegisterForm import RegisterForm
 from app.Forms.UpdatePartThresh import UpdatePartThresh
 from app.Forms.UpdatePartsForm import UpdatePartsForm
 from app.Forms.UpdateTypeForm import UpdateTypeForm
-from app.Forms.UpdateVanForm import UpdateVanForm
-from app.Forms.VanForm import VanForm
+from app.Forms.UpdatePartStoreForm import UpdatePartStoreForm
+from app.Forms.PartStoreForm import PartStoreForm
 from app.csp import csp
 from app.decorators.flask_decorators import login_required, admin_login_required
 
@@ -149,25 +149,25 @@ def logout():
 @login_required
 def parts():
     part_results = dbm.fetchall()
-    van_nums = dbm.get_van_nums()
+    part_store_names = dbm.get_part_store_names()
     form = PartsForm()
     update_form = UpdatePartsForm()
     if request.method == 'POST':
         part_name = form.partName.data
         part_amount = str(form.partAmount.data)
         part_number = form.partNumber.data
-        van_number = unquote(form.van.data)
+        part_store_name = unquote(form.partStore.data)
         part_type = str(form.unit.data)
         # Insert into the database
-        dbm.insert(part_name=part_name, part_amount=part_amount, part_number=part_number, van_number=van_number,
-                   part_type=part_type)
+        dbm.insert(part_name=part_name, part_amount=part_amount, part_number=part_number,
+                   part_store_name=part_store_name, part_type=part_type)
     try:
-        # Populate the van choices and type choices for the insert/update part select statements
-        form.van.choices = dbm.get_selections()
+        # Populate the part_store choices and type choices for the insert/update part select statements
+        form.partStore.choices = dbm.get_selections()
         form.unit.choices = dbm.get_part_type_names()
-        update_form.newVan.choices = dbm.get_selections()
+        update_form.newPartStore.choices = dbm.get_selections()
         update_form.newUnit.choices = dbm.get_part_type_names()
-        return render_template('parts.html', results=part_results, van_nums=van_nums, form=form,
+        return render_template('parts.html', results=part_results, part_store_names=part_store_names, form=form,
                                update_form=update_form)
     except IndexError:
         abort(404), 404
@@ -186,8 +186,8 @@ def display_part(part_id):
         return render_template('display_part.html', parts=results, form=form)
     # Else, redirect
     else:
-        if 'vans' in str(request.referrer):
-            return redirect(url_for('vans'))
+        if 'stores' in str(request.referrer):
+            return redirect(url_for('part_stores'))
         else:
             return redirect(url_for('parts'))
 
@@ -230,7 +230,7 @@ def type_parts():
 def type_parts_id(type_id):
     results = dbm.get_part_type_by_name(type_id)
     update_form = UpdatePartsForm()
-    update_form.newVan.choices = dbm.get_selections()
+    update_form.newPartStore.choices = dbm.get_selections()
     update_form.newUnit.choices = dbm.get_part_type_names()
     # Make sure the part exists, if not redirect back to the /types route
     if dbm.check_if_type_exists(type_id):
@@ -239,18 +239,66 @@ def type_parts_id(type_id):
         return redirect(url_for('type_parts'))
 
 
+# Route for /parts/stores
+@app.route('/parts/stores', strict_slashes=False, methods=['GET', 'POST'])
+@login_required
+def part_stores():
+    form = PartStoreForm()
+    update_form = UpdatePartStoreForm()
+    part_store_names = dbm.get_part_store_names()
+    if request.method == 'POST':
+        part_store_number = unquote(form.partStoreName.data)
+        # If the part_store doesn't exist, insert it
+        if not dbm.check_if_exists(part_store_number.lower()):
+            dbm.insert_part_store(part_store_number)
+        # Return 409 if the part_store already exists
+        else:
+            return render_template('part_stores.html', part_store_names=part_store_names, form=form,
+                                   update_form=update_form), 409
+    try:
+        return render_template('part_stores.html', part_store_names=part_store_names, form=form,
+                               update_form=update_form)
+    except IndexError:
+        abort(404), 404
+    except HTTPException:
+        abort(500)
+
+
+# Route for /parts/stores that consumes the part_store_id
+@app.route('/parts/stores/<part_store_num>', strict_slashes=False)
+@login_required
+def store_number(part_store_num):
+    insert_form = PartsForm()
+    update_form = UpdatePartsForm()
+    # Populate the insert form/update form select elements
+    insert_form.unit.choices = dbm.get_part_type_names()
+    update_form.newUnit.choices = dbm.get_part_type_names()
+    results = dbm.get_part_stores(part_store_num)
+    check_exist = dbm.check_if_exists(part_store_num)
+    # If there are no results in the part stores database, but it exists, execute the following
+    if results is None and check_exist:
+        return render_template('display_part_stores.html', results=None, check_exist=check_exist, form=insert_form,
+                               update_form=update_form)
+    # If the results are not None, return the following
+    elif results is not None:
+        return render_template('display_part_stores.html', results=results, form=insert_form, update_form=update_form)
+    # Otherwise, redirect to the main /parts/stores page
+    else:
+        return redirect(url_for('part_stores'))
+
+
 # Displays the table code in parts_table.html, so it can be refreshed dynamically without reloading the page
 @app.route('/table/<table_name>/<quantity_id>', strict_slashes=False, methods=['GET', 'POST'])
 def table(table_name, quantity_id):
-    # Requirements to return the results for a van by its number
-    if table_name == 'vans' and quantity_id != 'all':
+    # Requirements to return the results for a part store by its number
+    if table_name == 'part_store_list' and quantity_id != 'all':
         form = PartsForm()
         update_form = UpdatePartsForm()
-        results = dbm.get_vans(quantity_id)
+        results = dbm.get_part_stores(quantity_id)
         check_exist = dbm.check_if_exists(quantity_id)
         form.unit.choices = dbm.get_part_type_names()
         update_form.newUnit.choices = dbm.get_part_type_names()
-        return render_template('load/van_table.html', results=results, check_exist=check_exist, form=form,
+        return render_template('load/part_stores_table.html', results=results, check_exist=check_exist, form=form,
                                update_form=update_form)
     # Requirements to return the list of accounts
     elif table_name == 'users' and quantity_id != 'all':
@@ -258,8 +306,8 @@ def table(table_name, quantity_id):
         return render_template('load/accounts_table.html', users=results)
     # Requirements to return the job list of parts
     elif table_name == 'jobs' and quantity_id != 'all':
-        select_parts = dbm.get_parts_by_van(quantity_id)
-        return render_template('load/jobs_table.html', van_parts=select_parts)
+        select_parts = dbm.get_parts_by_store(quantity_id)
+        return render_template('load/jobs_table.html', part_store_parts=select_parts)
     # Requirements to return the full job list of parts
     elif table_name == 'jobs' and quantity_id == 'all':
         job_parts = dbm.get_jobs()
@@ -269,26 +317,26 @@ def table(table_name, quantity_id):
         form = PartsForm()
         update_form = UpdatePartsForm()
         results = dbm.fetchall()
-        van_nums = dbm.get_van_nums()
-        # Set the choices for selecting a new van
-        update_form.newVan.choices = dbm.get_selections()
+        store_names = dbm.get_part_store_names()
+        # Set the choices for selecting a new part store
+        update_form.newPartStore.choices = dbm.get_selections()
         update_form.newUnit.choices = dbm.get_part_type_names()
-        return render_template('load/parts_table.html', results=results, van_nums=van_nums, form=form,
+        return render_template('load/parts_table.html', results=results, store_names=store_names, form=form,
                                update_form=update_form)
     # Requirements for the individual attributes for a part
     elif table_name == 'display_part' and quantity_id != 'all':
         form = UpdatePartThresh()
         results = dbm.get_part_information(part_id=quantity_id)
         return render_template('load/display_part_table.html', parts=results, form=form)
-    # if table_name is vans_list, and van_number is all, return the following
-    elif table_name == 'vans_list' and quantity_id == 'all':
-        update_form = UpdateVanForm()
-        van_nums = dbm.get_van_nums()
-        return render_template('load/vans_list.html', van_numbers=van_nums, update_form=update_form)
+    # If table_name is part_store_ist, and quantity_id is all, return the following
+    elif table_name == 'part_store_list' and quantity_id == 'all':
+        update_form = UpdatePartStoreForm()
+        store_names = dbm.get_part_store_names()
+        return render_template('load/part_stores_list.html', part_store_names=store_names, update_form=update_form)
     elif table_name == 'part_type_list' and quantity_id != 'all':
         results = dbm.get_part_type_by_name(type_name=quantity_id)
         update_form = UpdatePartsForm()
-        update_form.newVan.choices = dbm.get_selections()
+        update_form.newPartStore.choices = dbm.get_selections()
         update_form.newUnit.choices = dbm.get_part_type_names()
         return render_template('load/display_part_type_table.html', results=results, update_form=update_form)
     elif table_name == 'part_type_list' and quantity_id == 'all':
@@ -309,10 +357,10 @@ def delete(id_type):
     if request.method == 'POST' and id_type == 'part':
         part_id = request.form.get('Delete')
         dbm.delete(part_id)
-    # If the id_type is a van, delete the van
-    elif request.method == 'POST' and id_type == 'van':
-        van_id = request.form.get('Delete')
-        dbm.delete_van(van_id)
+    # If the id_type is a part_store, delete the part_store
+    elif request.method == 'POST' and id_type == 'part_store':
+        part_store_id = request.form.get('Delete')
+        dbm.delete_part_store(part_store_id)
     # If the id_type is a user, delete the user
     elif request.method == 'POST' and id_type == 'user':
         user_id = request.form.get('user_id')
@@ -337,11 +385,11 @@ def update(id_type):
             part_name = form.partName.data
             part_amount = str(form.newPartAmount.data)
             part_number = form.partNumber.data
-            van_number = unquote(form.newVan.data)
+            part_store_name = unquote(form.newPartStore.data)
             part_type = form.newUnit.data
             if check_input(part_id) and check_input(part_name) and check_input(part_amount) \
-                    and check_input(part_number) and check_input(van_number) and check_input(part_type):
-                dbm.update(part_id, part_name, part_amount, part_number, van_number, part_type)
+                    and check_input(part_number) and check_input(part_store_name) and check_input(part_type):
+                dbm.update(part_id, part_name, part_amount, part_number, part_store_name, part_type)
         # Update the threshold of a part by its ID
         if request.method == 'POST' and id_type == 'threshold':
             form = UpdatePartThresh()
@@ -349,13 +397,13 @@ def update(id_type):
             thresh = form.newThresh.data
             if check_input(str(part_id)) and check_input(str(thresh)):
                 dbm.update_threshold(thresh, part_id)
-        # Route to update a van by the ID
-        elif request.method == 'POST' and id_type == 'van':
-            form = UpdateVanForm()
-            van_id = form.id.data
-            van_number = unquote(form.vanNumber.data)
-            if check_input(van_id) and check_input(van_number):
-                dbm.update_van(van_id, van_number)
+        # Route to update a part store by the ID
+        elif request.method == 'POST' and id_type == 'part_store':
+            form = UpdatePartStoreForm()
+            part_store_id = form.id.data
+            part_store_name = unquote(form.partStoreName.data)
+            if check_input(part_store_id) and check_input(part_store_name):
+                dbm.update_part_store(part_store_id, part_store_name)
         # Route to update an account by the ID to grant admin attribute
         elif request.method == 'POST' and id_type == 'user':
             user_id = request.form.get('user_id')
@@ -373,52 +421,6 @@ def update(id_type):
     except TypeError as e:
         print(str(getframeinfo(currentframe()).function) + '\n' + str(e) + '\n'
               + 'Blank input detected, database not manipulated.')
-
-
-# Route for /vans
-@app.route('/vans', strict_slashes=False, methods=['GET', 'POST'])
-@login_required
-def vans():
-    form = VanForm()
-    update_form = UpdateVanForm()
-    van_numbers = dbm.get_van_nums()
-    if request.method == 'POST':
-        van_number = unquote(form.van_number.data)
-        # If the van doesn't exist, insert it
-        if not dbm.check_if_exists(van_number.lower()):
-            dbm.insert_van(van_number)
-        # Return 409 if the van already exists
-        else:
-            return render_template('vans.html', van_numbers=van_numbers, form=form, update_form=update_form), 409
-    try:
-        return render_template('vans.html', van_numbers=van_numbers, form=form, update_form=update_form)
-    except IndexError:
-        abort(404), 404
-    except HTTPException:
-        abort(500)
-
-
-# Route for /vans that consumes the van_id
-@app.route('/vans/<van_number>', strict_slashes=False)
-@login_required
-def van_num(van_number):
-    insert_form = PartsForm()
-    update_form = UpdatePartsForm()
-    # Populate the insert form/update form select elements
-    insert_form.unit.choices = dbm.get_part_type_names()
-    update_form.newUnit.choices = dbm.get_part_type_names()
-    results = dbm.get_vans(van_number)
-    check_exist = dbm.check_if_exists(van_number)
-    # If there are no results in the van database, but it exists, execute the following
-    if results is None and check_exist:
-        return render_template('display_van.html', results=None, check_exist=check_exist, form=insert_form,
-                               update_form=update_form)
-    # If the results are not None, return the following
-    elif results is not None:
-        return render_template('display_van.html', results=results, form=insert_form, update_form=update_form)
-    # Otherwise, redirect to the main /vans page
-    else:
-        return redirect(url_for('vans'))
 
 
 # Allows admins to manage the users that have access to the system
@@ -444,14 +446,14 @@ def _jobs():
     return render_template('display_jobs.html', jobs=all_jobs)
 
 
-# Route for jobs/<van_id>
-@app.route('/jobs/<van_id>', strict_slashes=False, methods=['GET', 'POST'])
+# Route for jobs/<part_store_id>
+@app.route('/jobs/<part_store_id>', strict_slashes=False, methods=['GET', 'POST'])
 @login_required
-def jobs(van_id):
-    van_amount = dbm.get_total_parts_by_van(van_id)
-    select_parts = dbm.get_parts_by_van(van_id)
-    check_exist = dbm.check_if_exists(van_id)
-    # If the van does not exist or does not contain at least one part, redirect to index
+def jobs(part_store_id):
+    part_store_amount = dbm.get_total_parts_by_part_store(part_store_id)
+    select_parts = dbm.get_parts_by_store(part_store_id)
+    check_exist = dbm.check_if_exists(part_store_id)
+    # If the store does not exist or does not contain at least one part, redirect to index
     if not check_exist or not select_parts:
         return redirect(url_for('index'))
     elif request.method == 'POST' and request.is_json and select_parts:
@@ -467,10 +469,10 @@ def jobs(van_id):
         res = [int(i) for i in lst[::2]]
         parts_used = sum(res)
         # Get the difference of the two values
-        difference = get_difference(int(van_amount), int(parts_used))
-        dbm.update_multiple_parts_by_van(values)
+        difference = get_difference(int(part_store_amount), int(parts_used))
+        dbm.update_multiple_parts_by_part_store(values)
         # Record job in the database if there is at least 1 part changed
         if difference > 0:
-            dbm.record_job(session['username'], str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')), van_id,
+            dbm.record_job(session['username'], str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')), part_store_id,
                            difference)
-    return render_template('jobs.html', van_parts=select_parts)
+    return render_template('jobs.html', part_store_parts=select_parts)

@@ -3,9 +3,9 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 
 
-class VanForm(FlaskForm):
-    van_number = StringField(
-        'Van Number',
+class PartStoreForm(FlaskForm):
+    partStoreName = StringField(
+        'Part Store Name',
         validators=[DataRequired()]
     )
-    btnSubmit = SubmitField('Add Van')
+    btnSubmit = SubmitField('Add Part Store')

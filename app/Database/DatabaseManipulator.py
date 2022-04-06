@@ -6,7 +6,7 @@ from phonenumbers import is_valid_number, parse
 from requests import post
 from sqlalchemy import insert, select, update, delete, func, distinct
 
-from app.Database.DatabaseTables import Account, Van, Job, Part, PartType
+from app.Database.DatabaseTables import Account, PartStore, Job, Part, PartType
 from app.decorators.flask_decorators import db_connector
 
 
@@ -69,7 +69,7 @@ class DatabaseManipulator:
     @db_connector
     def fetchall(self, **kwargs) -> tuple:
         conn = kwargs.pop('connection')
-        stmt = conn.query(Part.id, Part.name, Part.amount, Part.part_number, Part.van_number,
+        stmt = conn.query(Part.id, Part.name, Part.amount, Part.part_number, Part.part_store_name,
                           Part.type, Part.unit)
         results = conn.execute(stmt).fetchall()
         return results
@@ -103,19 +103,19 @@ class DatabaseManipulator:
     @db_connector
     def get_part_type_by_name(self, type_name: str, **kwargs) -> list:
         connection = kwargs.pop('connection')
-        stmt = (select(Part.id, Part.name, Part.amount, Part.part_number, Part.van_number, Part.type, Part.unit)
+        stmt = (select(Part.id, Part.name, Part.amount, Part.part_number, Part.part_store_name, Part.type, Part.unit)
                 .where(Part.type == type_name))
         results = connection.execute(stmt).fetchall()
         return results
 
-    # Checks to see if the van_number exists in the database already
+    # Checks to see if the part_store_name exists in the database already
     @db_connector
-    def check_duplicates(self, van_number: str, **kwargs) -> bool:
+    def check_duplicates(self, part_store_name: str, **kwargs) -> bool:
         connection = kwargs.pop('connection')
-        stmt = (select(Van.van_number))
+        stmt = (select(PartStore.part_store_name))
         results = connection.execute(stmt).fetchall()
         res = [i[0] for i in results]
-        if res.count(van_number) > 0:
+        if res.count(part_store_name) > 0:
             return False
         else:
             return True
@@ -156,74 +156,74 @@ class DatabaseManipulator:
     def get_dupes(self, query_table: object, row_to_find: str, **kwargs) -> bool:
         connection = kwargs.pop('connection')
         # Use the distinct select statement in the parts DB
-        get_vans_dist = (select(distinct(query_table)).order_by(query_table))
-        dist_results = connection.execute(get_vans_dist).fetchall()
+        get_stores_dist = (select(distinct(query_table)).order_by(query_table))
+        dist_results = connection.execute(get_stores_dist).fetchall()
         # List the results in an array
         fin_dist = [i[0] for i in dist_results]
-        # Use the list of duplicates to see if the van exists in the vans DB
+        # Use the list of duplicates to see if the part store exists in the part store DB
         get_duplicates = (select(query_table))
         dupe_results = connection.execute(get_duplicates).fetchall()
         # List the results in an array
         fin_dupes = [i[0] for i in dupe_results]
-        # If the van_number exists in either database, return True; otherwise return False
+        # If the part_store_name exists in either database, return True; otherwise return False
         if fin_dist.count(row_to_find) > 0 or row_to_find in fin_dupes:
             return True
         else:
             return False
 
-    # Check if the van exists and has a part within it from either the parts or vans DB
-    def check_if_exists(self, van_number: str) -> bool:
-        return self.get_dupes(Van.van_number, van_number)
+    # Check if the part store exists and has a part within it from either the parts or part store DB
+    def check_if_exists(self, part_store_name: str) -> bool:
+        return self.get_dupes(PartStore.part_store_name, part_store_name)
 
     # Check if part type exists
     def check_if_type_exists(self, part_type: str) -> bool:
         return self.get_dupes(PartType.type_name, part_type)
 
-    # Insert van into the database
+    # Insert part store into the database
     @db_connector
-    def insert_van(self, van_number: str, **kwargs) -> None:
+    def insert_part_store(self, part_store_name: str, **kwargs) -> None:
         connection = kwargs.pop('connection')
-        stmt = (insert(Van).values(van_number=van_number))
+        stmt = (insert(PartStore).values(part_store_name=part_store_name))
         connection.execute(stmt)
         connection.commit()
 
-    # Get all vans by van number
+    # Get all part stores by part store name
     @db_connector
-    def get_vans(self, van_number: int, **kwargs) -> tuple or None:
+    def get_part_stores(self, part_store_name: int, **kwargs) -> tuple or None:
         connection = kwargs.pop('connection')
-        stmt = select(Part.id, Part.name, Part.amount, Part.part_number, Part.van_number, Part.type, Part.unit) \
-            .where(Part.van_number == van_number)
+        stmt = select(Part.id, Part.name, Part.amount, Part.part_number, Part.part_store_name, Part.type, Part.unit) \
+            .where(Part.part_store_name == part_store_name)
         results = connection.execute(stmt).fetchall()
-        # If the results are empty (i.e. the van_number doesn't exist) return None
+        # If the results are empty (i.e. the part_store_name doesn't exist) return None
         if not results:
             return None
         # Else, return the following
         else:
             return results
 
-    # Get list of van numbers that exist in the database
+    # Get list of part store names that exist in the database
     @db_connector
-    def get_van_nums(self, **kwargs) -> tuple:
+    def get_part_store_names(self, **kwargs) -> tuple:
         connection = kwargs.pop('connection')
-        stmt = select(Van.id, Van.van_number).order_by(func.length(Van.van_number))
+        stmt = select(PartStore.id, PartStore.part_store_name).order_by(func.length(PartStore.part_store_name))
         results = connection.execute(stmt).fetchall()
         return results
 
-    # Get the selections from the Vans that currently exist in the database
+    # Get the selections from the part store names that currently exist in the database
     def get_selections(self) -> list:
-        results = self.get_van_nums()
+        results = self.get_part_store_names()
         re = [(g[1], g[1]) for g in results]
         return re
 
     # Insert entries into database
     @db_connector
-    def insert(self, part_name: str, part_amount: str, part_number: str, van_number: str, part_type: str,
+    def insert(self, part_name: str, part_amount: str, part_number: str, part_store_name: str, part_type: str,
                **kwargs) -> None:
         connection = kwargs.pop('connection')
         if check_input(part_name) and check_input(part_amount) and part_amount.isnumeric() \
-                and check_input(part_number) and check_input(van_number) and check_input(part_type):
+                and check_input(part_number) and check_input(part_store_name) and check_input(part_type):
             stmt = (insert(Part).values(name=part_name, amount=part_amount, part_number=part_number,
-                                        van_number=van_number, type=part_type,
+                                        part_store_name=part_store_name, type=part_type,
                                         unit=self.get_unit_by_part(part_type)))
             connection.execute(stmt)
             connection.commit()
@@ -257,7 +257,7 @@ class DatabaseManipulator:
         phone_num = [i[0] for i in connection.execute(stmt).fetchall()]
         # Line to separate each row for readability
         line = '-' * 20
-        low_parts = ['Part Name: ' + str(i[1]) + ' \nPart Number: ' + str(i[3]) + '\nVan Number: ' + str(i[4]) +
+        low_parts = ['Part Name: ' + str(i[1]) + ' \nPart Number: ' + str(i[3]) + '\nPart Store Name: ' + str(i[4]) +
                      '\nCurrent Amount: ' + str(i[2]) + '\nPart Threshold: ' + str(i[5]) + '\n' + line
                      for i in self.get_low_parts()]
         message = line + '\n' + '\n'.join(low_parts)
@@ -293,7 +293,7 @@ class DatabaseManipulator:
     @db_connector
     def get_part_information(self, part_id: str, **kwargs) -> tuple:
         connection = kwargs.pop('connection')
-        stmt = (select(Part.id, Part.name, Part.amount, Part.part_number, Part.van_number, Part.low_thresh, Part.type,
+        stmt = (select(Part.id, Part.name, Part.amount, Part.part_number, Part.part_store_name, Part.low_thresh, Part.type,
                        Part.unit).where(Part.id == part_id))
         results = connection.execute(stmt).fetchall()
         return results
@@ -308,33 +308,33 @@ class DatabaseManipulator:
 
     # Update entries from database by ID
     @db_connector
-    def update(self, row_id: str, part_name: str, part_amount: str, part_number: str, van_number: str,
+    def update(self, row_id: str, part_name: str, part_amount: str, part_number: str, part_store_name: str,
                part_type: str, **kwargs) -> None:
         connection = kwargs.pop('connection')
         stmt = (update(Part).values(name=part_name, amount=part_amount,
-                                    part_number=part_number, van_number=van_number,
+                                    part_number=part_number, part_store_name=part_store_name,
                                     type=part_type, unit=self.get_unit_by_part(part_type))
                 .where(Part.id == row_id))
         if check_input(part_name) and check_input(part_amount) and check_input(part_number) \
-                and check_input(van_number) and check_input(part_type):
+                and check_input(part_store_name) and check_input(part_type):
             connection.execute(stmt)
             connection.commit()
 
-    # Delete van by van_id
+    # Delete part store by part_store_id
     @db_connector
-    def delete_van(self, van_id: str, **kwargs) -> None:
+    def delete_part_store(self, part_store_id: str, **kwargs) -> None:
         connection = kwargs.pop('connection')
-        stmt = (delete(Van).where(Van.id == van_id))
+        stmt = (delete(PartStore).where(PartStore.id == part_store_id))
         connection.execute(stmt)
         connection.commit()
 
-    # Update van by van_id
+    # Update part_store by part_store_id
     @db_connector
-    def update_van(self, van_id: str, van_number: str, **kwargs) -> None:
+    def update_part_store(self, part_store_id: str, part_store_name: str, **kwargs) -> None:
         connection = kwargs.pop('connection')
         # Check for duplicates and validate input
-        if check_input(van_number) and self.check_duplicates(van_number):
-            stmt = (update(Van).values(van_number=van_number).where(Van.id == van_id))
+        if check_input(part_store_name) and self.check_duplicates(part_store_name):
+            stmt = (update(PartStore).values(part_store_name=part_store_name).where(PartStore.id == part_store_id))
             connection.execute(stmt)
             connection.commit()
 
@@ -350,7 +350,7 @@ class DatabaseManipulator:
     @db_connector
     def get_low_parts(self, **kwargs) -> tuple:
         connection = kwargs.pop('connection')
-        stmt = (select(Part.id, Part.name, Part.amount, Part.part_number, Part.van_number, Part.low_thresh)
+        stmt = (select(Part.id, Part.name, Part.amount, Part.part_number, Part.part_store_name, Part.low_thresh)
                 .where(Part.low_thresh > Part.amount))
         results = connection.execute(stmt).fetchall()
         return results
@@ -438,18 +438,18 @@ class DatabaseManipulator:
             x[4] = (format(int(x[4][:-1]), ',').replace(',', '-') + x[4][-1])
         return res
 
-    # Get parts by van number
+    # Get parts by part store name
     @db_connector
-    def get_parts_by_van(self, van_number: str, **kwargs) -> tuple:
+    def get_parts_by_store(self, part_store_name: str, **kwargs) -> tuple:
         connection = kwargs.pop('connection')
         stmt = (select(Part.id, Part.name, Part.amount, Part.part_number)
-                .where(Part.van_number == van_number))
+                .where(Part.part_store_name == part_store_name))
         results = connection.execute(stmt).fetchall()
         return results
 
-    # Update multiple parts according to the van number
+    # Update multiple parts according to the part store name
     @db_connector
-    def update_multiple_parts_by_van(self, values: list, **kwargs) -> None:
+    def update_multiple_parts_by_part_store(self, values: list, **kwargs) -> None:
         connection = kwargs.pop('connection')
         for item in values:
             stmt = (update(Part).values(amount=item[0]).where(Part.id == item[1]))
@@ -458,9 +458,9 @@ class DatabaseManipulator:
 
     # Record a new job in the database
     @db_connector
-    def record_job(self, username: str, time: str, van_number: str, parts_used: str or int, **kwargs) -> None:
+    def record_job(self, username: str, time: str, part_store_name: str, parts_used: str or int, **kwargs) -> None:
         connection = kwargs.pop('connection')
-        stmt = (insert(Job).values(username=func.lower(username), time=time, van_number=van_number,
+        stmt = (insert(Job).values(username=func.lower(username), time=time, part_store_name=part_store_name,
                                    parts_used=parts_used))
         connection.execute(stmt)
         connection.commit()
@@ -469,15 +469,15 @@ class DatabaseManipulator:
     @db_connector
     def get_jobs(self, **kwargs) -> tuple:
         connection = kwargs.pop('connection')
-        stmt = (select(Job.job_id, Job.username, Job.time, Job.van_number, Job.parts_used))
+        stmt = (select(Job.job_id, Job.username, Job.time, Job.part_store_name, Job.parts_used))
         results = connection.execute(stmt).fetchall()
         return results
 
-    # Get the total amount of parts by van
+    # Get the total amount of parts by part store
     @db_connector
-    def get_total_parts_by_van(self, van: int, **kwargs) -> int:
+    def get_total_parts_by_part_store(self, part_store_name: int, **kwargs) -> int:
         connection = kwargs.pop('connection')
-        stmt = (select(func.sum(Part.amount)).where(Part.van_number == van))
+        stmt = (select(func.sum(Part.amount)).where(Part.part_store_name == part_store_name))
         results = connection.execute(stmt).fetchall()
         res = [i[0] for i in results]
         return res[0]

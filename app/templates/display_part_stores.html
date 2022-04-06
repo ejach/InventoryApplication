@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block scripts %}
 <script src= "{{ url_for('static', filename='js/ns/namespace.js') }}"></script>
-<script src= "{{ url_for('static', filename='js/van/van-parts-addPart.js') }}"></script>
-<script src= "{{ url_for('static', filename='js/van/van-parts-deletePart.js') }}"></script>
-<script src= "{{ url_for('static', filename='js/van/van-parts-updatePart.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/partStore/partStore-parts-addPart.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/partStore/partStore-parts-deletePart.js') }}"></script>
+<script src= "{{ url_for('static', filename='js/partStore/partStore-parts-updatePart.js') }}"></script>
 {% endblock %}
 {% block content %}
 <div id="table">
@@ -11,7 +11,7 @@
     {% if not results %}
     <input type="button" value="Create Job" id="createJobBtn" class="createJobBtn" disabled />
     {% else %}
-    <a href="/jobs/{{ request.url.split('/')[4] }}">
+    <a href="/jobs/{{ request.url.split('/')[5] }}">
         <input type="button" value="Create Job" id="createJobBtn" class="createJobBtn" formnovalidate/>
     </a>
     {% endif %}
@@ -38,14 +38,14 @@
   <p style="color:red;">The database is empty, consider adding a part.</p>
   {% else %}
   <table class="table">
-    <th>Part Name</th><th>Part Number</th><th>Van</th><th>Amount</th><th>Type</th><th>Action</th><br/>
+    <th>Part Name</th><th>Part Number</th><th>Part Stores</th><th>Amount</th><th>Type</th><th>Action</th><br/>
     {% for row in results %}
     <tr>
         <td>{{ update_form.id(value=row[0]) }}<a href="/parts/{{ row[0] }}"><p class="thisPartName" id="thisPartName{{ row[0] }}">{{ row[1] }}</p></a>
             {{ update_form.partName(class='partName', pattern='^\w+( +\w+)*$', placeholder=update_form.partNumber.label.text, id='partName' ~ row[0], value=row[1], data_value=row[0]) }}</td>
         <td><p class="thisPartNumber" id="thisPartNumber{{ row[0] }}">{{ row[3] }}</p>
             {{ update_form.partNumber(class='partNumber', pattern='^\w+( +\w+)*$', placeholder=update_form.partNumber.label.text, id='partNumber' ~ row[0], value=row[3], data_value=row[0]) }}</td>
-        <td><p class="thisVanNumber" id="thisVanNumber{{ row[0] }}">{{ row[4] }}</p>
+        <td><p class="thisPartStoreName" id="thisPartStoreName{{ row[0] }}">{{ row[4] }}</p>
     <td><p class="thisAmount" id="thisAmount{{ row[0] }}">{{ row[2] }} {{ row[6] }}</p>
             {{ update_form.newPartAmount(class=update_form.newPartAmount.name, pattern='[0-9]{1,5}', id=update_form.newPartAmount.name ~ row[0], value=row[2], min=1) }}</td>
         <td><p class="thisPartUnit" id="thisPartUnit{{ row[0] }}">{{ row[5] }}</p>

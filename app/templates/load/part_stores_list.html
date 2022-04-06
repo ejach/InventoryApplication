@@ -1,7 +1,7 @@
 <span id="mySpan" class="table">
-  {% for row in van_numbers %}
-  <a href="/vans/{{ row[1] }}" id="link">{{ update_form.id(value=row[0]) }}<img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
-    width="100px" height="100px" /><p class="thisVanNumber" id="thisVanNumber{{ row[0] }}">{{ row[1] }}</p></a>
+  {% for row in part_store_names %}
+  <a href="/parts/stores/{{ row[1] }}" id="link">{{ update_form.id(value=row[0]) }}<img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
+    width="100px" height="100px" /><p class="thisPartStoreName" id="thisPartStoreName{{ row[0] }}">{{ row[1] }}</p></a>
     {% if session['is_admin'] %}
     <form>
       <input type="button" id="deleteBtn{{ row[0] }}" class="deleteBtn" value="Delete" data-value="{{ row[0] }}">
@@ -11,7 +11,7 @@
         data-value="{{ row[0] }}" />
         <input type="button" class="noBtn" id="noBtn{{ row[0] }}" value="No" name="noBtn"
         data-value="{{ row[0] }}" /></p>
-    {{ update_form.vanNumber(class=update_form.vanNumber.name, id=update_form.vanNumber.name ~ row[0], value=row[1], data_value=row[1]) }}
+    {{ update_form.partStoreName(class=update_form.partStoreName.name, id=update_form.partStoreName.name ~ row[0], value=row[1], data_value=row[1]) }}
     {{ update_form.confirmUpdateBtn(class=update_form.confirmUpdateBtn.name, type='button', id=update_form.confirmUpdateBtn.name ~ row[0], data_value=row[1]) }}
     {% endif %}
     <input type="button" class="cancelUpdateBtn" name="cancelUpdateBtn" id="cancelUpdateBtn{{ row[0] }}" value="Cancel"
