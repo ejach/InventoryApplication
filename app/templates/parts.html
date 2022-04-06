@@ -7,18 +7,18 @@
 {% endblock %}
 {% block content %}
 <form id="myForm">
-    <p id="instructions">Enter the Part Name,  Part Number, Part Amount, and Van Number: </p>
+    <p id="instructions">Enter the Part Name,  Part Number, Part Amount, and Part Store: </p>
     {{ form.partName(placeholder=form.partName.label.text, pattern='^\w+( +\w+)*$') }}
     {{ form.partNumber(placeholder=form.partNumber.label.text, pattern='^\w+( +\w+)*$') }}
     {{ form.partAmount(placeholder=form.partAmount.label.text, pattern='[0-9]{1,5}', value=1, min=1) }}
-    <select name="van" id="van">
+    <select name="partStore" id="partStore">
     {% if form.unit.choices|length == 0 %}
-        <option value="" disabled selected>No vans</option>
+        <option value="" disabled selected>No part stores</option>
     {% else %}
     {#  Make the first item in the loop a disabled default value of SelectField's label  #}
-        {% for option in form.van %}
+        {% for option in form.partStore %}
             {% if loop.first %}
-                <option value="" disabled selected>{{ form.van.label.text }}</option>
+                <option value="" disabled selected>{{ form.partStore.label.text }}</option>
             {% endif %}
                 {{ option }}
         {% endfor %}
@@ -44,15 +44,15 @@
   <p style="color:red;">The database is empty, consider adding a part.</p>
   {% else %}
   <table class="table">
-    <th>Part Name</th><th>Part Number</th><th>Van</th><th>Amount</th><th>Type</th><th>Action</th><br/>
+    <th>Part Name</th><th>Part Number</th><th>Part Store</th><th>Amount</th><th>Type</th><th>Action</th><br/>
     {% for row in results %}
     <tr>
         <td><a href="/parts/{{ row[0] }}">{{ update_form.id(value=row[0]) }}<p class="thisPartName" id="thisPartName{{ row[0] }}">{{ row[1] }}</p></a>
             {{ update_form.partName(class='partName', pattern='^\w+( +\w+)*$', placeholder=update_form.partName.label.text, id='partName' ~ row[0], value=row[1], data_value=row[0]) }}</td>
         <td><p class="thisPartNumber" id="thisPartNumber{{ row[0] }}">{{ row[3] }}</p>
             {{ update_form.partNumber(class='partNumber', pattern='^\w+( +\w+)*$', placeholder=update_form.partNumber.label.text, id='partNumber' ~ row[0], value=row[3], data_value=row[0]) }}</td>
-        <td><p class="thisVanNumber" id="thisVanNumber{{ row[0] }}">{{ row[4] }}</p>
-            {{ update_form.newVan(class='vanNumber', id='vanNumber' ~ row[0], data_value=row[0]) }}</td>
+        <td><p class="thisPartStoreName" id="thisPartStoreName{{ row[0] }}">{{ row[4] }}</p>
+            {{ update_form.newPartStore(class='partStoreName', id='partStoreName' ~ row[0], data_value=row[0]) }}</td>
     {% if not row[5] %}
     <td><p class="thisAmount" id="thisAmount{{ row[0] }}">{{ row[2] }}</p>
     {% else %}

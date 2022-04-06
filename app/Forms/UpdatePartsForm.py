@@ -17,7 +17,7 @@ class UpdatePartsForm(FlaskForm):
         'Part Amount',
         validators=[DataRequired()]
     )
-    newVan = SelectField(
+    newPartStore = SelectField(
         validators=[DataRequired()]
     )
     newUnit = SelectField(

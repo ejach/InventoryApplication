@@ -3,10 +3,10 @@ from wtforms import StringField, SubmitField, HiddenField
 from wtforms.validators import DataRequired
 
 
-class UpdateVanForm(FlaskForm):
+class UpdatePartStoreForm(FlaskForm):
     id = HiddenField()
-    vanNumber = StringField(
-        'Van Number',
+    partStoreName = StringField(
+        'Part Store Name',
         validators=[DataRequired()]
     )
     confirmUpdateBtn = SubmitField('Submit')

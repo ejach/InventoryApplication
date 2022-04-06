@@ -16,8 +16,8 @@ class PartsForm(FlaskForm):
         'Part Amount',
         validators=[DataRequired()]
     )
-    van = SelectField(
-        'Select Van',
+    partStore = SelectField(
+        'Select Part Store',
         validators=[DataRequired()]
     )
 

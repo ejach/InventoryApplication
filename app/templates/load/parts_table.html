@@ -4,15 +4,15 @@
   <p style="color:red;">The database is empty, consider adding a part.</p>
   {% else %}
   <table class="table">
-    <th>Part Name</th><th>Part Number</th><th>Van</th><th>Amount</th><th>Type</th><th>Action</th><br/>
+    <th>Part Name</th><th>Part Number</th><th>Part Store</th><th>Amount</th><th>Type</th><th>Action</th><br/>
     {% for row in results %}
     <tr>
         <td><a href="/parts/{{ row[0] }}">{{ update_form.id(value=row[0]) }}<p class="thisPartName" id="thisPartName{{ row[0] }}">{{ row[1] }}</p></a>
             {{ update_form.partName(class='partName', pattern='^\w+( +\w+)*$', placeholder=update_form.partName.label.text, id='partName' ~ row[0], value=row[1], data_value=row[0]) }}</td>
         <td><p class="thisPartNumber" id="thisPartNumber{{ row[0] }}">{{ row[3] }}</p>
             {{ update_form.partNumber(class='partNumber', pattern='^\w+( +\w+)*$', placeholder=update_form.partNumber.label.text, id='partNumber' ~ row[0], value=row[3], data_value=row[0]) }}</td>
-        <td><p class="thisVanNumber" id="thisVanNumber{{ row[0] }}">{{ row[4] }}</p>
-            {{ update_form.newVan(class='vanNumber', id='vanNumber' ~ row[0], data_value=row[0]) }}</td>
+        <td><p class="thisPartStoreName" id="thisPartStoreName{{ row[0] }}">{{ row[4] }}</p>
+            {{ update_form.newPartStore(class='partStoreName', id='partStoreName' ~ row[0], data_value=row[0]) }}</td>
     {% if not row[5] %}
     <td><p class="thisAmount" id="thisAmount{{ row[0] }}">{{ row[2] }}</p>
     {% else %}

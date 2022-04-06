@@ -1,6 +1,6 @@
 $(document).ready(function() {
-    // Path to obtain the van list
-    const getPath = '/table/vans_list/all';
+    // Path to obtain the partStore list
+    const getPath = '/table/part_store_list/all';
     // On submit, execute the following
     $('#btnSubmit').click(function (event) {
     // Prevents form from submitting
@@ -12,7 +12,7 @@ $(document).ready(function() {
       $.ajax({
           type: 'POST',
           enctype: 'multipart/form-data',
-          url: '/vans',
+          url: '/parts/stores',
           data: data,
           processData: false,
           contentType: false,
@@ -22,7 +22,7 @@ $(document).ready(function() {
           success: function () {
               $('#mySpan').load(getPath);
               $('#btnSubmit').prop('disabled', false);
-              $('#instructions').html('Select a van:').css('color', 'black');
+              $('#instructions').html('Select a part store:').css('color', 'black');
           },
           // On failure, print errors and re-enable the submit button
           error: function (e) {

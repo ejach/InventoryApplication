@@ -178,7 +178,7 @@ h1 {
     font-size: 56px;
 }
 
-#myName, #myNumber, #myAmount, #myType,  #myVan {
+#myName, #myNumber, #myAmount, #myType,  #myPartStore {
     float: left;
 }
 
@@ -235,7 +235,7 @@ h1 {
   padding: 8px;
 }
 
-.partName, .partNumber, .vanNumber, .confirmUpdateBtn, .cancelUpdateBtn, .newPartAmount {
+.partName, .partNumber, .partStoreName, .confirmUpdateBtn, .cancelUpdateBtn, .newPartAmount {
   display: none;
 }
 
@@ -264,9 +264,7 @@ h1 {
 .error {
     color: red;
 }
-.selectVan {
-    height: 25%;
-}
+
 @media (orientation: portrait) {
     #card > a > img {
       width: 100px;

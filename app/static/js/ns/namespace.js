@@ -140,7 +140,7 @@
           toggleProps('#yesBtn' + id);
           // Parameters to be sent in the request
           let url = (window.location.pathname.split('/')[2] !== 'type' && window.location.pathname !== '/parts'
-              && !window.location.pathname.split('/vans/')[1]) ? '/delete/van/' : '/delete/part/';
+              && !window.location.pathname.split('/stores/')[1]) ? '/delete/part_store/' : '/delete/part/';
           // Append csrf token to data string
           let data = 'Delete=' + id;
           let toggles = ['.deleteBtn', '.updateBtn'].toString();
@@ -234,18 +234,19 @@
         let partNumber = $('#partNumber');
         let unit = $('#unit').val();
         let instructions = $('#instructions');
-        let vanNum = window.location.pathname.split('/')[2] ? window.location.pathname.split('/')[2] : $('#van').val();
-        // Append vanNum from URL to the formData object if the current window is not /parts
-        if (window.location.pathname !== '/parts') {
-          let vanNum = window.location.pathname.split('/')[2];
-          data.append('van', vanNum);
+        let partStoreName = window.location.pathname.split('/')[3] ?
+            window.location.pathname.split('/')[3] : $('#partStore').val();
+        // Append partStoreName from URL to the formData object if the current window is not /parts
+        if (window.location.pathname !== '/parts/stores') {
+          let partStoreName = window.location.pathname.split('/')[3];
+          data.append('partStore', partStoreName);
         }
-        if (!Number.isFinite(amount) && amount.val() && partName.val() && partNumber.val() && vanNum && unit &&
+        if (!Number.isFinite(amount) && amount.val() && partName.val() && partNumber.val() && partStoreName && unit &&
         parseInt(amount.val()) !== amount.val() && parseInt(amount.val()) > 0) {
           postRequest('/parts', data, ('#submit'), 'multipart/form-data', $getPath,
               window.location.pathname.split('/')[2]
           ? $(instructions).html('Enter the Part Name, Part Number, and Part Amount: ').css('color', 'black')
-          : $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Van Number: ')
+          : $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Part Store Name: ')
                   .css('color', 'black'), 'insert');
           $(form).trigger('reset');
           // If amount is blank, or the amount is NaN notify the user
@@ -261,12 +262,12 @@
       // Toggle the form/table elements
       let toggleElem = function (id) {
         if (window.location.pathname === '/parts' || window.location.pathname.split('/type')[1]) {
-          $('#thisPartName' + id + ', #thisPartNumber' + id + ', #thisVanNumber' + id + ', #thisAmount' + id +
+          $('#thisPartName' + id + ', #thisPartNumber' + id + ', #thisPartStoreName' + id + ', #thisAmount' + id +
               ', #newPartAmount' + id + ', #updateBtn' + id + ', #confirmUpdateBtn' + id + ', #deleteBtn'
-              + id + ', #partName' + id + ', #partNumber' + id + ', #vanNumber' + id + ', #cancelUpdateBtn' + id +
+              + id + ', #partName' + id + ', #partNumber' + id + ', #partStoreName' + id + ', #cancelUpdateBtn' + id +
               ' , #thisPartUnit' + id + ' , #newUnit' + id).toggle();
-        } else if (!window.location.pathname.split('/vans/')[1]) {
-          $('#deleteBtn' + id + ', #thisVanNumber' + id + ', #vanNumber' + id + ', #updateBtn' + id +
+        } else if (!window.location.pathname.split('/stores/')[1]) {
+          $('#deleteBtn' + id + ', #thisPartStoreNumber' + id + ', #partStoreName' + id + ', #updateBtn' + id +
           ', #confirmUpdateBtn' + id +  ', #partNumber' + id + ', #cancelUpdateBtn' + id).toggle();
         } else {
           $('#thisPartName' + id +', #thisPartNumber' + id + ', #updateBtn' + id + ', #thisAmount' + id +
@@ -279,32 +280,32 @@
         // ID to be updated
         let id = this.dataset.value;
         toggleElem(id);
-        let vanNum = $('#thisVanNumber'+id);
+        let partStoreName = $('#thisPartStoreName'+id);
         let partName = $('#partName'+id);
         let partNumber = $('#partNumber'+id);
-        let vanNumOptVal = vanNum.html();
-        let selectVanElem = $('#vanNumber'+id);
+        let storeNameOptVal = partStoreName.html();
+        let selectPartStoreElem = $('#partStoreName' + id);
         let partAmount = $('#newPartAmount'+id);
         let selectUnit = $('#thisPartUnit' + id);
         let selectUnitElem = $('#newUnit' + id);
         let partUnitOptVal = selectUnit.html();
         let instructions = $('#instructions');
         // Make sure the select element selects the original value
-        selectVanElem.find('option[value="'+vanNumOptVal+'"]').attr('selected',true);
+        selectPartStoreElem.find('option[value="'+storeNameOptVal+'"]').attr('selected',true);
         selectUnitElem.find('option[value="'+partUnitOptVal+'"]').attr('selected',true);
         toggleProps('.deleteBtn', '.updateBtn');
-        $('#table').off('click').on('click', '#confirmUpdateBtn'+id, function(event) {
+        $('#table').off('click').on('click', '#confirmUpdateBtn'+id, function() {
           let text;
           let url;
           toggleElem(id);
-          if (!window.location.pathname.split('/')[2] && window.location.pathname !== '/parts') {
-            if (selectVanElem.val()) {
-              url = '/update/van/';
-              text = 'id=' + id + '&vanNumber=' + selectVanElem.val();
+          if (!window.location.pathname.split('/')[3] && window.location.pathname.split('/')[2] === 'stores') {
+            if (selectPartStoreElem.val()) {
+              url = '/update/part_store/';
+              text = 'id=' + id + '&partStoreName=' + selectPartStoreElem.val();
               let toggles = ['.deleteBtn', '.updateBtn'].toString();
               // Send our POST request
               postRequest(url, text, toggles, null, $getPath);
-              $(instructions).html('Select a van: ').css('color', 'black');
+              $(instructions).html('Select a part store: ').css('color', 'black');
             } else {
               $(instructions).html('Blank input will not be accepted.').css('color', 'red');
               setTimeout(function () {
@@ -316,12 +317,12 @@
             let partNameHtml = partName.val();
             let partAmountHtml = partAmount.val();
             let partUnitHtml = $('#newUnit'+id+' option:selected').text();
-            // If the window location is not /parts, get it from the URL, else prompt the user for the vanNum
-            let vanNumHtml = function() {
-              if (window.location.pathname !== '/parts' && window.location.pathname.split('/')[2] && !window.location.pathname.split('/')[3]) {
-                return window.location.pathname.split('/')[2];
+            // If the window location is not /parts, get it from the URL, else prompt the user for the partStoreName
+            let storeNameHtml = function() {
+              if (window.location.pathname !== '/parts' && window.location.pathname.split('/')[3] && !window.location.pathname.split('/')[4]) {
+                return window.location.pathname.split('/')[3];
               } else {
-                 return $('#vanNumber'+id+' option:selected').text();
+                 return $('#partStoreName'+id+' option:selected').text();
               }
             };
             if (!partNameHtml || !partNumberHtml || !partAmountHtml || parseInt(partAmountHtml) < 0) {
@@ -334,14 +335,14 @@
                     && !window.location.pathname.split('/')[3]) {
                   return $(instructions).html('Enter the Part Name, Part Number, and Part Amount: ').css('color', 'black');
                 } else if (window.location.pathname.split('/')[1] === 'parts' && window.location.pathname.split('/')[2] !== 'type' && !window.location.pathname.split('/')[3]) {
-                  return $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Van Number: ').css('color', 'black');
+                  return $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Part Store Name: ').css('color', 'black');
                 } else {
                   return $(instructions).html('Part Type: ' + '<b>' + window.location.pathname.split('/')[3] + '</b>').css('color', 'black');
                 }
               };
-              text = 'id=' + id + '&partName=' + partNameHtml + '&newPartAmount=' + partAmountHtml + '&partNumber=' + partNumberHtml + '&newVan=' + vanNumHtml()
+              text = 'id=' + id + '&partName=' + partNameHtml + '&newPartAmount=' + partAmountHtml + '&partNumber=' + partNumberHtml + '&newPartStore=' + storeNameHtml()
               + '&newUnit=' + partUnitHtml;
-              url = (window.location.pathname.split('/')[2] !== 'type' && window.location.pathname !== '/parts' && !window.location.pathname.split('/vans/')[1]) ? '/update/van/' : '/update/part/';
+              url = (window.location.pathname.split('/')[2] !== 'type' && window.location.pathname !== '/parts' && !window.location.pathname.split('/stores/')[1]) ? '/update/part_store/' : '/update/part/';
               let toggles = ['.deleteBtn', '.updateBtn'].toString();
               postRequest(url, text, toggles, null, $getPath, newInstructions());
             }
@@ -352,12 +353,12 @@
           toggleElem(id);
           // Reset to original values
           if (!window.location.pathname.split('/')[2] && window.location.pathname !== '/parts') {
-            selectVanElem.val(origVal(selectVanElem));
+            selectPartStoreElem.val(origVal(selectPartStoreElem));
           } else {
             partName.val(origVal(partName));
             partNumber.val(origVal(partNumber));
             partAmount.val(origVal(partAmount));
-            selectVanElem.val(vanNumOptVal);
+            selectPartStoreElem.val(storeNameOptVal);
             selectUnit.html() === 'None' ? selectUnitElem.attr('selected', 'Select Unit')
                 : selectUnitElem.val(partUnitOptVal);
           }
