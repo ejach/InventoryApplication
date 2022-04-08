@@ -14,16 +14,12 @@ TEST_PHONE=xxx
 #### Expected Output
 
 ```
-Process finished with exit code 0
 test_add_part_amount() TEST
 insert() part amount TRUE test -> PASSED
 insert() part amount FALSE test -> PASSED
-test_add_van() TEST
-insert_van() test -> PASSED
-insert_van() FALSE test -> PASSED
 test_check_duplicates() TEST
-check_duplicates() duplicate van FALSE test -> PASSED
-check_duplicates() duplicate van TRUE test -> PASSED
+check_duplicates() duplicate part store FALSE test -> PASSED
+check_duplicates() duplicate part store TRUE test -> PASSED
 test_check_input() TEST
 check_input() TRUE test -> PASSED
 check_input() Empty Input test -> PASSED
@@ -35,8 +31,8 @@ test_create_job() TEST
 create job FALSE TEST -> PASSED
 create job TRUE TEST -> PASSED
 test_create_job() TEST -> PASSED
-test_delete_van() TEST
-delete_van() test -> PASSED
+test_delete_part_store() TEST
+delete_part_store() test -> PASSED
 test_enter_low_threshold() TEST
 insert part TEST -> PASSED
 update threshold TEST -> PASSED
@@ -45,7 +41,10 @@ test_false_part_amount() TEST
 insert() part amount invalid input test -> PASSED
 test_get_selections() TEST
 get_selections TEST -> PASSED
-check_if_van_exist() TEST -> PASSED
+check_if_part_store_exist() TEST -> PASSED
+test_insert_part_store() TEST
+insert_part_store() test -> PASSED
+insert_part_store() FALSE test -> PASSED
 test_invalid_low_threshold() TEST
 insert part TEST -> PASSED
 update threshold INVALID TEST -> PASSED
@@ -68,6 +67,11 @@ insert() TRUE test -> PASSED
 delete() test -> PASSED
 test_parts_update() TEST
 update() test -> PASSED
+test_phone_num_methods() TEST
+Random Number EXISTENCE FALSE TEST -> PASSED
+Random Number VALIDITY FALSE TEST -> PASSED
+Random Number EXISTENCE TRUE TEST -> PASSED
+test_phone_num_methods() TEST -> PASSED
 test_toggle_admin() TEST
 MAKE ADMIN TEST -> PASSED
 REMOVE ADMIN TEST -> PASSED
@@ -88,11 +92,16 @@ test_type_update() TEST -> PASSED
 test_update_part_amount() TEST
 insert() part amount update insert test -> PASSED
 insert() part amount update test -> PASSED
+test_update_part_store() TEST
+update_part_store() TypeError test -> PASSED
+update_part_store() test -> PASSED
 test_update_parts() TEST
-insert_van TEST -> PASSED
+insert_part_store TEST -> PASSED
 update TEST -> PASSED
 test_update_parts() TEST -> PASSED
-test_update_van() TEST
-update_van() TypeError test -> PASSED
-update_van() test -> PASSED
+test_validate_phone_number() TEST
+Valid Number TEST -> PASSED
+Existing Number TEST -> PASSED
+Random Number TEST -> PASSED
+test_validate_phone_number() TEST -> PASSED
 ```
