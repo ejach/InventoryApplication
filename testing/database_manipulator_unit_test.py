@@ -570,10 +570,10 @@ class DBMUnitTest(TestCase):
         dbm.insert_part_store(part_store_name, part_store_icon=get_random_icon())
         part_store_id = get_last_id(PartStore)[0]
         # Make sure that you cannot create a job from a partStore with no parts
-        dbm.record_job(username=random_string + random_string + random_digit, time=random_time_string + random_digit,
+        dbm.record_job(username=random_string, time=random_time_string + random_digit,
                        part_store_name=part_store_name,
                        parts_used=random_numbers)
-        self.assertFalse(check_if_job_exists(_username=random_string + random_string + random_digit,
+        self.assertFalse(check_if_job_exists(_username=random_string,
                                              _time=random_time_string + random_digit,
                                              part_store=part_store_name, parts_used=random_numbers))
         print('create job FALSE TEST -> PASSED')
