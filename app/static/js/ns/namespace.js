@@ -267,7 +267,8 @@
               + id + ', #partName' + id + ', #partNumber' + id + ', #partStoreName' + id + ', #cancelUpdateBtn' + id +
               ' , #thisPartUnit' + id + ' , #newUnit' + id).toggle();
         } else if (!window.location.pathname.split('/stores/')[1]) {
-          $('#deleteBtn' + id + ', #thisPartStoreNumber' + id + ', #partStoreName' + id + ', #updateBtn' + id +
+          $('#deleteBtn' + id + ', #thisPartStoreNumber' + id + ', #partStoreName' + id +
+              ', #newPartStoreImage' + id + ', #updateBtn' + id +
           ', #confirmUpdateBtn' + id +  ', #partNumber' + id + ', #cancelUpdateBtn' + id).toggle();
         } else {
           $('#thisPartName' + id +', #thisPartNumber' + id + ', #updateBtn' + id + ', #thisAmount' + id +
@@ -289,10 +290,12 @@
         let selectUnit = $('#thisPartUnit' + id);
         let selectUnitElem = $('#newUnit' + id);
         let partUnitOptVal = selectUnit.html();
+        let partStoreImage = $('#newPartStoreImage' + id);
         let instructions = $('#instructions');
         // Make sure the select element selects the original value
         selectPartStoreElem.find('option[value="'+storeNameOptVal+'"]').attr('selected',true);
         selectUnitElem.find('option[value="'+partUnitOptVal+'"]').attr('selected',true);
+        partStoreImage.find('option[value="'+$('#myCard' + id).data('image')+'"]').attr('selected',true);
         toggleProps('.deleteBtn', '.updateBtn');
         $('#table').off('click').on('click', '#confirmUpdateBtn'+id, function() {
           let text;
@@ -301,11 +304,12 @@
           if (!window.location.pathname.split('/')[3] && window.location.pathname.split('/')[2] === 'stores') {
             if (selectPartStoreElem.val()) {
               url = '/update/part_store/';
-              text = 'id=' + id + '&partStoreName=' + selectPartStoreElem.val();
+              text = 'id=' + id + '&partStoreName=' + selectPartStoreElem.val() + '&newPartStoreImage='
+                  + partStoreImage.val();
               let toggles = ['.deleteBtn', '.updateBtn'].toString();
               // Send our POST request
               postRequest(url, text, toggles, null, $getPath);
-              $(instructions).html('Select a part store: ').css('color', 'black');
+              $(instructions).html(instructions.data('value')).css('color', 'black');
             } else {
               $(instructions).html('Blank input will not be accepted.').css('color', 'red');
               setTimeout(function () {
@@ -319,30 +323,41 @@
             let partUnitHtml = $('#newUnit'+id+' option:selected').text();
             // If the window location is not /parts, get it from the URL, else prompt the user for the partStoreName
             let storeNameHtml = function() {
-              if (window.location.pathname !== '/parts' && window.location.pathname.split('/')[3] && !window.location.pathname.split('/')[4]) {
+              if (window.location.pathname !== '/parts' && window.location.pathname.split('/')[3] &&
+                  !window.location.pathname.split('/')[4]) {
                 return window.location.pathname.split('/')[3];
               } else {
                  return $('#partStoreName'+id+' option:selected').text();
               }
             };
             if (!partNameHtml || !partNumberHtml || !partAmountHtml || parseInt(partAmountHtml) < 0) {
-              $(instructions).html('Blank or invalid input will not be accepted.').css('color', 'red');
+              $(instructions).html('Blank or invalid input will not be accepted.')
+                  .css('color', 'red');
               toggleProps('.deleteBtn', '.updateBtn');
               origVal('#newPartAmount' + id);
             } else {
               let newInstructions = function () {
-                if (window.location.pathname.split('/')[2] !== 'type' || window.location.pathname.split('/')[2] !== 'parts'
+                if (window.location.pathname.split('/')[2] !== 'type' ||
+                    window.location.pathname.split('/')[2] !== 'parts'
                     && !window.location.pathname.split('/')[3]) {
-                  return $(instructions).html('Enter the Part Name, Part Number, and Part Amount: ').css('color', 'black');
-                } else if (window.location.pathname.split('/')[1] === 'parts' && window.location.pathname.split('/')[2] !== 'type' && !window.location.pathname.split('/')[3]) {
-                  return $(instructions).html('Enter the Part Name, Part Number, Part Amount, and Part Store Name: ').css('color', 'black');
+                  return $(instructions).html('Enter the Part Name, Part Number, and Part Amount: ')
+                      .css('color', 'black');
+                } else if (window.location.pathname.split('/')[1] === 'parts'
+                    && window.location.pathname.split('/')[2] !== 'type'
+                    && !window.location.pathname.split('/')[3]) {
+                  return $(instructions)
+                      .html('Enter the Part Name, Part Number, Part Amount, and Part Store Name: ')
+                      .css('color', 'black');
                 } else {
-                  return $(instructions).html('Part Type: ' + '<b>' + window.location.pathname.split('/')[3] + '</b>').css('color', 'black');
+                  return $(instructions).html('Part Type: ' + '<b>' +
+                      window.location.pathname.split('/')[3] + '</b>').css('color', 'black');
                 }
               };
-              text = 'id=' + id + '&partName=' + partNameHtml + '&newPartAmount=' + partAmountHtml + '&partNumber=' + partNumberHtml + '&newPartStore=' + storeNameHtml()
+              text = 'id=' + id + '&partName=' + partNameHtml + '&newPartAmount=' + partAmountHtml + '&partNumber=' +
+                  partNumberHtml + '&newPartStore=' + storeNameHtml()
               + '&newUnit=' + partUnitHtml;
-              url = (window.location.pathname.split('/')[2] !== 'type' && window.location.pathname !== '/parts' && !window.location.pathname.split('/stores/')[1]) ? '/update/part_store/' : '/update/part/';
+              url = (window.location.pathname.split('/')[2] !== 'type' && window.location.pathname !== '/parts'
+                  && !window.location.pathname.split('/stores/')[1]) ? '/update/part_store/' : '/update/part/';
               let toggles = ['.deleteBtn', '.updateBtn'].toString();
               postRequest(url, text, toggles, null, $getPath, newInstructions());
             }
@@ -354,6 +369,9 @@
           // Reset to original values
           if (!window.location.pathname.split('/')[2] && window.location.pathname !== '/parts') {
             selectPartStoreElem.val(origVal(selectPartStoreElem));
+          } else if (!window.location.pathname.split('/')[3] && window.location.pathname.split('/')[2] === 'stores') {
+            selectPartStoreElem.val(partStoreName.html());
+            partStoreImage.val($('#myCard' + id).data('image'));
           } else {
             partName.val(origVal(partName));
             partNumber.val(origVal(partNumber));

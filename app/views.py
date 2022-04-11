@@ -8,7 +8,8 @@ from flask_talisman import Talisman
 from flask_wtf import CSRFProtect
 from werkzeug.exceptions import HTTPException, abort
 
-from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, get_difference
+from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, get_difference, get_store_icon_names, \
+    check_if_icon_exists
 from app.Forms.AddTypeForm import AddTypeForm
 from app.Forms.LoginForm import LoginForm
 from app.Forms.LowPartsForm import LowPartsForm
@@ -244,13 +245,17 @@ def type_parts_id(type_id):
 @login_required
 def part_stores():
     form = PartStoreForm()
+    form.partStoreImage.choices = get_store_icon_names()
     update_form = UpdatePartStoreForm()
     part_store_names = dbm.get_part_store_names()
+    update_form.newPartStoreImage.choices = get_store_icon_names()
     if request.method == 'POST':
-        part_store_number = unquote(form.partStoreName.data)
+        part_store_name = unquote(form.partStoreName.data)
+        part_store_icon = form.partStoreImage.data
         # If the part_store doesn't exist, insert it
-        if not dbm.check_if_exists(part_store_number.lower()):
-            dbm.insert_part_store(part_store_number)
+        if check_input(part_store_name) and not dbm.check_if_exists(part_store_name.lower()) \
+                and check_if_icon_exists(part_store_icon):
+            dbm.insert_part_store(part_store_name, part_store_icon)
         # Return 409 if the part_store already exists
         else:
             return render_template('part_stores.html', part_store_names=part_store_names, form=form,
@@ -332,6 +337,7 @@ def table(table_name, quantity_id):
     elif table_name == 'part_store_list' and quantity_id == 'all':
         update_form = UpdatePartStoreForm()
         store_names = dbm.get_part_store_names()
+        update_form.newPartStoreImage.choices = get_store_icon_names()
         return render_template('load/part_stores_list.html', part_store_names=store_names, update_form=update_form)
     elif table_name == 'part_type_list' and quantity_id != 'all':
         results = dbm.get_part_type_by_name(type_name=quantity_id)
@@ -402,8 +408,9 @@ def update(id_type):
             form = UpdatePartStoreForm()
             part_store_id = form.id.data
             part_store_name = unquote(form.partStoreName.data)
-            if check_input(part_store_id) and check_input(part_store_name):
-                dbm.update_part_store(part_store_id, part_store_name)
+            part_store_image = form.newPartStoreImage.data
+            if check_input(part_store_id) and check_input(part_store_name) and check_if_icon_exists(part_store_image):
+                dbm.update_part_store(part_store_id, part_store_name, part_store_image)
         # Route to update an account by the ID to grant admin attribute
         elif request.method == 'POST' and id_type == 'user':
             user_id = request.form.get('user_id')
