@@ -1,4 +1,4 @@
-from os import getenv
+from os import getenv, listdir
 from random import choice, randint
 from string import ascii_letters, digits
 from time import time
@@ -36,6 +36,12 @@ def random_phone_num_generator():
     while last in ['1111', '2222', '3333', '4444', '5555', '6666', '7777', '8888']:
         last = (str(randint(1, 9998)).zfill(4))
     return '1{}{}{}'.format(first, second, last)
+
+
+# Get random icon from list
+def get_random_icon():
+    items = listdir('../app/static/assets/stores/')
+    return choice([i.rstrip('.svg') for i in items])
 
 
 # Check if part exists
@@ -155,7 +161,7 @@ class DBMUnitTest(TestCase):
         # Make sure it exists
         self.assertTrue(check_if_type_exist(type_id))
         # Create a partStore in the database
-        dbm.insert_part_store(part_store_name)
+        dbm.insert_part_store(part_store_name, part_store_icon=get_random_icon())
         part_store_id = get_last_id(PartStore)[0]
         # Make sure it exist
         self.assertTrue(dbm.check_if_exists(part_store_name))
@@ -174,7 +180,8 @@ class DBMUnitTest(TestCase):
         self.assertFalse(check_if_type_exist(type_id))
         # Make sure the corresponding partStore and part do not exist
         self.assertFalse(check_if_part_exist(part_name=part_name, part_number=part_number,
-                                             part_amount=random_digit, part_store_name=part_store_name, part_type=part_type))
+                                             part_amount=random_digit, part_store_name=part_store_name,
+                                             part_type=part_type))
         self.assertFalse(check_if_part_store_exists(part_store_id))
         print('delete() test -> PASSED')
 
@@ -188,7 +195,7 @@ class DBMUnitTest(TestCase):
         # Make sure it exists
         self.assertTrue(check_if_type_exist(type_id))
         # Create another partStore
-        dbm.insert_part_store(random_time_string)
+        dbm.insert_part_store(random_time_string, part_store_icon=get_random_icon())
         part_store_id = get_last_id(PartStore)[0]
         # Add another part into the database
         dbm.insert(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
@@ -216,7 +223,8 @@ class DBMUnitTest(TestCase):
         # Check existence
         self.assertFalse(
             check_if_part_exist(part_name=random_string + random_digit, part_number=random_numbers + random_digit,
-                                part_store_name=random_time_string + random_digit, part_amount=random_digit + random_digit,
+                                part_store_name=random_time_string + random_digit,
+                                part_amount=random_digit + random_digit,
                                 part_type=part_type))
         self.assertFalse(check_if_part_store_exists(part_store_id))
         print('update() test -> PASSED')
@@ -241,7 +249,7 @@ class DBMUnitTest(TestCase):
         # Create a test_insert_part_store with a random string of numbers
         part_store_name = 'test_part_store' + random_string
         # Insert it into the database
-        dbm.insert_part_store(part_store_name)
+        dbm.insert_part_store(part_store_name, part_store_icon=get_random_icon())
         part_store_id = get_last_id(PartStore)[0]
         # Assert that check_if_exists will return True
         self.assertTrue(dbm.check_if_exists(part_store_name))
@@ -258,7 +266,7 @@ class DBMUnitTest(TestCase):
         # Create a test_part_store with a random digit
         part_store_name = 'test_part_store' + random_digit
         # Insert it into the database
-        dbm.insert_part_store(part_store_name)
+        dbm.insert_part_store(part_store_name, part_store_icon=get_random_icon())
         # Get the part_store_id from the last insert statement
         part_store_id = get_last_id(PartStore)[0]
         # Delete the partStore from the database after getting the lastrowid
@@ -275,15 +283,15 @@ class DBMUnitTest(TestCase):
         # part store name to be updated to
         new_part_store_name = 'new_part_store_name' + random_string
         # Insert it into the database
-        dbm.insert_part_store(part_store_name)
+        dbm.insert_part_store(part_store_name, part_store_icon=get_random_icon())
         # Get the row id after inserting
         part_store_id = get_last_id(PartStore)[0]
         # Update it to a new partStore name
-        dbm.update_part_store(part_store_id, new_part_store_name)
+        dbm.update_part_store(part_store_id, new_part_store_name, part_store_image=get_random_icon())
         # Check if the partStore exists
         self.assertTrue(dbm.check_if_exists(new_part_store_name))
         # Make sure if the partStore name is Blank, a TypeError is raised
-        dbm.update_part_store(part_store_id, '')
+        dbm.update_part_store(part_store_id, '', part_store_image=get_random_icon())
         self.assertRaises(TypeError)
         print('update_part_store() TypeError test -> PASSED')
         # When finished, delete the partStore from the database
@@ -298,7 +306,7 @@ class DBMUnitTest(TestCase):
         # Create a part_store name with a string of random numbers
         part_store_name = 'test_part_store' + random_numbers
         # Insert it into the database
-        dbm.insert_part_store(part_store_name)
+        dbm.insert_part_store(part_store_name, part_store_icon=get_random_icon())
         # Get the lastrowid and delete it
         part_store_id = get_last_id(PartStore)[0]
         # Assert that check_duplicates will return false as it exists in the database
@@ -376,7 +384,7 @@ class DBMUnitTest(TestCase):
         # Make sure it exists
         self.assertTrue(check_if_type_exist(type_id))
         # Create test partStore
-        dbm.insert_part_store(random_time_string)
+        dbm.insert_part_store(random_time_string, part_store_icon=get_random_icon())
         # Get the partStore ID
         part_store_id = get_last_id(PartStore)[0]
         # Make sure it exists
@@ -422,7 +430,7 @@ class DBMUnitTest(TestCase):
         # Make sure it exists
         self.assertTrue(check_if_type_exist(type_id))
         # Insert partStore number into database
-        dbm.insert_part_store(random_time_string)
+        dbm.insert_part_store(random_time_string, part_store_icon=get_random_icon())
         # Get partStore ID
         part_store_id = get_last_id(PartStore)[0]
         # Check if it exists
@@ -484,7 +492,7 @@ class DBMUnitTest(TestCase):
         # Create random string
         this_string = random_digit + random_digit + random_time_string
         # Insert random partStore into database
-        dbm.insert_part_store(this_string)
+        dbm.insert_part_store(this_string, part_store_icon=get_random_icon())
         this_id = get_last_id(PartStore)[0]
         # Make sure the method returns the string that was inserted
         self.assertIn(member=(this_string, this_string), container=dbm.get_selections())
@@ -506,7 +514,7 @@ class DBMUnitTest(TestCase):
         # Make sure it exists
         self.assertTrue(check_if_type_exist(type_id))
         # Create a new partStore
-        dbm.insert_part_store(random_time_string)
+        dbm.insert_part_store(random_time_string, part_store_icon=get_random_icon())
         part_store_id = get_last_id(PartStore)[0]
         # Get random partStore from existing part store
         random_part_store = get_random_part_store()
@@ -559,13 +567,13 @@ class DBMUnitTest(TestCase):
         self.assertTrue(check_if_type_exist(type_id))
         part_store_name = random_time_string + digits + random_string
         # Create a random partStore
-        dbm.insert_part_store(part_store_name)
+        dbm.insert_part_store(part_store_name, part_store_icon=get_random_icon())
         part_store_id = get_last_id(PartStore)[0]
         # Make sure that you cannot create a job from a partStore with no parts
-        dbm.record_job(username=random_string + random_string, time=random_time_string + random_digit,
+        dbm.record_job(username=random_string + random_string + random_digit, time=random_time_string + random_digit,
                        part_store_name=part_store_name,
                        parts_used=random_numbers)
-        self.assertFalse(check_if_job_exists(_username=random_string + random_string,
+        self.assertFalse(check_if_job_exists(_username=random_string + random_string + random_digit,
                                              _time=random_time_string + random_digit,
                                              part_store=part_store_name, parts_used=random_numbers))
         print('create job FALSE TEST -> PASSED')
@@ -576,7 +584,8 @@ class DBMUnitTest(TestCase):
             check_if_part_exist(part_name=random_string, part_number=random_numbers, part_amount=random_digit,
                                 part_store_name=part_store_name, part_type=part_type))
         # Create job, make sure it exists
-        dbm.record_job(username=random_string, time=random_time_string, part_store_name=part_store_name, parts_used=random_digit)
+        dbm.record_job(username=random_string, time=random_time_string, part_store_name=part_store_name,
+                       parts_used=random_digit)
         self.assertTrue(check_if_job_exists(_username=random_string, _time=random_time_string,
                                             part_store=part_store_name, parts_used=random_digit))
         print('create job TRUE TEST -> PASSED')
@@ -603,7 +612,7 @@ class DBMUnitTest(TestCase):
         self.assertTrue(check_if_type_exist(type_id))
         # Insert partStore into database
         part_store_name = random_numbers
-        dbm.insert_part_store(part_store_name)
+        dbm.insert_part_store(part_store_name, part_store_icon=get_random_icon())
         part_store_id = get_last_id(PartStore)[0]
         self.assertTrue(check_if_part_store_exists(part_store_id))
         # Insert part into database
@@ -643,7 +652,7 @@ class DBMUnitTest(TestCase):
         self.assertTrue(check_if_type_exist(type_id))
         part_store_name = random_digit + random_digit + random_string
         # Insert partStore
-        dbm.insert_part_store(part_store_name)
+        dbm.insert_part_store(part_store_name, part_store_icon=get_random_icon())
         part_store_id = get_last_id(PartStore)[0]
         # First digit from range 1-5
         start_digit = ''.join(choice(digits) for z in range(1, 5))
@@ -683,7 +692,7 @@ class DBMUnitTest(TestCase):
         self.assertTrue(check_if_type_exist(type_id))
         part_store_name = random_digit + random_digit + random_time_string
         # Insert partStore
-        dbm.insert_part_store(part_store_name)
+        dbm.insert_part_store(part_store_name, part_store_icon=get_random_icon())
         part_store_id = get_last_id(PartStore)[0]
         neg_digit = '-' + ''.join(choice(digits) for _ in range(1, 5))
         # First digit from range 1-5
@@ -716,18 +725,20 @@ class DBMUnitTest(TestCase):
         # Create random part type
         part_type = random_string + random_digit
         part_unit = random_string
-        random_part_store = get_random_part_store()[0]
+        part_store_name = random_string + random_digit
+        dbm.insert_part_store(part_store_name, part_store_icon=get_random_icon())
+        self.assertTrue(dbm.check_if_exists(part_store_name))
+        part_store_id = get_last_id(PartStore)[0]
         # Insert part type
         dbm.insert_part_type(part_type, part_unit)
         type_id = get_last_id(PartType)[0]
         print('Type Insertion TEST -> PASSED')
         # Add type to part
         dbm.insert(part_name=random_string, part_amount=random_digit, part_number=random_numbers,
-                   part_store_name=random_part_store, part_type=part_type)
-        part_id = get_last_id(Part)[0]
+                   part_store_name=part_store_name, part_type=part_type)
         self.assertTrue(check_if_part_exist(part_name=random_string,
                                             part_amount=random_digit, part_number=random_numbers,
-                                            part_store_name=random_part_store, part_type=part_type))
+                                            part_store_name=part_store_name, part_type=part_type))
         print('Insert Part TEST -> PASSED')
         self.assertIn(part_type, dbm.get_part_type_names())
         print('Check Part Type TEST -> PASSED')
@@ -735,11 +746,9 @@ class DBMUnitTest(TestCase):
         dbm.delete_part_type(type_id)
         # Make sure it is deleted
         self.assertFalse(check_if_type_exist(type_id))
-        # Delete part
-        dbm.delete(part_id)
-        self.assertFalse(check_if_part_exist(part_name=random_string,
-                                             part_amount=random_digit, part_number=random_numbers,
-                                             part_store_name=random_part_store, part_type=part_type))
+        # Delete part store
+        dbm.delete_part_store(part_store_id)
+        self.assertFalse(check_if_part_store_exists(part_store_id))
         print('test_type_insertion() TEST -> PASSED')
 
     def test_type_update(self):
