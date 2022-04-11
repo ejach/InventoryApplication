@@ -23,6 +23,7 @@ class PartStore(Base):
 
     id = Column(Integer, primary_key=True)
     part_store_name = Column(String(255), index=True)
+    icon = Column(String(255))
 
 
 class PartType(Base):

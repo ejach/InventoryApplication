@@ -1,4 +1,4 @@
-from os import environ
+from os import environ, listdir
 from re import compile, IGNORECASE
 
 from bcrypt import gensalt, hashpw, checkpw
@@ -62,6 +62,29 @@ def check_phone_num(phone_num: str) -> bool:
         return True
     else:
         return False
+
+
+# Get the part store icon file names in the /assets/stores/ directory
+def get_store_icon_names() -> list:
+    items = listdir('app/static/assets/stores')
+    return [i.rstrip('.svg') for i in items]
+
+
+# Check if icon file exists
+def check_if_icon_exists(icon: str) -> bool:
+    items = get_store_icon_names()
+    if icon in items:
+        return True
+    else:
+        return False
+
+
+@db_connector
+def get_current_store_name_icon(part_store_id: str, **kwargs) -> list:
+    connection = kwargs.pop('connection')
+    stmt = (select(PartStore.part_store_name, PartStore.icon).where(PartStore.id == part_store_id))
+    results = connection.execute(stmt).fetchall()
+    return [i for i in results][0]
 
 
 class DatabaseManipulator:
@@ -181,9 +204,9 @@ class DatabaseManipulator:
 
     # Insert part store into the database
     @db_connector
-    def insert_part_store(self, part_store_name: str, **kwargs) -> None:
+    def insert_part_store(self, part_store_name: str, part_store_icon: str, **kwargs) -> None:
         connection = kwargs.pop('connection')
-        stmt = (insert(PartStore).values(part_store_name=part_store_name))
+        stmt = (insert(PartStore).values(part_store_name=part_store_name, icon=part_store_icon))
         connection.execute(stmt)
         connection.commit()
 
@@ -205,7 +228,8 @@ class DatabaseManipulator:
     @db_connector
     def get_part_store_names(self, **kwargs) -> tuple:
         connection = kwargs.pop('connection')
-        stmt = select(PartStore.id, PartStore.part_store_name).order_by(func.length(PartStore.part_store_name))
+        stmt = select(PartStore.id, PartStore.part_store_name, PartStore.icon) \
+            .order_by(func.length(PartStore.part_store_name))
         results = connection.execute(stmt).fetchall()
         return results
 
@@ -293,8 +317,9 @@ class DatabaseManipulator:
     @db_connector
     def get_part_information(self, part_id: str, **kwargs) -> tuple:
         connection = kwargs.pop('connection')
-        stmt = (select(Part.id, Part.name, Part.amount, Part.part_number, Part.part_store_name, Part.low_thresh, Part.type,
-                       Part.unit).where(Part.id == part_id))
+        stmt = (
+            select(Part.id, Part.name, Part.amount, Part.part_number, Part.part_store_name, Part.low_thresh, Part.type,
+                   Part.unit).where(Part.id == part_id))
         results = connection.execute(stmt).fetchall()
         return results
 
@@ -330,13 +355,28 @@ class DatabaseManipulator:
 
     # Update part_store by part_store_id
     @db_connector
-    def update_part_store(self, part_store_id: str, part_store_name: str, **kwargs) -> None:
+    def update_part_store(self, part_store_id: str, part_store_name: str, part_store_image: str, **kwargs) -> None:
         connection = kwargs.pop('connection')
+        current_name, current_icon = get_current_store_name_icon(part_store_id)
         # Check for duplicates and validate input
-        if check_input(part_store_name) and self.check_duplicates(part_store_name):
-            stmt = (update(PartStore).values(part_store_name=part_store_name).where(PartStore.id == part_store_id))
+        if part_store_name == current_name and part_store_image != current_icon \
+                and check_if_icon_exists(part_store_image):
+            stmt = (update(PartStore).values(icon=part_store_image)
+                    .where(PartStore.id == part_store_id))
             connection.execute(stmt)
             connection.commit()
+        elif part_store_name != current_name and part_store_image == current_icon and \
+                check_input(part_store_name) and self.check_duplicates(part_store_name):
+            stmt = (update(PartStore).values(part_store_name=part_store_name)
+                    .where(PartStore.id == part_store_id))
+            connection.execute(stmt)
+            connection.commit()
+        else:
+            if check_input(part_store_name) and self.check_duplicates(part_store_name):
+                stmt = (update(PartStore).values(part_store_name=part_store_name, icon=part_store_image)
+                        .where(PartStore.id == part_store_id))
+                connection.execute(stmt)
+                connection.commit()
 
     # Update part's threshold
     @db_connector

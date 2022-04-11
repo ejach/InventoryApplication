@@ -11,13 +11,30 @@
 {% if part_store_names == [] %}
 <p id="warning">The database is empty, consider adding a part store.</p>
 {% else %}
-<p id="instructions">Select a part store: </p>
+{% if session['is_admin'] %}
+<p id="instructions" data-value="Select or add a part store: ">Select or add a part store: </p>
+<form id="formElement">
+{{ form.partStoreName(placeholder=form.partStoreName.label.text) }}
+<select name="partStoreImage" id="partStoreImage">
+{% for option in form.partStoreImage %}
+    {% if loop.first %}
+        <option value="" disabled selected>{{ form.partStoreImage.label.text }}</option>
+    {% endif %}
+        {{ option }}
+{% endfor %}
+</select>
+{{ form.btnSubmit(value=form.btnSubmit.label.text) }}
+</form>
+{% else %}
+<p id="instructions" data-value="Select a part store: ">Select a part store: </p>
+{% endif %}
 {% endif %}
 <div id="table">
 <div class="card">
 <span id="mySpan" class="table">
   {% for row in part_store_names %}
-  <a href="/parts/stores/{{ row[1] }}" id="link">{{ update_form.id(value=row[0]) }}<img id="myCard" src="{{ url_for('static', filename='assets/shuttle-van-solid.svg') }}"
+  <a href="/parts/stores/{{ row[1] }}" id="link">{{ update_form.id(value=row[0]) }}
+      <img class="myCard" id="myCard{{ row[0] }}" data-image="{{ row[2] }}" src="{{ url_for('static', filename='assets/stores/'~row[2]~'.svg') }}"
     width="100px" height="100px" /><p class="thisPartStoreName" id="thisPartStoreName{{ row[0] }}">{{ row[1] }}</p></a>
     {% if session['is_admin'] %}
     <form>
@@ -29,6 +46,7 @@
         <input type="button" class="noBtn" id="noBtn{{ row[0] }}" value="No" name="noBtn"
         data-value="{{ row[0] }}" /></p>
     {{ update_form.partStoreName(class=update_form.partStoreName.name, id=update_form.partStoreName.name ~ row[0], value=row[1], data_value=row[1]) }}
+    {{ update_form.newPartStoreImage(class=update_form.newPartStoreImage.name, id=update_form.newPartStoreImage.name ~ row[0], value=row[1], data_value=row[1]) }}
     {{ update_form.confirmUpdateBtn(class=update_form.confirmUpdateBtn.name, type='button', id=update_form.confirmUpdateBtn.name ~ row[0], data_value=row[1]) }}
     {% endif %}
     <input type="button" class="cancelUpdateBtn" name="cancelUpdateBtn" id="cancelUpdateBtn{{ row[0] }}" value="Cancel"
@@ -38,11 +56,4 @@
   </span>
 </div>
 </div>
-{% if session['is_admin'] %}
-  <span id="addPartStore">
-    <img id="myCard" src="{{ url_for('static', filename='assets/add-button.svg') }}" width="100px" height="100px" />
-  </span><p id="paragraph">Add Part Store</p><form id="formElement">
-    {{ form.partStoreName(placeholder=form.partStoreName.label.text) }}
-    {{ form.btnSubmit(value=form.btnSubmit.label.text) }}</form>
-{% endif %}
-  {% endblock %}
+{% endblock %}
