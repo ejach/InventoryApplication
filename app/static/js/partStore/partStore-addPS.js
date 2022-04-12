@@ -11,7 +11,7 @@ $(document).ready(function() {
     $('html').css('cursor', 'progress');
     const form = $('#formElement')[0];
     const data = new FormData(form);
-    if (partStoreName && partStoreImage.val()) {
+    if (partStoreName.val() && partStoreImage.val()) {
         // Disable submit button until something happens
         $('#btnSubmit').prop('disabled', true);
         $.ajax({
@@ -43,6 +43,7 @@ $(document).ready(function() {
         });
         $(form).trigger('reset');
     } else {
+        $('html').css('cursor', 'default');
         $(instructions).html('Invalid or blank input will not be accepted').css('color', 'red');
     }
   });

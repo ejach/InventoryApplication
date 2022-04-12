@@ -8,7 +8,7 @@ from sqlalchemy import select, func
 from sqlalchemy.sql.functions import count
 
 from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, create_password_hash, check_password, \
-    check_password_hash, check_phone_num
+    check_password_hash, check_phone_num, get_current_store_name_icon
 from app.Database.DatabaseTables import PartStore, Part, Account, Job, PartType
 from app.decorators import DatabaseSession
 from app.decorators.flask_decorators import db_connector
@@ -81,11 +81,24 @@ def get_low_part_id(**kwargs):
     return results[0][0]
 
 
-# Check if partStore exists
+# Check if part_store exists
 @db_connector
 def check_if_part_store_exists(this_id, **kwargs):
     connection = kwargs.pop('connection')
     get_part_store = (select(PartStore.id, PartStore.part_store_name).where(PartStore.id == this_id))
+    results = connection.execute(get_part_store).fetchall()
+    if not results:
+        return False
+    else:
+        return True
+
+
+# Check if part_store exists by name
+@db_connector
+def check_part_store_name(part_store_name, **kwargs):
+    connection = kwargs.pop('connection')
+    get_part_store = (select(PartStore.id, PartStore.part_store_name)
+                      .where(PartStore.part_store_name == part_store_name))
     results = connection.execute(get_part_store).fetchall()
     if not results:
         return False
@@ -832,6 +845,33 @@ class DBMUnitTest(TestCase):
         # Make sure it is deleted
         self.assertFalse(dbm.check_if_account_exists(username))
         print('test_phone_num_methods() TEST -> PASSED')
+
+    # Test to make sure blank input will not be added into the database
+    def test_part_store_input(self):
+        print('test_part_store_input() TEST')
+        dbm.insert_part_store(random_string, '')
+        self.assertFalse(check_part_store_name(random_string))
+        print('Blank icon name TEST -> PASSED')
+        dbm.insert_part_store('', get_random_icon())
+        self.assertFalse((check_part_store_name('')))
+        print('Blank part store name TEST -> PASSED')
+        dbm.insert_part_store('', '')
+        self.assertFalse(check_part_store_name(''))
+        print('Blank part store name and icon TEST -> PASSED')
+
+    # Test the store icon names functionality
+    def test_icon_names(self):
+        print('test_store_icon_names() TEST')
+        icon = get_random_icon()
+        dbm.insert_part_store(random_string, part_store_icon=icon)
+        part_store_id = get_last_id(PartStore)[0]
+        self.assertTrue(dbm.check_if_exists(random_string))
+        print('Insert van TEST -> PASSED')
+        self.assertEqual(get_current_store_name_icon(part_store_id)[1], icon)
+        print('Icon equal TEST -> PASSED')
+        dbm.delete_part_store(part_store_id)
+        self.assertFalse(dbm.check_if_exists(random_string))
+        print('test_store_icon_names() TEST -> PASSED')
 
 
 if __name__ == '__main__':
