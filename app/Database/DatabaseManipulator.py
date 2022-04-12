@@ -206,9 +206,10 @@ class DatabaseManipulator:
     @db_connector
     def insert_part_store(self, part_store_name: str, part_store_icon: str, **kwargs) -> None:
         connection = kwargs.pop('connection')
-        stmt = (insert(PartStore).values(part_store_name=part_store_name, icon=part_store_icon))
-        connection.execute(stmt)
-        connection.commit()
+        if check_input(part_store_name) and check_input(part_store_icon):
+            stmt = (insert(PartStore).values(part_store_name=part_store_name, icon=part_store_icon))
+            connection.execute(stmt)
+            connection.commit()
 
     # Get all part stores by part store name
     @db_connector

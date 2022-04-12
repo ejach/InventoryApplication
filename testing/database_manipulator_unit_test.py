@@ -81,11 +81,24 @@ def get_low_part_id(**kwargs):
     return results[0][0]
 
 
-# Check if partStore exists
+# Check if part_store exists
 @db_connector
 def check_if_part_store_exists(this_id, **kwargs):
     connection = kwargs.pop('connection')
     get_part_store = (select(PartStore.id, PartStore.part_store_name).where(PartStore.id == this_id))
+    results = connection.execute(get_part_store).fetchall()
+    if not results:
+        return False
+    else:
+        return True
+
+
+# Check if part_store exists by name
+@db_connector
+def check_part_store_name(part_store_name, **kwargs):
+    connection = kwargs.pop('connection')
+    get_part_store = (select(PartStore.id, PartStore.part_store_name)
+                      .where(PartStore.part_store_name == part_store_name))
     results = connection.execute(get_part_store).fetchall()
     if not results:
         return False
@@ -832,6 +845,19 @@ class DBMUnitTest(TestCase):
         # Make sure it is deleted
         self.assertFalse(dbm.check_if_account_exists(username))
         print('test_phone_num_methods() TEST -> PASSED')
+
+    # Test to make sure blank input will not be added into the database
+    def test_part_store_input(self):
+        print('test_part_store_input() TEST')
+        dbm.insert_part_store(random_string, '')
+        self.assertFalse(check_part_store_name(random_string))
+        print('Blank icon name TEST -> PASSED')
+        dbm.insert_part_store('', get_random_icon())
+        self.assertFalse((check_part_store_name('')))
+        print('Blank part store name TEST -> PASSED')
+        dbm.insert_part_store('', '')
+        self.assertFalse(check_part_store_name(''))
+        print('Blank part store name and icon TEST -> PASSED')
 
 
 if __name__ == '__main__':
