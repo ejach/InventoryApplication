@@ -8,7 +8,7 @@ from sqlalchemy import select, func
 from sqlalchemy.sql.functions import count
 
 from app.Database.DatabaseManipulator import DatabaseManipulator, check_input, create_password_hash, check_password, \
-    check_password_hash, check_phone_num
+    check_password_hash, check_phone_num, get_current_store_name_icon
 from app.Database.DatabaseTables import PartStore, Part, Account, Job, PartType
 from app.decorators import DatabaseSession
 from app.decorators.flask_decorators import db_connector
@@ -858,6 +858,20 @@ class DBMUnitTest(TestCase):
         dbm.insert_part_store('', '')
         self.assertFalse(check_part_store_name(''))
         print('Blank part store name and icon TEST -> PASSED')
+
+    # Test the store icon names functionality
+    def test_icon_names(self):
+        print('test_store_icon_names() TEST')
+        icon = get_random_icon()
+        dbm.insert_part_store(random_string, part_store_icon=icon)
+        part_store_id = get_last_id(PartStore)[0]
+        self.assertTrue(dbm.check_if_exists(random_string))
+        print('Insert van TEST -> PASSED')
+        self.assertEqual(get_current_store_name_icon(part_store_id)[1], icon)
+        print('Icon equal TEST -> PASSED')
+        dbm.delete_part_store(part_store_id)
+        self.assertFalse(dbm.check_if_exists(random_string))
+        print('test_store_icon_names() TEST -> PASSED')
 
 
 if __name__ == '__main__':

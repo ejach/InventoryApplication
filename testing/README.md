@@ -42,6 +42,10 @@ insert() part amount invalid input test -> PASSED
 test_get_selections() TEST
 get_selections TEST -> PASSED
 check_if_part_store_exist() TEST -> PASSED
+test_store_icon_names() TEST
+Insert van TEST -> PASSED
+Icon equal TEST -> PASSED
+test_store_icon_names() TEST -> PASSED
 test_insert_part_store() TEST
 insert_part_store() test -> PASSED
 insert_part_store() FALSE test -> PASSED
@@ -62,6 +66,10 @@ test_login_deny() TEST
 CREATE DENIED ACCOUNT TEST -> PASSED
 DELETE DENIED ACCOUNT TEST -> PASSED
 FAIL LOGIN ACCOUNT TEST -> PASSED
+test_part_store_input() TEST
+Blank icon name TEST -> PASSED
+Blank part store name TEST -> PASSED
+Blank part store name and icon TEST -> PASSED
 test_parts_delete() TEST
 insert() TRUE test -> PASSED
 delete() test -> PASSED
