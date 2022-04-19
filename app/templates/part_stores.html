@@ -33,6 +33,7 @@
 <div class="card">
 <span id="mySpan" class="table">
   {% for row in part_store_names %}
+  <div class="tableElem">
   <a href="/parts/stores/{{ row[1] }}" id="link">{{ update_form.id(value=row[0]) }}
       <img class="myCard" id="myCard{{ row[0] }}" data-image="{{ row[2] }}" src="{{ url_for('static', filename='assets/stores/'~row[2]~'.svg') }}"
     width="100px" height="100px" /><p class="thisPartStoreName" id="thisPartStoreName{{ row[0] }}">{{ row[1] }}</p></a>
@@ -52,6 +53,7 @@
     <input type="button" class="cancelUpdateBtn" name="cancelUpdateBtn" id="cancelUpdateBtn{{ row[0] }}" value="Cancel"
     data-value="{{ row[0] }}" />
     </form>
+  </div>
     {% endfor %}
   </span>
 </div>
