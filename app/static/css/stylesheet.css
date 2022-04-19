@@ -128,7 +128,13 @@ a:visited {
 #mySpan {
     vertical-align: top;
     display: inline-block;
+    width: 100%;
     text-align: center;
+}
+
+.tableElem {
+    display: inline-block;
+    padding: 1em
 }
 
 #paragraph {
