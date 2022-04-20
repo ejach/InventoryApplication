@@ -11,7 +11,7 @@
   <table class="table" id="table">
     <th>Part Name</th><th>Part Number</th><th>Part Stores</th><th>Amount</th><th>Type</th><th>Action</th><br/>
       {% if not results %}
-        <p style="color: red">Type database empty, consider adding a part under this type.</p>
+        <p id="warning">Type database empty, consider adding a part under this type.</p>
       {% else %}
     {% for row in results %}
     <tr>

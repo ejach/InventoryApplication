@@ -35,7 +35,7 @@
 </form>
   {#    If the results are empty, throw the following error    #}
   {% if not results %}
-  <p style="color:red;">The database is empty, consider adding a part.</p>
+  <p id="warning">The database is empty, consider adding a part.</p>
   {% else %}
   <table class="table">
     <th>Part Name</th><th>Part Number</th><th>Part Stores</th><th>Amount</th><th>Type</th><th>Action</th><br/>
