@@ -16,7 +16,7 @@ a:visited {
 }
 
 .partStoreName {
-  width: 55%;
+  width: 15%;
 }
 
 .sidenav {
@@ -134,7 +134,9 @@ a:visited {
 
 .tableElem {
     display: inline-block;
-    padding: 1em
+    padding: 1em;
+    min-width: 1em;
+    max-width: 6em;
 }
 
 #paragraph {
