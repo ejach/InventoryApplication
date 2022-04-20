@@ -4,7 +4,7 @@ from re import compile, IGNORECASE
 from bcrypt import gensalt, hashpw, checkpw
 from phonenumbers import is_valid_number, parse
 from requests import post
-from sqlalchemy import insert, select, update, delete, func, distinct
+from sqlalchemy import insert, select, update, delete, func, distinct, cast, Integer
 
 from app.Database.DatabaseTables import Account, PartStore, Job, Part, PartType
 from app.decorators.flask_decorators import db_connector
@@ -230,7 +230,7 @@ class DatabaseManipulator:
     def get_part_store_names(self, **kwargs) -> tuple:
         connection = kwargs.pop('connection')
         stmt = select(PartStore.id, PartStore.part_store_name, PartStore.icon) \
-            .order_by(func.length(PartStore.part_store_name))
+            .order_by(cast(PartStore.part_store_name, Integer))
         results = connection.execute(stmt).fetchall()
         return results
 
