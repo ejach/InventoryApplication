@@ -134,7 +134,7 @@
       $(document).off('click').on('click', '.deleteBtn', function(){
         let id = this.dataset.value;
         toggleProps('.deleteBtn', '.updateBtn');
-        toggleMe('#deleteBtn' + id, '#updateBtn' + id, '#confirmMe' + id);
+        toggleMe('#deleteBtn' + id, '#updateBtn' + id, '#confirmMe' + id, '#thisPartStoreName' + id);
         // Un-attach and re-attach the event listener
         $(element).off().on('click', '#yesBtn' + id, function () {
           toggleProps('#yesBtn' + id);
@@ -147,7 +147,7 @@
           postRequest(url, data, toggles, 'multipart/form-data', $getPath);
         });
         $('#noBtn' + id).off().click(function () {
-          toggleMe('#deleteBtn' + id, '#updateBtn' + id, '#confirmMe' + id);
+          toggleMe('#deleteBtn' + id, '#updateBtn' + id, '#confirmMe' + id, '#thisPartStoreName' + id);
           toggleProps('.deleteBtn', '.updateBtn');
         });
       });
@@ -268,7 +268,7 @@
               ' , #thisPartUnit' + id + ' , #newUnit' + id).toggle();
         } else if (!window.location.pathname.split('/stores/')[1]) {
           $('#deleteBtn' + id + ', #thisPartStoreNumber' + id + ', #partStoreName' + id +
-              ', #newPartStoreImage' + id + ', #updateBtn' + id +
+              ', #newPartStoreImage' + id + ', #updateBtn' + id + ', #thisPartStoreName' + id +
           ', #confirmUpdateBtn' + id +  ', #partNumber' + id + ', #cancelUpdateBtn' + id).toggle();
         } else {
           $('#thisPartName' + id +', #thisPartNumber' + id + ', #updateBtn' + id + ', #thisAmount' + id +
