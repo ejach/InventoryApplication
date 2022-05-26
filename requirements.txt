@@ -10,6 +10,6 @@ PyMySQL~=1.0.2
 SQLAlchemy~=1.4.36
 SQLAlchemy-Utils~=0.38.2
 requests==2.27.1
-responses~=0.20.0
+responses~=0.21.0
 phonenumbers~=8.12.48
 wget~=3.2
