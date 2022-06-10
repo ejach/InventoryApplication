@@ -11,5 +11,5 @@ SQLAlchemy~=1.4.37
 SQLAlchemy-Utils~=0.38.2
 requests==2.27.1
 responses~=0.21.0
-phonenumbers~=8.12.49
+phonenumbers~=8.12.50
 wget~=3.2
